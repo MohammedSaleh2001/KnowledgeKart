@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <!-- Taken from https://nrodrig1.medium.com/remove-flash-message-from-flask-web-application-e5c82e639b2f -->
+  <script>
+    function removeFlash() {
+      const element = document.getElementById('div_flash');
+      element.remove();
+    }
+  </script>
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+
+    <div class="notification is-success" id="div_flash">
+      <button class="delete" onclick=removeFlash()></button>
+      {{ messages[0] }}
+    </div>
+
+  {% endif %}
+  {% endwith %}
+
+  <h1 class="title">
+    Welcome, {{name}}!
+  </h1>
+{% endblock %}

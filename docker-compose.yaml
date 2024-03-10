@@ -1,0 +1,115 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: airflow
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+      - ./db-setup/init.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./SQL:/etc/queries
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      retries: 5
+    restart: always
+    ports:
+        - "5432:5432"
+    shm_size: '2gb'
+    networks:
+      - db_nw
+
+  pgadmin4:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+        - PGADMIN_DEFAULT_EMAIL=kkadmin@ualberta.ca
+        - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+        - "127.0.0.1:15432:80"
+    networks:
+      - db_nw
+
+  flaskapp:
+    image: kk/flaskapp
+    build: ./flask
+    restart: always
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - db_nw
+      - web_nw
+    depends_on:
+      postgres:
+        condition: service_healthy
+    expose:
+      - "5439"
+
+  sleeper:
+    image: sleepy/sleeper
+    build: ./sleeper
+    restart: no
+    depends_on:
+      - flaskapp
+      - grafana
+
+  nginx:
+    image: "nginx:1.25-alpine"
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl/localhost.crt:/etc/nginx/ssl/nginx.crt
+      - ./nginx/ssl/localhost.key:/etc/nginx/ssl/nginx.key
+    networks:
+      - web_nw
+    depends_on: 
+      sleeper:
+        condition: service_completed_successfully
+
+    healthcheck:
+      test: curl --fail http://localhost/ || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  grafana:
+    image: grafana/grafana:9.5.2
+    restart: unless-stopped
+    expose:
+      - "3000"
+    volumes:
+      - grafana-volume:/var/lib/grafana
+      - ./grafana-setup/grafana.ini:/etc/grafana/grafana.ini
+    environment:
+      - GF_DATABASE_TYPE = postgres
+      - GF_DATABASE_HOST = localhost:5432
+      - GF_DATABASE_NAME = airflow
+      - GF_DATABASE_USER = postgres
+      - GF_DATABASE_PASSWORD = ${POSTGRES_PASSWORD}
+      - GF_DATABASE_SSL_MODE = disable
+      - GF_SERVER_ROOT_URL=https://localhost/grafana
+    user: "0"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - web_nw
+      - db_nw
+    
+
+volumes:
+  db-volume:
+  grafana-volume:
+
+networks:
+  db_nw:
+    driver: bridge
+  web_nw:
+    driver: bridge
