@@ -63,13 +63,13 @@ services:
     expose:
       - "5439"
 
-  sleeper:
-    image: sleepy/sleeper
-    build: ./sleeper
-    restart: "no"
-    depends_on:
-      - flaskapp
-      - grafana
+  # sleeper:
+  #   image: sleepy/sleeper
+  #   build: ./sleeper
+  #   restart: no
+  #   depends_on:
+  #     - flaskapp
+  #     - grafana
 
   nginx:
     image: "nginx:1.25-alpine"
@@ -83,8 +83,8 @@ services:
       - ./nginx/ssl/localhost.key:/etc/nginx/ssl/nginx.key
     networks:
       - web_nw
-    depends_on: 
-      sleeper:
+    depends_on:
+      init-grafana:
         condition: service_completed_successfully
 
     healthcheck:
@@ -110,6 +110,8 @@ services:
       - GF_DATABASE_PASSWORD = ${POSTGRES_PASSWORD}
       - GF_DATABASE_SSL_MODE = disable
       - GF_SERVER_ROOT_URL=https://localhost/grafana
+      - GF_SECURITY_ADMIN_USER=kkadmin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
     user: "0"
     depends_on:
       postgres:
@@ -117,6 +119,23 @@ services:
     networks:
       - web_nw
       - db_nw
+
+  init-grafana:
+    image: alpine/alpinewithcurl
+    build: ./grafana-setup
+    restart: no
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DEFAULT_OWNER_PASSWORD=${DEFAULT_OWNER_PASSWORD}
+    volumes:
+        - ./grafana-setup/grafana.sh:/grafana.sh
+    command: /grafana.sh
+    depends_on:
+      grafana:
+          condition: service_started
+    networks:
+      - web_nw
     
 
 volumes:
