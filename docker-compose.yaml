@@ -32,6 +32,21 @@ services:
     networks:
       - db_nw
 
+  front-end:
+    container_name: front-end
+    build: ./front-end
+    volumes:
+      - ./front-end:/code
+      - node-modules:/code/node_modules
+    ports:
+      - 4000:4000
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - web_nw
+    command: npm start
+
   flaskapp:
     image: kk/flaskapp
     build: ./flask
@@ -126,6 +141,7 @@ services:
 volumes:
   db-volume:
   grafana-volume:
+  node-modules:
 
 networks:
   db_nw:
