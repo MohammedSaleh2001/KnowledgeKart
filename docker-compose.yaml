@@ -1,6 +1,7 @@
 version: '3'
 services:
   postgres:
+    container_name: postgres
     image: postgres:13
     environment:
       POSTGRES_USER: postgres
@@ -34,20 +35,25 @@ services:
 
   front-end:
     container_name: front-end
+    image: kk/react
     build: ./front-end
     volumes:
       - ./front-end:/code
       - node-modules:/code/node_modules
-    ports:
-      - 4000:4000
+    expose:
+      - "4000"
     stdin_open: true
     environment:
       - CHOKIDAR_USEPOLLING=true
     networks:
       - web_nw
     command: npm start
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   flaskapp:
+    container_name: flaskapp
     image: kk/flaskapp
     build: ./flask
     restart: always
@@ -95,6 +101,7 @@ services:
       start_period: 30s
 
   grafana:
+    container_name: grafana
     image: grafana/grafana:9.5.2
     restart: unless-stopped
     expose:
@@ -121,9 +128,9 @@ services:
       - db_nw
 
   init-grafana:
-    image: alpine/alpinewithcurl
+    image: kk/curl
     build: ./grafana-setup
-    restart: no
+    restart: on-failure
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -136,6 +143,18 @@ services:
           condition: service_started
     networks:
       - web_nw
+
+  etl:
+    container_name: etl
+    image: kk/etl
+    build: ./etl
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    depends_on:
+      postgres:
+          condition: service_healthy
+    networks:
+      - db_nw
     
 
 volumes:

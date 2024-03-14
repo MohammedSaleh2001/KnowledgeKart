@@ -30,6 +30,12 @@ You can now navigate to localhost/ or localhost/grafana.
 
 There are two default users for Flask, kkowner and kkadmin, with default passwords kkownerpass and kkadminpass.
 
+There are three sample users, Joe, Bob, and Alice, with passwords joepass, bobpass, alicepass.
+
 To assess changes to the database, use:
 - docker compose down --volumes
 to have the database script be re-ran on next startup.
+
+You can clear installed images by using
+  - docker image prune -a
+This clears all images and allows for a fresh run.
