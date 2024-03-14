@@ -1,5 +1,5 @@
 #! /bin/bash
-sleep 5
+sleep 10
 echo "Executing Grafana commands."
 echo "Creating Grafana Owner user."
 
@@ -14,3 +14,5 @@ curl -X POST \
     "login": "kkowner",
     "password": "'${DEFAULT_OWNER_PASSWORD}'"
 }'
+
+# Create default data source and default dashboard(s).

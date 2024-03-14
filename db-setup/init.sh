@@ -21,3 +21,7 @@ do
     psql -d analytics -f "$file"
 done
 
+for file in /etc/queries/sample/*.sql;
+do
+    psql -d main -f "$file"
+done
