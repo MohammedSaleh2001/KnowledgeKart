@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS core.listing (
-    ListingID SERIAL PRIMARY KEY,
+    ListingID int PRIMARY KEY,
     UserID int NOT NULL REFERENCES core.kkuser(UserID),
     /*
     ListingName varchar NOT NULL,
@@ -30,4 +30,8 @@ CREATE TABLE IF NOT EXISTS core.listing (
     /* DERIVED FIELDS */
     TimeToClose numeric,
     DifferenceAskingSoldPrice numeric
-)
+);
+
+CREATE INDEX IF NOT EXISTS ix_listing_userid ON core.listing (UserID);
+CREATE INDEX IF NOT EXISTS ix_listing_categorytypeid ON core.listing (CategoryTypeID);
+CREATE INDEX IF NOT EXISTS ix_listing_soldto ON core.listing (SoldTo);

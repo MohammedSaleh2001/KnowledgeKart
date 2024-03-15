@@ -3,27 +3,15 @@ INSERT INTO listing (
     ListingName ,
     ListingDescription ,
     AskingPrice ,
-    Condition 
+    Condition,
+    DateListed
 ) VALUES (
-    3,
+    4,
     'Calculus 1 Textbook',
     'Like new and hardly used',
     75,
-    'New'
-);
-
-INSERT INTO listing (
-    UserID,
-    ListingName ,
-    ListingDescription ,
-    AskingPrice ,
-    Condition 
-) VALUES (
-    4,
-    'History 100 Textbook',
-    'It is very old, but still better than the bookstore',
-    10,
-    'Very Used'
+    'New',
+    '2024-03-12'::TIMESTAMP
 );
 
 INSERT INTO listing (
@@ -32,18 +20,36 @@ INSERT INTO listing (
     ListingDescription ,
     AskingPrice ,
     Condition ,
+    DateListed 
+) VALUES (
+    5,
+    'History 100 Textbook',
+    'It is very old, but still better than the bookstore',
+    10,
+    'Very Used',
+    '2024-03-12'::TIMESTAMP
+);
+
+INSERT INTO listing (
+    UserID,
+    ListingName ,
+    ListingDescription ,
+    AskingPrice ,
+    Condition ,
+    DateListed,
     ListingStatus  ,
     DateChanged ,
     SoldTo  ,
     SoldPrice
 ) VALUES (
-    5,
+    6,
     'ENGL 199 Textbook',
     'I hardly used it and I want it out of sight',
     10,
     'New',
+    '2024-03-12'::TIMESTAMP,
     'S',
-    '2024-04-15'::TIMESTAMP,
-    3,
+    '2024-03-13 12:00:00'::TIMESTAMP,
+    4,
     10
 );

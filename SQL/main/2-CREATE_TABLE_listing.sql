@@ -14,4 +14,8 @@ CREATE TABLE IF NOT EXISTS listing (
     DateChanged timestamp,
     SoldTo int REFERENCES kkuser(UserID),
     SoldPrice numeric
-)
+);
+
+CREATE INDEX IF NOT EXISTS ix_listing_userid ON listing (UserID);
+CREATE INDEX IF NOT EXISTS ix_listing_categorytypeid ON listing (CategoryTypeID);
+CREATE INDEX IF NOT EXISTS ix_listing_soldto ON listing (SoldTo);

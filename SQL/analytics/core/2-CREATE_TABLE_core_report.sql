@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS core.report (
-    ReportID SERIAL PRIMARY KEY,
+    ReportID int PRIMARY KEY,
     ReportBy int REFERENCES core.kkuser(UserID),
     ReportFor int REFERENCES core.kkuser(UserID),
     /*
@@ -10,4 +10,8 @@ CREATE TABLE IF NOT EXISTS core.report (
     /*
     Verdict text,
     */
-)
+);
+
+CREATE INDEX IF NOT EXISTS ix_report_reportby ON core.report (ReportBy);
+CREATE INDEX IF NOT EXISTS ix_report_reportfor ON core.report (ReportFor);
+CREATE INDEX IF NOT EXISTS ix_report_modassigned ON core.report (ModeratorAssigned);
