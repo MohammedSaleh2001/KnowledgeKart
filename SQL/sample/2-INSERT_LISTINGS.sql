@@ -53,3 +53,17 @@ INSERT INTO listing (
     4,
     10
 );
+
+INSERT INTO listing (
+    UserID,
+    ListingName ,
+    ListingDescription ,
+    AskingPrice ,
+    Condition
+) VALUES (
+    5,
+    'ENG PHYS 130 Textbook',
+    'Tough course, so I took it out on the book a few times.',
+    5,
+    'Very Used'
+);

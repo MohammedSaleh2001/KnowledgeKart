@@ -130,6 +130,100 @@ def load_users(a_conn, data):
 
     return True
 
+def datamart_newuserreport(a_conn):
+    a_cursor = a_conn.cursor()
+
+    a_cursor.execute(
+        '''
+        WITH the_intervals AS (
+            SELECT generate_series AS the_interval
+            FROM generate_series(COALESCE (
+                                    (SELECT MAX(UserReportDate) 
+                                    FROM datamart.userreport), '2024-03-10'::TIMESTAMP 
+                                ), CURRENT_TIMESTAMP::timestamp, '3 hour')
+        )
+        INSERT INTO datamart.newuserreport (
+            NewUserReportDate,
+            NewUserReportDateFK ,
+            NewUserReportTimeFK ,
+            NumNewUsers 
+        ) (
+
+            SELECT t.the_interval,
+                    COALESCE(
+                        EXTRACT(year from t.the_interval)*10000 
+                        + EXTRACT('month' from t.the_interval)*100
+                        + EXTRACT('day' from t.the_interval), 19000101) as DateFK,
+                    COALESCE( to_char(t.the_interval, 'hh24mi'), '-1' ) AS TimeFK,
+                    COUNT(n.UserID)
+            FROM the_intervals t
+            LEFT JOIN core.kkuser n ON (n.DateJoined >= t.the_interval AND n.DateJoined < t.the_interval + interval '3 hour')
+            GROUP BY t.the_interval
+            ORDER BY t.the_interval
+        ) ON CONFLICT (NewUserReportDate) DO UPDATE SET
+            NewUserReportDate = EXCLUDED.NewUserReportDate,
+            NewUserReportDateFK = EXCLUDED.NewUserReportDateFK,
+            NewUserReportTimeFK = EXCLUDED.NewUserReportTimeFK,
+            NumNewUsers = EXCLUDED.NumNewUsers
+        '''
+    )
+
+    a_conn.commit()
+
+    return True
+
+def datamart_userreport(a_conn):
+    a_cursor = a_conn.cursor()
+
+    a_cursor.execute(
+        '''
+        WITH the_interval AS (
+            SELECT 
+            date_trunc('hour', CURRENT_TIMESTAMP::TIMESTAMP) 
+            + date_part('minute', CURRENT_TIMESTAMP::TIMESTAMP)::int / 30 * interval '30 min'
+            AS current_interval
+        )
+        INSERT INTO datamart.userreport (
+            UserReportDate,
+            UserReportDateFK ,
+            UserReportTimeFK ,
+            NumUnverifiedUsers ,
+            NumVerifiedUsers ,
+            NumBlacklistedUsers ,
+            NumTotalUsers ,
+            AvgUserRating 
+        ) (
+            SELECT current_interval,
+                COALESCE(
+                    EXTRACT(year from current_interval)*10000 
+                    + EXTRACT('month' from current_interval)*100
+                    + EXTRACT('day' from current_interval), 19000101) as DateFK,
+                COALESCE( to_char(current_interval, 'hh24mi'), '-1' ) AS TimeFK,
+                COUNT(UserID) FILTER (WHERE Verified = False),
+                COUNT(UserID) FILTER (WHERE Verified = True),
+                COUNT(UserID) FILTER (WHERE Blacklist = True),
+                COUNT(UserID),
+                AVG(AvgUserRating) FILTER (WHERE AvgUserRating != 0)
+            FROM the_interval, core.kkuser
+            GROUP BY current_interval, DateFK, TimeFK
+
+        ) ON CONFLICT (UserReportDate) DO UPDATE SET
+            UserReportDate = EXCLUDED.UserReportDate,
+            UserReportDateFK = EXCLUDED.UserReportDateFK,
+            UserReportTimeFK = EXCLUDED.UserReportTimeFK,
+            NumUnverifiedUsers = EXCLUDED.NumUnverifiedUsers,
+            NumVerifiedUsers = EXCLUDED.NumVerifiedUsers,
+            NumBlacklistedUsers = EXCLUDED.NumBlacklistedUsers,
+            NumTotalUsers = EXCLUDED.NumTotalUsers,
+            AvgUserRating = EXCLUDED.AvgUserRating
+        '''
+    )
+
+    a_conn.commit()
+
+    return True
+
+
 def update_user_delta(a_conn):
     a_cursor = a_conn.cursor()
 
@@ -183,22 +277,38 @@ def etl_user():
 
     data = extract_transform_users(m_conn, a_delta)
 
-    if load_users(a_conn, data):
-        print("Successfully added Users!")
-    else:
+    try:
+        load_users(a_conn, data)
+    except:
         print("Could not update Users!")
         m_conn.close()
         a_conn.close()
         return
-    
+
+    print("Successfully added Users!")
+
     # Do Datamart Work...
+    try:
+        datamart_newuserreport(a_conn)
+        print("Completed New User Report!")
+        datamart_userreport(a_conn)
+        print("Completed User Report!")
+    except:
+        print("Could not complete User Reports!")
+        m_conn.close()
+        a_conn.close()
+        return
 
-    if update_user_delta(a_conn):
-        print("Updated user delta!")
-        print("Work completed, closing connections...")
-    else:
+    try:
+        update_user_delta(a_conn)
+    except:
         print("Could not update user delta!")
+        m_conn.close()
+        a_conn.close()
+        return
 
+    print("Updated user delta!")
+    print("Work completed, closing connections...")
     m_conn.close()
     a_conn.close()
     return

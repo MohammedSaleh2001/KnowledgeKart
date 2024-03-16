@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS datamart.modreport (
-    ModReportID SERIAL PRIMARY KEY,
-    ModReportDate timestamp,
+    ModReportDate timestamp PRIMARY KEY,
     ModReportDateFK bigint,
     ModReportTimeFK varchar,
     NumberOfNewReports int,
