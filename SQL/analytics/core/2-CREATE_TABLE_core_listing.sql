@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS core.listing (
     SoldPrice numeric,
 
     /* DERIVED FIELDS */
-    TimeToClose numeric,
+    TimeToClose bigint,
     DifferenceAskingSoldPrice numeric
 );
 

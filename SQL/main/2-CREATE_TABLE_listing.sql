@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS listing (
     ListingName varchar NOT NULL,
     ListingDescription text,
     AskingPrice numeric NOT NULL,
-    CategoryTypeID int REFERENCES categorytype(CategoryTypeID),
+    CategoryTypeID int REFERENCES categorytype(CategoryTypeID) DEFAULT 1,
     CategoryID int,
     Condition varchar /* New, Very Good, Good, Used, Very Used */,
     ImageDirectory varchar,
