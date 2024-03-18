@@ -5,11 +5,24 @@ CREATE TABLE IF NOT EXISTS core.report (
     /*
     ReportText text,
     */
+    DateReported timestamp NOT NULL,
+    /* DATETIME FKs */
+    DateReportedFK bigint,
+    TimeReportedFK varchar,
+
     ModeratorAssigned int REFERENCES core.kkuser(UserID),
-    ReportOpen boolean NOT NULL
+    ReportOpen boolean NOT NULL,
+    DateClosed timestamp,
+    /* DATETIME FKs */
+    DateClosedFK bigint,
+    TimeClosedFK varchar,
+    
     /*
-    Verdict text,
+    Verdict text
     */
+
+    /* DERIVED FIELDS */
+    TimeToClose int
 );
 
 CREATE INDEX IF NOT EXISTS ix_report_reportby ON core.report (ReportBy);

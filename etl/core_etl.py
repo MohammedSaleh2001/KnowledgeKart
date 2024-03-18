@@ -158,7 +158,7 @@ def datamart_newuserreport(a_conn):
                     COUNT(n.UserID)
             FROM the_intervals t
             LEFT JOIN core.kkuser n ON (n.DateJoined >= t.the_interval AND n.DateJoined < t.the_interval + interval '3 hour')
-            GROUP BY t.the_interval
+            GROUP BY t.the_interval, DateFK, TimeFK
             ORDER BY t.the_interval
         ) ON CONFLICT (NewUserReportDate) DO UPDATE SET
             NewUserReportDate = EXCLUDED.NewUserReportDate,
@@ -469,7 +469,7 @@ def datamart_newlistingreport(a_conn):
                                         AND l3.DateChanged < t.the_interval + interval '3 hour'
                                         AND l3.CategoryTypeID = t.CategoryTypeID
                                         AND l3.ListingStatus = 'S')
-            GROUP BY t.the_interval, t.Category
+            GROUP BY t.the_interval, DateFK, TimeFK, t.Category
             ORDER BY t.the_interval, t.Category
 
         ) ON CONFLICT (NewListingReportDate, Category) DO UPDATE SET
@@ -538,7 +538,6 @@ def datamart_listingreport(a_conn):
 
     return True
 
-
 def update_listing_delta(a_conn):
     a_cursor = a_conn.cursor()
 
@@ -556,7 +555,6 @@ def update_listing_delta(a_conn):
     a_conn.commit()
 
     return True
-
 
 def etl_listing():
     try:
@@ -639,9 +637,281 @@ def etl_listing():
     return
 
 
+def get_report_delta(m_conn, a_conn):
+    m_cursor = m_conn.cursor()
+
+    a_cursor = a_conn.cursor() 
+
+    m_cursor.execute("SELECT MAX(ReportID) FROM report")
+
+    main_max = m_cursor.fetchone()
+
+    a_cursor.execute("SELECT MAX(ReportID) FROM core.delta")
+
+    analytics_max = a_cursor.fetchone()
+
+    return main_max[0], analytics_max[0]
+    
+def extract_transform_report(m_conn, a_delta):
+    m_cursor = m_conn.cursor()
+
+    m_cursor.execute(
+            '''
+            SELECT  r.ReportID,
+                    r.ReportBy,
+                    r.ReportFor,
+                    r.DateReported,
+                    COALESCE(
+                        EXTRACT(year from r.DateReported)*10000 
+                        + EXTRACT('month' from r.DateReported)*100
+                        + EXTRACT('day' from r.DateReported), 19000101) as DateReportedFK,
+                    COALESCE( to_char(r.DateReported, 'hh24mi'), '-1' ) AS TimeReportedFK,
+                    r.ModeratorAssigned,
+                    r.ReportOpen,
+                    r.DateClosed,
+                    COALESCE(
+                        EXTRACT(year from r.DateClosed)*10000 
+                        + EXTRACT('month' from r.DateClosed)*100
+                        + EXTRACT('day' from r.DateClosed), 19000101) as DateClosedFK,
+                    COALESCE( to_char(r.DateClosed, 'hh24mi'), '-1' ) AS TimeClosedFK,
+                    CASE WHEN r.ReportOpen = True THEN -1
+                        ELSE EXTRACT('day' FROM (r.DateClosed - r.DateReported)) * 24 * 60 
+                            + EXTRACT('hour' FROM (r.DateClosed- r.DateReported)) * 60
+                            + EXTRACT('minute' FROM (r.DateClosed - r.DateReported)) 
+                    END as TimeToClose
+            FROM report r
+            WHERE r.ReportID > %s
+            '''
+        , (a_delta,))
+    
+    return m_cursor.fetchall()
+
+def load_report(a_conn, data):
+    a_cursor = a_conn.cursor()
+
+    # ON CONFLICT should never evaluate ideally
+    a_cursor.executemany(
+        '''
+        INSERT INTO core.report (
+            ReportID,
+            ReportBy ,
+            ReportFor,
+            DateReported ,
+            DateReportedFK ,
+            TimeReportedFK ,
+            ModeratorAssigned,
+            ReportOpen ,
+            DateClosed ,
+            DateClosedFK ,
+            TimeClosedFK ,
+            TimeToClose 
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                  %s, %s)
+        ON CONFLICT (ReportID) DO NOTHING;
+        '''
+        , data
+    )
+
+    a_conn.commit()
+
+    return True
+
+def datamart_newmodreport(a_conn):
+    a_cursor = a_conn.cursor()
+
+    a_cursor.execute(
+        '''
+        WITH the_intervals AS (
+            SELECT generate_series AS the_interval
+            FROM generate_series(COALESCE (
+                                    (SELECT MAX(NewModReportDate) 
+                                    FROM datamart.newmodreport), '2024-03-10'::TIMESTAMP 
+                                ), CURRENT_TIMESTAMP::timestamp, '3 hour')
+        )
+        INSERT INTO datamart.newmodreport (
+            NewModReportDate,
+            NewModReportDateFK ,
+            NewModReportTimeFK ,
+            NumNewReports ,
+            NumClosedReports ,
+            AverageTimeToClose 
+        ) (
+
+            SELECT t.the_interval,
+                    COALESCE(
+                        EXTRACT(year from t.the_interval)*10000 
+                        + EXTRACT('month' from t.the_interval)*100
+                        + EXTRACT('day' from t.the_interval), 19000101) as DateFK,
+                    COALESCE( to_char(t.the_interval, 'hh24mi'), '-1' ) AS TimeFK,
+                    COUNT(r1.ReportID) as NumNewReports,
+                    COUNT(r2.ReportID) as NumClosedReports,
+                    COALESCE(AVG(r1.TimeToClose), -1) as AverageCloseTime
+            FROM the_intervals t
+            LEFT JOIN core.report r1 ON (r1.DateReported >= t.the_interval 
+                                        AND r1.DateReported < t.the_interval + interval '3 hour')
+            LEFT JOIN core.report r2 ON (r2.DateClosed >= t.the_interval 
+                                        AND r2.DateClosed < t.the_interval + interval '3 hour')
+            GROUP BY t.the_interval, DateFK, TimeFK
+            ORDER BY t.the_interval
+
+        ) ON CONFLICT (NewModReportDate) DO UPDATE SET
+            NewModReportDate= EXCLUDED.NewModReportDate,
+            NewModReportDateFK = EXCLUDED.NewModReportDateFK,
+            NewModReportTimeFK = EXCLUDED.NewModReportTimeFK,
+            NumNewReports = EXCLUDED.NumNewReports,
+            NumClosedReports = EXCLUDED.NumClosedReports,
+            AverageTimeToClose = EXCLUDED.AverageTimeToClose
+            ;
+        '''
+    )
+
+    a_conn.commit()
+
+    return True
+
+def datamart_modreport(a_conn):
+    a_cursor = a_conn.cursor()
+
+    a_cursor.execute(
+        '''
+        WITH the_interval AS (
+            SELECT 
+            date_trunc('hour', CURRENT_TIMESTAMP::TIMESTAMP) 
+            + date_part('minute', CURRENT_TIMESTAMP::TIMESTAMP)::int / 30 * interval '30 min'
+            AS current_interval
+        )
+        INSERT INTO datamart.modreport (
+            ModReportDate ,
+            ModReportDateFK ,
+            ModReportTimeFK ,
+            NumOpenReports ,
+            NumUnassignedReports ,
+            NumClosedReports ,
+            NumTotalReports 
+        ) (
+            SELECT current_interval,
+                COALESCE(
+                    EXTRACT(year from current_interval)*10000 
+                    + EXTRACT('month' from current_interval)*100
+                    + EXTRACT('day' from current_interval), 19000101) as DateFK,
+                COALESCE( to_char(current_interval, 'hh24mi'), '-1' ) AS TimeFK,
+                COUNT(ReportID) FILTER (WHERE ReportOpen = True) AS NumOpenReports,
+                COUNT(ReportID) FILTER (WHERE ModeratorAssigned IS NULL) AS NumUnassignedReports,
+                COUNT(ReportID) FILTER (WHERE ReportOpen = False) AS NumClosedReports,
+                COUNT(ReportID) AS NumTotalReports
+            FROM the_interval, core.report
+            GROUP BY current_interval, DateFK, TimeFK
+
+        ) ON CONFLICT (ModReportDate) DO UPDATE SET
+            ModReportDate= EXCLUDED.ModReportDate,
+            ModReportDateFK = EXCLUDED.ModReportDateFK,
+            ModReportTimeFK = EXCLUDED.ModReportTimeFK,
+            NumOpenReports = EXCLUDED.NumOpenReports,
+            NumUnassignedReports = EXCLUDED.NumUnassignedReports,
+            NumClosedReports = EXCLUDED.NumClosedReports,
+            NumTotalReports = EXCLUDED.NumTotalReports
+            ;
+        '''
+    )
+
+    a_conn.commit()
+
+    return True
+
+def update_report_delta(a_conn):
+    a_cursor = a_conn.cursor()
+
+    # UserID should never be NULL if this function is called, only a contingency
+    a_cursor.execute(
+        '''
+        UPDATE core.delta
+        SET ReportID = (
+            SELECT COALESCE(MAX(ReportID), 0)
+            FROM core.report
+        )
+        '''
+    )
+
+    a_conn.commit()
+
+    return True
+
+def etl_report():
+    try:
+        m_conn = psycopg2.connect(database='main',
+                                    user=DB_USER,
+                                    password=DB_PASS,
+                                    host=DB_HOST,
+                                    port=DB_PORT)
+        
+        a_conn = psycopg2.connect(database='analytics',
+                                        user=DB_USER,
+                                        password=DB_PASS,
+                                        host=DB_HOST,
+                                        port=DB_PORT)
+    except:
+        print("Couldn't connect to DB for extract_user")
+
+    deltas = get_report_delta(m_conn, a_conn)
+    m_delta = deltas[0]
+    a_delta = deltas[1]
+
+    if m_delta is None or a_delta is None:
+        print("Could not retrieve deltas...")
+        m_conn.close()
+        a_conn.close()
+        return
+    
+    if m_delta == a_delta:
+        print("No changes to Reports!")
+        m_conn.close()
+        a_conn.close()
+        return
+
+    data = extract_transform_report(m_conn, a_delta)
+
+    try:
+        load_report(a_conn, data)
+    except:
+        print("Could not update Report!")
+        m_conn.close()
+        a_conn.close()
+        return
+
+    print("Successfully added Reports!")
+
+    # Do Datamart Work...
+    try:
+        datamart_newmodreport(a_conn)
+        print("Completed New Mod Report!")
+        datamart_modreport(a_conn)
+        print("Completed Mod Report!")
+    except:
+        print("Could not complete Mod Reports!")
+        m_conn.close()
+        a_conn.close()
+        return
+
+    try:
+        update_report_delta(a_conn)
+    except:
+        print("Could not update report delta!")
+        m_conn.close()
+        a_conn.close()
+        return
+
+    print("Updated report delta!")
+    print("Work completed, closing connections...")
+    m_conn.close()
+    a_conn.close()
+    return
+
+
+
 def main():
     etl_user()
     etl_listing()
+    etl_report()
 
 if __name__ == "__main__":
     main()
