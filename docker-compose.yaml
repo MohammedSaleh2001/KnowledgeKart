@@ -111,8 +111,8 @@ services:
       - ./grafana-setup/grafana.ini:/etc/grafana/grafana.ini
     environment:
       - GF_DATABASE_TYPE = postgres
-      - GF_DATABASE_HOST = localhost:5432
-      - GF_DATABASE_NAME = airflow
+      - GF_DATABASE_HOST = postgres:5432
+      - GF_DATABASE_NAME = analytics
       - GF_DATABASE_USER = postgres
       - GF_DATABASE_PASSWORD = ${POSTGRES_PASSWORD}
       - GF_DATABASE_SSL_MODE = disable

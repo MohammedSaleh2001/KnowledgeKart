@@ -283,14 +283,12 @@ def etl_user():
         a_conn.close()
         return
 
-    print("Successfully added Users!")
+    
 
     # Do Datamart Work...
     try:
         datamart_newuserreport(a_conn)
-        print("Completed New User Report!")
         datamart_userreport(a_conn)
-        print("Completed User Report!")
     except:
         print("Could not complete User Reports!")
         m_conn.close()
@@ -305,8 +303,7 @@ def etl_user():
         a_conn.close()
         return
 
-    print("Updated user delta!")
-    print("Work completed, closing connections...")
+    print("Successfully added Users!")
     m_conn.close()
     a_conn.close()
     return
@@ -608,14 +605,12 @@ def etl_listing():
         a_conn.close()
         return
 
-    print("Successfully added Listings!")
+    
 
     # Do Datamart Work...
     try:
         datamart_newlistingreport(a_conn)
-        print("Completed New Listing Report!")
         datamart_listingreport(a_conn)
-        print("Completed Listing Report!")
     except:
         print("Could not complete Listing Reports!")
         m_conn.close()
@@ -630,8 +625,7 @@ def etl_listing():
         a_conn.close()
         return
 
-    print("Updated Listing delta!")
-    print("Work completed, closing connections...")
+    print("Successfully added Listings!")
     m_conn.close()
     a_conn.close()
     return
@@ -878,14 +872,10 @@ def etl_report():
         a_conn.close()
         return
 
-    print("Successfully added Reports!")
-
     # Do Datamart Work...
     try:
         datamart_newmodreport(a_conn)
-        print("Completed New Mod Report!")
         datamart_modreport(a_conn)
-        print("Completed Mod Report!")
     except:
         print("Could not complete Mod Reports!")
         m_conn.close()
@@ -900,8 +890,7 @@ def etl_report():
         a_conn.close()
         return
 
-    print("Updated report delta!")
-    print("Work completed, closing connections...")
+    print("Successfully added Reports!")
     m_conn.close()
     a_conn.close()
     return
