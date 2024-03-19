@@ -1,10 +1,17 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from flask_login import login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_cors import cross_origin
 from .models import User
 from . import db
 
 auth = Blueprint('auth', __name__)
+
+# Used for testing
+import time
+@auth.route('/time')
+def get_current_time():
+    return {'time': time.time()}
 
 @auth.route('/login')
 def login():
@@ -31,15 +38,16 @@ def login_post():
     login_user(User(user), remember=remember)
     return redirect(url_for('main.profile'))
 
-@auth.route('/signup')
-def signup():
-    return render_template('signup.html')
+# @auth.route('/signup')
+# def signup():
+#     return render_template('signup.html')
 
 @auth.route('/signup', methods=['POST'])
 def signup_post():
-    email = request.form.get('email')
-    name = request.form.get('name')
-    password = request.form.get('password')
+    data = request.json
+    email = data.get('email')
+    name = data.get('name')
+    password = data.get('password')
 
     # Add check for ualberta address
 
@@ -50,7 +58,8 @@ def signup_post():
     
     if user.fetchone():
         flash('Email address in use!')
-        return redirect(url_for('auth.signup'))
+        return {'status': 1}
+        # return redirect(url_for('auth.signup'))
     
     query = db.text(
             '''
@@ -74,9 +83,9 @@ def signup_post():
     
     user = result.fetchone()
     
-    login_user(User(user), remember=False)
+    # login_user(User(user), remember=False)
     flash('You have signed up successfully!')
-    return redirect(url_for('main.profile'))
+    return {'status': 1} # redirect(url_for('main.profile'))
 
 @auth.route('/changepass')
 def changepass():

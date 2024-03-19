@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './LoginSignup.css'
 
 import { useNavigate } from "react-router-dom";
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 function Signup() {
     const navigate = useNavigate()
 
-    const [fullName, setFullName] = useState('');
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,20 +18,22 @@ function Signup() {
         }
 
         const data = {
-            fullName,
+            name,
             email,
-            password,
-            confirmPassword
+            password
         };
 
+        console.log(JSON.stringify(data));
+
         try {
-            const url = 'http://flaskapp:5439/signup';
+            const url = '/api/signup';
             const response = await fetch(url, {
                 method: 'POST',
-                mode: 'cors',
+                // mode: 'no-cors',
                 cache: 'no-cache',
                 credentials: 'same-origin',
                 headers: {
+                    'Accept': 'application/json',
                     'Content-type': 'application/json',
                 },
                 body: JSON.stringify(data)
@@ -42,7 +44,7 @@ function Signup() {
                 console.log(responseData);
                 navigate('/')
             } else {
-                throw new Error('HTTP error: ${response.status}');
+                throw new Error(`HTTP error: ${response.status}`);
             }
         } catch (error) {
             console.log('There was a problem with the fetch operation: ', error);
@@ -57,16 +59,16 @@ function Signup() {
             </div>
             <div className="inputs">
                 <div className="input">
-                    <input type="text" placeholder="Full Name" />
+                    <input type="text" placeholder="Full Name" value={name} onInput={e => setName(e.target.value)} />
                 </div>
                 <div className="input">
-                    <input type="email" placeholder="Email Address" />
+                    <input type="email" placeholder="Email Address" value={email} onInput={e => setEmail(e.target.value)} />
                 </div>
                 <div className="input">
-                    <input type="password" placeholder="Password" />
+                    <input type="password" placeholder="Password" value={password} onInput={e => setPassword(e.target.value)} />
                 </div>
                 <div className="input">
-                    <input type="password" placeholder="Re-enter Password" />
+                    <input type="password" placeholder="Re-enter Password" value={confirmPassword} onInput={e => setConfirmPassword(e.target.value)} />
                 </div>
             </div>
             <div className="submit-container">
