@@ -7,4 +7,4 @@ import Login from './Login'
 import LoginSignup from './LoginSignup'
 import Signup from './Signup'
 
-export default {ForgotPassword, Login, LoginSignup, Signup}
+export {ForgotPassword, Login, LoginSignup, Signup};

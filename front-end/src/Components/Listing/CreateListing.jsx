@@ -8,3 +8,5 @@ function CreateListing() {
         </div>
     )
 }
+
+export default CreateListing;

@@ -4,9 +4,7 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 import {ForgotPassword, Login, LoginSignup, Signup} from './Components/LoginSignup/index'
-import {CreateListing, HomePage} from './components/Listing/index'
-
-import CreateListing from './Components/Listing/CreateListing'
+import {CreateListing, HomePage} from './Components/Listing/index'
 
 function App() {
   return (
