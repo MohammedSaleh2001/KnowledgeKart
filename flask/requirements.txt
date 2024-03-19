@@ -1,4 +1,5 @@
 flask
 psycopg2
 flask-login
+flask-cors
 Flask-SQLAlchemy
