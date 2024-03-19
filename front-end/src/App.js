@@ -3,10 +3,10 @@ import './App.css';
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
-import LoginSignup from './Components/LoginSignup/LoginSignup'
-import Login from './Components/LoginSignup/Login'
-import Signup from './Components/LoginSignup/Signup'
-import ForgotPassword from './Components/LoginSignup/ForgotPassword'
+import {ForgotPassword, Login, LoginSignup, Signup} from './Components/LoginSignup/index'
+import {CreateListing, HomePage} from './components/Listing/index'
+
+import CreateListing from './Components/Listing/CreateListing'
 
 function App() {
   return (
@@ -17,6 +17,8 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgotpassword" element={<ForgotPassword />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/createlisting" element={<CreateListing />} />
         </Routes>
       </Router>
     </div>
