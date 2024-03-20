@@ -1,0 +1,50 @@
+#homepage-container {
+    width: 100vw;
+    height: 100vh;
+}
+
+#menu-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px;
+}
+
+#chat-icon {
+    position: relative;
+    top: 5px;
+    margin: 10px;
+}
+
+#add-post-icon {
+    margin: 10px;
+}
+
+#profile-icon {
+    margin: 10px;
+}
+
+#search-bar-container {
+    flex-grow: 1;
+    margin: 10px;
+}
+
+#search-bar {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    background-color: #eee;
+}
+
+#listing-container {
+    background-color: #eee
+}
+
+.input-wrapper {
+    display: flex;
+    background-color: #eee;
+    padding: 15px;
+    border: solid black 1px;
+    border-radius: 20px;
+    overflow: hidden;
+}

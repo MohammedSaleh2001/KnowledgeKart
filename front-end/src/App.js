@@ -17,6 +17,12 @@ function App() {
           <Route path="/forgotpassword" element={<ForgotPassword />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/createlisting" element={<CreateListing />} />
+          {/* <Route path="/test" element={<Listing_Item 
+            title="Insert Title Here"
+            description="Insert Description Here"
+            price={30.00}
+            category="test_category"
+             />} /> */}
         </Routes>
       </Router>
     </div>
