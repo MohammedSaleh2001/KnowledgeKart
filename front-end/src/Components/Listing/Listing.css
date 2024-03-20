@@ -37,7 +37,9 @@
 }
 
 #listing-container {
-    background-color: #eee
+    display: flex;
+    background-color: #eee;
+    margin: 15px;
 }
 
 .input-wrapper {

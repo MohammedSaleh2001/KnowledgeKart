@@ -41,15 +41,7 @@ function HomePage() {
                     <AccountCircleIcon style={{fontSize: 50}} id="profile-icon" />
                 </div>
             </div>
-            <div>
-                {listingComponents}
-            </div>
-            {/* <ListingItem
-                title={"Listing 1"}
-                description={"Description 1"}
-                price={30.00}
-                category={"some_category"}
-            /> */}
+            {listingComponents}
         </div>
     )
 }
