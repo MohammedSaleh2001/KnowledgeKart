@@ -1,13 +1,15 @@
 import React from 'react'
 import './Listing.css'
 
-function ListingItem({title, description, price, category}) {
+function ListingItem({title, price}) {
     return (
         <div id="listing-container">
-            {title}
-            {description}
-            {price}
-            {category}
+            <div className="list-item-title">
+                {title}
+            </div>
+            <div className="list-item-price">
+                ${price}
+            </div>
         </div>
     )
 }
