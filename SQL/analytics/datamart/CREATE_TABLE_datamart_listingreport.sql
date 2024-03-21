@@ -1,11 +1,9 @@
 CREATE TABLE IF NOT EXISTS datamart.listingreport (
-    ListingReportID SERIAL PRIMARY KEY,
-    ListingReportDate timestamp,
+    ListingReportDate timestamp PRIMARY KEY,
     ListingReportDateFK bigint,
-    Category varchar,
-    NumberOfNewListings int,
-    NumberOfClosedListings int,
-    NumberOfSoldListings int,
-    AveragePercentSaleDifference numeric
+    ListingReportTimeFK varchar,
+    NumOpenListings int,
+    NumClosedListings int,
+    NumSoldListings int
 
 )

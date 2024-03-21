@@ -78,8 +78,7 @@ services:
   #     - grafana
 
   nginx:
-    image: "nginx:1.25-alpine"
-    restart: always
+    image: "nginx:1.25"
     ports:
       - "80:80"
       - "443:443"
@@ -92,7 +91,6 @@ services:
     depends_on:
       init-grafana:
         condition: service_completed_successfully
-
     healthcheck:
       test: curl --fail http://localhost/ || exit 1
       interval: 30s
@@ -111,8 +109,8 @@ services:
       - ./grafana-setup/grafana.ini:/etc/grafana/grafana.ini
     environment:
       - GF_DATABASE_TYPE = postgres
-      - GF_DATABASE_HOST = localhost:5432
-      - GF_DATABASE_NAME = airflow
+      - GF_DATABASE_HOST = postgres:5432
+      - GF_DATABASE_NAME = analytics
       - GF_DATABASE_USER = postgres
       - GF_DATABASE_PASSWORD = ${POSTGRES_PASSWORD}
       - GF_DATABASE_SSL_MODE = disable
@@ -130,13 +128,14 @@ services:
   init-grafana:
     image: kk/curl
     build: ./grafana-setup
-    restart: on-failure
+    restart: no
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DEFAULT_OWNER_PASSWORD=${DEFAULT_OWNER_PASSWORD}
     volumes:
         - ./grafana-setup/grafana.sh:/grafana.sh
+        - ./grafana-setup/analytics.json:/analytics.json
     command: /grafana.sh
     depends_on:
       grafana:

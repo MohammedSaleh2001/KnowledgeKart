@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS datamart.userreport (
-    UserReportID SERIAL PRIMARY KEY,
-    UserReportDate timestamp,
+    UserReportDate timestamp PRIMARY KEY,
     UserReportDateFK bigint,
-    NumNewUsers int,
+    UserReportTimeFK varchar,
     NumUnverifiedUsers int,
     NumVerifiedUsers int,
     NumBlacklistedUsers int,
+    NumTotalUsers int,
     AvgUserRating numeric
 )

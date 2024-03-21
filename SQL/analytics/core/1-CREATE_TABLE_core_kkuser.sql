@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS core.kkuser (
-    UserID SERIAL PRIMARY KEY,
+    UserID int PRIMARY KEY,
     
     Email varchar UNIQUE, 
     /*
