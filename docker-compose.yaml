@@ -78,8 +78,7 @@ services:
   #     - grafana
 
   nginx:
-    image: "nginx:1.25-alpine"
-    restart: always
+    image: "nginx:1.25"
     ports:
       - "80:80"
       - "443:443"
@@ -92,7 +91,6 @@ services:
     depends_on:
       init-grafana:
         condition: service_completed_successfully
-
     healthcheck:
       test: curl --fail http://localhost/ || exit 1
       interval: 30s
@@ -130,13 +128,14 @@ services:
   init-grafana:
     image: kk/curl
     build: ./grafana-setup
-    restart: on-failure
+    restart: no
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DEFAULT_OWNER_PASSWORD=${DEFAULT_OWNER_PASSWORD}
     volumes:
         - ./grafana-setup/grafana.sh:/grafana.sh
+        - ./grafana-setup/analytics.json:/analytics.json
     command: /grafana.sh
     depends_on:
       grafana:
