@@ -1,0 +1,93 @@
+#homepage-container {
+    width: 100vw;
+    height: 100vh;
+}
+
+#menu-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px;
+}
+
+#chat-icon {
+    position: relative;
+    top: 5px;
+    margin: 10px;
+}
+
+#add-post-icon {
+    margin: 10px;
+}
+
+#profile-icon {
+    margin: 10px;
+}
+
+#search-bar-container {
+    flex-grow: 1;
+    margin: 10px;
+}
+
+#search-bar {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    background-color: #eee;
+}
+
+#listing-container {
+    display: flex;
+    justify-content: space-between;
+    background-color: #eee;
+    margin: 15px;
+    border-radius: 5px;
+    box-shadow: 5px 5px #444;
+}
+
+#listview_container {
+    display: flex;
+}
+
+#list_items_div {
+    width: 60vw;
+}
+
+#recommended_list {
+    width: 40vw;
+    background-color: #ccc;
+    margin: 10px;
+    border-radius: 20px;
+    border: solid black 2px;
+    overflow: hidden;
+}
+
+#recommended_list_title {
+    padding: 20px 0px 20px 0px;
+    font-weight: bold;
+    font-size: 36px;
+    text-align: center;
+    color: white;
+    background-color: black;
+}
+
+.input-wrapper {
+    display: flex;
+    background-color: #eee;
+    padding: 15px;
+    border: solid black 1px;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.list-item-title {
+    margin: 5px 15px 5px 15px;
+    padding: 15px;
+    font-weight: bold;
+}
+
+.list-item-price {
+    margin: 5px 15px 5px 15px;
+    padding: 15px;
+    font-weight: bold;
+}
