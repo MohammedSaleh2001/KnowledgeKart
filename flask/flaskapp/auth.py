@@ -1,9 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session
-from flask_login import login_user, login_required, logout_user
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
+from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timezone, timedelta
 from flask_cors import cross_origin
 from .models import User
 from . import db
+import json
 
 auth = Blueprint('auth', __name__)
 
@@ -13,15 +15,31 @@ import time
 def get_current_time():
     return {'time': time.time()}
 
-@auth.route('/login')
-def login():
-    return render_template('login.html')
+@auth.after_request
+def refresh_expiring_jwts(response):
+    try:
+        exp_timestamp = get_jwt()["exp"]
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+        if target_timestamp > exp_timestamp:
+            access_token = create_access_token(identity=get_jwt_identity())
+            data = response.get_json()
+            if type(data) is dict:
+                data["access_token"] = access_token 
+                response.data = json.dumps(data)
+        return response
+    except (RuntimeError, KeyError):
+        # Case where there is not a valid JWT. Just return the original respone
+        return response
 
 @auth.route('/login', methods=['POST'])
 def login_post():
-    email = request.form.get('email')
-    password = request.form.get('password')
-    remember = True if request.form.get('remember') else False
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+    # remember = True if request.form.get('remember') else False
+
+    print('login_post:', data)
 
     query = db.text('SELECT * FROM kkuser WHERE Email = :e')
 
@@ -32,15 +50,10 @@ def login_post():
     
     # take the user-supplied password, hash it, and compare it to the hashed password in the database
     if not user or not check_password_hash(user[2], password):
-        flash('Please check your login details!')
-        return redirect(url_for('auth.login')) # if the user doesn't exist or password is wrong, reload the page
+        return {'status': 'error', 'message': 'Please check your login details!'} # if the user doesn't exist or password is wrong
 
-    login_user(User(user), remember=remember)
-    return redirect(url_for('main.profile'))
-
-# @auth.route('/signup')
-# def signup():
-#     return render_template('signup.html')
+    access_token = create_access_token(identity=email)
+    return {'status': 'success', 'access_token':access_token}
 
 @auth.route('/signup', methods=['POST'])
 def signup_post():
@@ -57,9 +70,7 @@ def signup_post():
                               {'e': email})
     
     if user.fetchone():
-        flash('Email address in use!')
-        return {'status': 1}
-        # return redirect(url_for('auth.signup'))
+        return {'status': 'error', 'message': 'Email address in use!'}
     
     query = db.text(
             '''
@@ -83,13 +94,12 @@ def signup_post():
     
     user = result.fetchone()
     
-    # login_user(User(user), remember=False)
-    flash('You have signed up successfully!')
-    return {'status': 1} # redirect(url_for('main.profile'))
+    # # login_user(User(user), remember=False)
+    # flash('You have signed up successfully!')
+    # return {'status': 1} # redirect(url_for('main.profile'))
 
-@auth.route('/changepass')
-def changepass():
-    return render_template('changepass.html')
+    access_token = create_access_token(identity=email)
+    return {'status': 'success', 'access_token':access_token}
 
 @auth.route('/changepass', methods=['POST'])
 def changepass_post():
@@ -138,8 +148,27 @@ def changepass_post():
     flash('You have changed your password successfully!')
     return redirect(url_for('main.profile'))
 
+
 @auth.route('/logout')
-@login_required
+@jwt_required
 def logout():
-    logout_user()
-    return redirect(url_for('main.index'))
+    response = jsonify({"status": "success"})
+    unset_jwt_cookies(response)
+    return response
+
+
+# @auth.route('/search_users', methods=['POST'])
+# @jwt_required()
+# def search_users():
+#     data = request.json
+#     search_term = data.get('search_term')
+#     max_results = data.get('max_number_results')
+
+#     query = db.text(f"SELECT Email FROM kkuser WHERE Email LIKE '%{search_term}%'")
+
+#     result = db.session.execute(query)
+
+#     print(result)
+
+#     return {'status': 'success', 'data': result}
+

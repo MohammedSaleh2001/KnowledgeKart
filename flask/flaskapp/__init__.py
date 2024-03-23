@@ -3,6 +3,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_cors import CORS, cross_origin
+from flask_jwt_extended import JWTManager
+from datetime import timedelta
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
@@ -11,7 +13,13 @@ def create_app():
     app = Flask(__name__)
 
     cors = CORS(app)
+    jwt = JWTManager(app)
+
     app.config['CORS_HEADER'] = 'Content-Type'
+
+    # TODO: Replace placeholder secret key
+    app.config['JWT_SECRET_KEY'] = 'super-secret'
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
     app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
     db_pass = os.environ['POSTGRES_PASSWORD']
