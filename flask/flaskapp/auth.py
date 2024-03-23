@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone, timedelta
@@ -38,6 +38,8 @@ def login_post():
     email = data.get('email')
     password = data.get('password')
     # remember = True if request.form.get('remember') else False
+
+    print('login_post:', data)
 
     query = db.text('SELECT * FROM kkuser WHERE Email = :e')
 
@@ -150,7 +152,7 @@ def changepass_post():
 @auth.route('/logout')
 @jwt_required
 def logout():
-    response = json.jsonify({"status": "success"})
+    response = jsonify({"status": "success"})
     unset_jwt_cookies(response)
     return response
 
