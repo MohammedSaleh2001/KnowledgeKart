@@ -269,6 +269,14 @@ def etl_user():
     
     if m_delta == a_delta:
         print("No changes to Users!")
+        try:
+            datamart_newuserreport(a_conn)
+            datamart_userreport(a_conn)
+        except:
+            print("Could not complete User Reports!")
+            m_conn.close()
+            a_conn.close()
+            return
         m_conn.close()
         a_conn.close()
         return
@@ -590,6 +598,14 @@ def etl_listing():
     
     if m_delta == a_delta:
         print("No changes to Listing!")
+        try:
+            datamart_newlistingreport(a_conn)
+            datamart_listingreport(a_conn)
+        except:
+            print("Could not complete Listing Reports!")
+            m_conn.close()
+            a_conn.close()
+            return
         m_conn.close()
         a_conn.close()
         return
@@ -858,6 +874,14 @@ def etl_report():
     
     if m_delta == a_delta:
         print("No changes to Reports!")
+        try:
+            datamart_newmodreport(a_conn)
+            datamart_modreport(a_conn)
+        except:
+            print("Could not complete Mod Reports!")
+            m_conn.close()
+            a_conn.close()
+            return
         m_conn.close()
         a_conn.close()
         return
