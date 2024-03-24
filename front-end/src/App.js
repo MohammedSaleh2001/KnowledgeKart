@@ -5,7 +5,7 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 import {ForgotPassword, Login, LoginSignup, Signup} from './Components/LoginSignup/index'
-import {CreateListing, HomePage} from './Components/Listing/index'
+import {CreateListing, HomePage, Listing} from './Components/Listing/index'
 
 // function requireAuth(nextState, replace, next) {
 //   if (!authenticated) {
@@ -29,6 +29,7 @@ function App() {
           <Route path="/forgotpassword" element={<ForgotPassword token={token} setToken={setToken} />} />
           <Route path="/home" element={<HomePage  token={token} setToken={setToken} />} />
           <Route path="/createlisting" element={<CreateListing token={token} setToken={setToken} />} />
+          <Route path="/listing/:listingId" element={<Listing />} />
           {/* <Route path="/test" element={<Listing_Item 
             title="Insert Title Here"
             description="Insert Description Here"
