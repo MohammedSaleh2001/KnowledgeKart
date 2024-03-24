@@ -1,15 +1,20 @@
-import React, { useState } from 'react'
-import './LoginSignup.css'
+import React, { useState, useContext } from 'react';
+import AuthContext from '../../Context/AuthProvider';
+import './LoginSignup.css';
 
 import { useNavigate } from "react-router-dom";
 
 function Login(props) {
+    const { auth, setAuth } = useContext(AuthContext);
+
     const navigate = useNavigate()
     
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
         if (email.trim() === '' || password.trim() === '') {
             alert('Enter email and password');
             return;
@@ -39,13 +44,18 @@ function Login(props) {
             if (response.ok) {
                 const responseData = await response.json();
 
+                const accessToken = responseData?.data?.accessToken;
+                // const roles = responseData?.data?.roles;
+                const roles = ['U'];
+                setAuth({ email, password, roles, accessToken });
+
                 props.setToken(responseData.access_token);
 
                 console.log(responseData);
                 console.log(props);
                 console.log(props.token);
 
-                navigate('/home')
+                navigate('/home');
             } else {
                 throw new Error(`HTTP error: ${response.status}`);
             }
