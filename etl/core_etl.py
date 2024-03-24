@@ -357,6 +357,7 @@ def extract_transform_listing(m_conn, a_delta):
                     l.AskingPrice,
                     l.CategoryTypeID,
                     l.CategoryID,
+                    l.Condition,
                     l.DateListed,
                     COALESCE(
                         EXTRACT(year from l.DateListed)*10000 
@@ -399,6 +400,7 @@ def load_listing(a_conn, data):
             AskingPrice ,
             CategoryTypeID ,
             CategoryID ,
+            Condition,
             DateListed,
             DateListedFK ,
             TimeListedFK ,
@@ -411,7 +413,7 @@ def load_listing(a_conn, data):
             TimeToClose ,
             DifferenceAskingSoldPrice 
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                  %s, %s, %s, %s, %s, %s)
+                  %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (ListingID) DO NOTHING;
         '''
         , data
@@ -427,18 +429,19 @@ def datamart_newlistingreport(a_conn):
     a_cursor.execute(
         '''
         WITH the_intervals AS (
-            SELECT generate_series AS the_interval, CategoryTypeID, Category
+            SELECT generate_series AS the_interval, CategoryTypeID, Category, Condition
             FROM generate_series(COALESCE (
                                     (SELECT MAX(NewListingReportDate) 
                                     FROM datamart.newlistingreport), '2024-03-10'::TIMESTAMP 
                                 ), CURRENT_TIMESTAMP::timestamp, '3 hour'),
-                core.dim_categorytype
+                core.dim_categorytype, core.dim_condition
         )
         INSERT INTO datamart.newlistingreport (
             NewListingReportDate ,
             NewListingReportDateFK ,
             NewListingReportTimeFK ,
             Category ,
+            Condition,
             NumNewListings ,
             NumClosedListings ,
             NumSoldListings ,
@@ -455,6 +458,7 @@ def datamart_newlistingreport(a_conn):
                         + EXTRACT('day' from t.the_interval), 19000101) as DateFK,
                     COALESCE( to_char(t.the_interval, 'hh24mi'), '-1' ) AS TimeFK,
                     t.Category,
+					t.Condition,
                     COUNT(l1.ListingID) as NumNewListings,
                     COUNT(l2.ListingID) as NumClosedListings,
                     COUNT(l3.ListingID) as NumSoldListings,
@@ -465,23 +469,27 @@ def datamart_newlistingreport(a_conn):
             FROM the_intervals t
             LEFT JOIN core.listing l1 ON (l1.DateListed >= t.the_interval 
                                         AND l1.DateListed < t.the_interval + interval '3 hour'
-                                        AND l1.CategoryTypeID = t.CategoryTypeID)
+                                        AND l1.CategoryTypeID = t.CategoryTypeID
+										AND l1.Condition = t.Condition)
             LEFT JOIN core.listing l2 ON (l2.DateChanged >= t.the_interval 
                                         AND l2.DateChanged < t.the_interval + interval '3 hour'
                                         AND l2.CategoryTypeID = t.CategoryTypeID
-                                        AND l2.ListingStatus = 'C')
+                                        AND l2.ListingStatus = 'C'
+										AND l2.Condition = t.Condition)
             LEFT JOIN core.listing l3 ON (l3.DateChanged >= t.the_interval 
                                         AND l3.DateChanged < t.the_interval + interval '3 hour'
                                         AND l3.CategoryTypeID = t.CategoryTypeID
-                                        AND l3.ListingStatus = 'S')
-            GROUP BY t.the_interval, DateFK, TimeFK, t.Category
+                                        AND l3.ListingStatus = 'S'
+									    AND l3.Condition = t.Condition)
+            GROUP BY t.the_interval, DateFK, TimeFK, t.Category, t.Condition
             ORDER BY t.the_interval, t.Category
 
-        ) ON CONFLICT (NewListingReportDate, Category) DO UPDATE SET
+        ) ON CONFLICT (NewListingReportDate, Category, Condition) DO UPDATE SET
             NewListingReportDate = EXCLUDED.NewListingReportDate,
             NewListingReportDateFK = EXCLUDED.NewListingReportDateFK,
             NewListingReportTimeFK = EXCLUDED.NewListingReportTimeFK,
             Category = EXCLUDED.Category,
+            Condition = EXCLUDED.Condition,
             NumNewListings = EXCLUDED.NumNewListings,
             NumClosedListings = EXCLUDED.NumClosedListings,
             NumSoldListings= EXCLUDED.NumSoldListings ,
