@@ -157,18 +157,18 @@ def logout():
     return response
 
 
-# @auth.route('/search_users', methods=['POST'])
-# @jwt_required()
-# def search_users():
-#     data = request.json
-#     search_term = data.get('search_term')
-#     max_results = data.get('max_number_results')
+@auth.route('/search_users', methods=['POST'])
+@jwt_required()
+def search_users():
+    data = request.json
+    search_term = data.get('search_term')
+    max_results = data.get('max_number_results')
 
-#     query = db.text(f"SELECT Email FROM kkuser WHERE Email LIKE '%{search_term}%'")
+    query = db.text(f"SELECT Email FROM kkuser WHERE Email LIKE '%{search_term}%'")
 
-#     result = db.session.execute(query)
+    result = db.session.execute(query)
 
-#     print(result)
+    print(result)
 
-#     return {'status': 'success', 'data': result}
+    return {'status': 'success', 'data': result}
 

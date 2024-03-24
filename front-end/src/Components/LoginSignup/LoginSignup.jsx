@@ -1,28 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './LoginSignup.css'
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";  
 
-// async function getUser() {
-//     try {
-//       // ⛔️ TypeError: Failed to fetch
-//       // 👇️ incorrect or incomplete URL
-//       const response = await fetch('flaskapp:5439/login');
-  
-//       if (!response.ok) {
-//         throw new Error(`Error! status: ${response.status}`);
-//       }
-  
-//       const result = await response.json();
-//       return result;
-//     //   console.
-//     } catch (err) {
-//       console.log(err);
-//     }
-// }
-  
-
-function LoginSignup() {
+function LoginSignup(props) {
     const navigate = useNavigate()
 
     // const [currentTime, setCurrentTime] = useState(0);
@@ -43,13 +24,14 @@ function LoginSignup() {
 
     // getUser();
 
+    // console.log(props);
+
     return (
         <div className='container'>
             <div className="header">
                 <div className="text">Welcome</div>
                 <div className="underline" />
             </div>
-            {/* <div className="text"> {currentTime} </div> */}
             <div className="submit-container">
                 <div className="submit" onClick={() => {
                     navigate("/signup")
