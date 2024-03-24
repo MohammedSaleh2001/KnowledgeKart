@@ -3,7 +3,7 @@ import './LoginSignup.css'
 
 import { useNavigate } from "react-router-dom";
 
-function ForgotPassword() {
+function ForgotPassword(props) {
     const navigate = useNavigate()
 
     return (

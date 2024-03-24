@@ -3,7 +3,7 @@ import './LoginSignup.css'
 
 import { useNavigate } from "react-router-dom";
 
-function Login() {
+function Login(props) {
     const navigate = useNavigate()
     
     const [email, setEmail] = useState('');
@@ -38,8 +38,14 @@ function Login() {
 
             if (response.ok) {
                 const responseData = await response.json();
+
+                props.setToken(responseData.access_token);
+
                 console.log(responseData);
-                navigate('/')
+                console.log(props);
+                console.log(props.token);
+
+                navigate('/home')
             } else {
                 throw new Error(`HTTP error: ${response.status}`);
             }
