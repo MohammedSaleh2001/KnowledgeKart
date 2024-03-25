@@ -2,12 +2,14 @@ import React, { useState, useContext } from 'react';
 import AuthContext from '../../Context/AuthProvider';
 import './LoginSignup.css';
 
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 function Login(props) {
     const { auth, setAuth } = useContext(AuthContext);
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    // const location = useLocation();
+    // const from = location.state?.from?.pathname || "/";
     
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -55,7 +57,7 @@ function Login(props) {
                 console.log(props);
                 console.log(props.token);
 
-                navigate('/home');
+                navigate('/home', { replace: true });
             } else {
                 throw new Error(`HTTP error: ${response.status}`);
             }
