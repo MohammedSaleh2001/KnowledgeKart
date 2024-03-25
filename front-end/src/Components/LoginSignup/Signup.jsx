@@ -3,7 +3,7 @@ import './LoginSignup.css'
 
 import { useNavigate } from "react-router-dom";
 
-function Signup() {
+function Signup(props) {
     const navigate = useNavigate()
 
     const [name, setName] = useState('');
@@ -12,7 +12,7 @@ function Signup() {
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const handleSubmit = async () => {
-        if (password != confirmPassword) {
+        if (password !== confirmPassword) {
             alert('Passwords do not match');
             return;
         }
