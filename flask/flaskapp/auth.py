@@ -39,7 +39,7 @@ def login_post():
     password = data.get('password')
     # remember = True if request.form.get('remember') else False
 
-    print('login_post:', data)
+    # print('login_post:', data)
 
     query = db.text('SELECT * FROM kkuser WHERE Email = :e')
 
@@ -52,8 +52,10 @@ def login_post():
     if not user or not check_password_hash(user[2], password):
         return {'status': 'error', 'message': 'Please check your login details!'} # if the user doesn't exist or password is wrong
 
+    # print(user)
+
     access_token = create_access_token(identity=email)
-    return {'status': 'success', 'access_token':access_token}
+    return {'status': 'success', 'access_token':access_token, 'role':user[5]}
 
 @auth.route('/signup', methods=['POST'])
 def signup_post():
@@ -156,7 +158,6 @@ def logout():
     unset_jwt_cookies(response)
     return response
 
-
 @auth.route('/search_users', methods=['POST'])
 @jwt_required()
 def search_users():
@@ -168,7 +169,55 @@ def search_users():
 
     result = db.session.execute(query)
 
-    print(result)
+    # print(result)
 
-    return {'status': 'success', 'data': result}
+    userlist = []
+    for user in result.fetchall():
+        userlist.append(user[0])
 
+    return {'status': 'success', 'data': userlist}
+
+@auth.route('/add_listing', methods=['POST'])
+@jwt_required()
+def add_listing():
+    data = request.json
+    user = data.get('user')
+    name = data.get('name')
+    description = data.get('description')
+    asking_price = data.get('asking_price')
+    category_type = data.get('category_type')
+    # category = data.get('category')
+    condition = data.get('condition')
+    date_listed = data.get('date_listed')
+    
+    query = db.text(
+            '''
+            INSERT INTO listing (userid,
+                                listingname,
+                                listingdescription,
+                                askingprice,
+                                categorytypeid,
+                                condition,
+                                datelisted)
+            VALUES (:user, :name, :desc, :price, :cat, :cond, :date)
+            ''')
+
+    db.session.execute(query, 
+                    {'user': user,
+                    'name': name,
+                    'desc': description,
+                    'price': asking_price,
+                    'cat': category_type,
+                    'cond': condition,
+                    'date': date_listed})
+
+    db.session.commit()
+
+    query = db.text('SELECT * FROM listing WHERE listingname = :name')
+
+    result = db.session.execute(query,
+                              {'name': name})
+    
+    listing = result.fetchone()
+
+    return {'status': 'success' if listing else 'error'}
