@@ -1,3 +1,4 @@
 # START CRON JOB
 * * * * * /usr/local/bin/python3 /app/core_etl.py > /proc/1/fd/1 2>/proc/1/fd/2
+* * * * * /usr/local/bin/python3 /app/update_etl.py > /proc/1/fd/1 2>/proc/1/fd/2
 # END CRON JOB

@@ -290,7 +290,7 @@ def etl_listing():
         a_conn.close()
         return
 
-    a_delta = get_listing_delta(m_conn, a_conn)
+    a_delta = get_listing_delta(a_conn)
 
     if a_delta is None:
         print("Could not retrieve update delta...")
@@ -405,7 +405,7 @@ def etl_report():
     except:
         print("Couldn't connect to DB for extract_user")
 
-    a_delta = get_report_delta(m_conn, a_conn)
+    a_delta = get_report_delta(a_conn)
 
     if a_delta is None:
         print("Could not retrieve update delta...")

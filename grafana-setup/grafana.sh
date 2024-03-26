@@ -64,7 +64,7 @@ else
     "http://kkadmin:${GF_SECURITY_ADMIN_PASSWORD}@grafana:3000/api/dashboards/db" \
     -H "Accept: application/json" \
     -H "Content-Type: application/json" \
-    -d "$(cat analytics.json)"
+    -d @analytics.json #"$(cat analytics.json)"
 fi
 
 
