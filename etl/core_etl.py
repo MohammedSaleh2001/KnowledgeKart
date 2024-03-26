@@ -31,10 +31,10 @@ def extract_transform_users(m_conn, a_delta):
                     u.FirstName,
                     u.DateJoined,
                     COALESCE(
-                        EXTRACT(year from u.DateJoined)*10000 
-                        + EXTRACT('month' from u.DateJoined)*100
-                        + EXTRACT('day' from u.DateJoined), 19000101) as DateJoinedFK,
-                    COALESCE( to_char(u.DateJoined, 'hh24mi'), '-1' ) AS TimeJoinedFK,
+                        EXTRACT(year from u.DateJoined AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from u.DateJoined AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from u.DateJoined AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateJoinedFK,
+                    COALESCE( to_char(u.DateJoined AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeJoinedFK,
                     u.UserRole,
                     u.Verified,
                     u.Blacklist,
@@ -151,10 +151,10 @@ def datamart_newuserreport(a_conn):
 
             SELECT t.the_interval,
                     COALESCE(
-                        EXTRACT(year from t.the_interval)*10000 
-                        + EXTRACT('month' from t.the_interval)*100
-                        + EXTRACT('day' from t.the_interval), 19000101) as DateFK,
-                    COALESCE( to_char(t.the_interval, 'hh24mi'), '-1' ) AS TimeFK,
+                        EXTRACT(year from t.the_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from t.the_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from t.the_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateFK,
+                    COALESCE( to_char(t.the_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeFK,
                     COUNT(n.UserID)
             FROM the_intervals t
             LEFT JOIN core.kkuser n ON (n.DateJoined >= t.the_interval AND n.DateJoined < t.the_interval + interval '3 hour')
@@ -195,10 +195,10 @@ def datamart_userreport(a_conn):
         ) (
             SELECT current_interval,
                 COALESCE(
-                    EXTRACT(year from current_interval)*10000 
-                    + EXTRACT('month' from current_interval)*100
-                    + EXTRACT('day' from current_interval), 19000101) as DateFK,
-                COALESCE( to_char(current_interval, 'hh24mi'), '-1' ) AS TimeFK,
+                    EXTRACT(year from current_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                    + EXTRACT('month' from current_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                    + EXTRACT('day' from current_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateFK,
+                COALESCE( to_char(current_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeFK,
                 COUNT(UserID) FILTER (WHERE Verified = False),
                 COUNT(UserID) FILTER (WHERE Verified = True),
                 COUNT(UserID) FILTER (WHERE Blacklist = True),
@@ -360,17 +360,17 @@ def extract_transform_listing(m_conn, a_delta):
                     l.Condition,
                     l.DateListed,
                     COALESCE(
-                        EXTRACT(year from l.DateListed)*10000 
-                        + EXTRACT('month' from l.DateListed)*100
-                        + EXTRACT('day' from l.DateListed), 19000101) as DateListedFK,
-                    COALESCE( to_char(l.DateListed, 'hh24mi'), '-1' ) AS TimeListedFK,
+                        EXTRACT(year from l.DateListed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from l.DateListed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from l.DateListed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateListedFK,
+                    COALESCE( to_char(l.DateListed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeListedFK,
                     l.ListingStatus,
                     l.DateChanged,
                     COALESCE(
-                        EXTRACT(year from l.DateChanged)*10000 
-                        + EXTRACT('month' from l.DateChanged)*100
-                        + EXTRACT('day' from l.DateChanged), 19000101) as DateChangedFK,
-                    COALESCE( to_char(l.DateChanged, 'hh24mi'), '-1' ) AS TimeChangedFK,
+                        EXTRACT(year from l.DateChanged AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from l.DateChanged AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from l.DateChanged AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateChangedFK,
+                    COALESCE( to_char(l.DateChanged AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeChangedFK,
                     l.SoldTo,
                     l.SoldPrice,
                     CASE WHEN l.ListingStatus = 'O' THEN -1
@@ -453,10 +453,10 @@ def datamart_newlistingreport(a_conn):
 
             SELECT t.the_interval,
                     COALESCE(
-                        EXTRACT(year from t.the_interval)*10000 
-                        + EXTRACT('month' from t.the_interval)*100
-                        + EXTRACT('day' from t.the_interval), 19000101) as DateFK,
-                    COALESCE( to_char(t.the_interval, 'hh24mi'), '-1' ) AS TimeFK,
+                        EXTRACT(year from t.the_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from t.the_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from t.the_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateFK,
+                    COALESCE( to_char(t.the_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeFK,
                     t.Category,
 					t.Condition,
                     COUNT(l1.ListingID) as NumNewListings,
@@ -526,10 +526,10 @@ def datamart_listingreport(a_conn):
         ) (
             SELECT current_interval,
                 COALESCE(
-                    EXTRACT(year from current_interval)*10000 
-                    + EXTRACT('month' from current_interval)*100
-                    + EXTRACT('day' from current_interval), 19000101) as DateFK,
-                COALESCE( to_char(current_interval, 'hh24mi'), '-1' ) AS TimeFK,
+                    EXTRACT(year from current_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                    + EXTRACT('month' from current_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                    + EXTRACT('day' from current_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateFK,
+                COALESCE( to_char(current_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeFK,
                 COUNT(ListingID) FILTER (WHERE ListingStatus = 'O'),
                 COUNT(ListingID) FILTER (WHERE ListingStatus = 'C'),
                 COUNT(ListingID) FILTER (WHERE ListingStatus = 'S')
@@ -680,18 +680,18 @@ def extract_transform_report(m_conn, a_delta):
                     r.ReportFor,
                     r.DateReported,
                     COALESCE(
-                        EXTRACT(year from r.DateReported)*10000 
-                        + EXTRACT('month' from r.DateReported)*100
-                        + EXTRACT('day' from r.DateReported), 19000101) as DateReportedFK,
-                    COALESCE( to_char(r.DateReported, 'hh24mi'), '-1' ) AS TimeReportedFK,
+                        EXTRACT(year from r.DateReported AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from r.DateReported AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from r.DateReported AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateReportedFK,
+                    COALESCE( to_char(r.DateReported AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeReportedFK,
                     r.ModeratorAssigned,
                     r.ReportOpen,
                     r.DateClosed,
                     COALESCE(
-                        EXTRACT(year from r.DateClosed)*10000 
-                        + EXTRACT('month' from r.DateClosed)*100
-                        + EXTRACT('day' from r.DateClosed), 19000101) as DateClosedFK,
-                    COALESCE( to_char(r.DateClosed, 'hh24mi'), '-1' ) AS TimeClosedFK,
+                        EXTRACT(year from r.DateClosed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from r.DateClosed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from r.DateClosed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateClosedFK,
+                    COALESCE( to_char(r.DateClosed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeClosedFK,
                     CASE WHEN r.ReportOpen = True THEN -1
                         ELSE EXTRACT('day' FROM (r.DateClosed - r.DateReported)) * 24 * 60 
                             + EXTRACT('hour' FROM (r.DateClosed- r.DateReported)) * 60
@@ -757,10 +757,10 @@ def datamart_newmodreport(a_conn):
 
             SELECT t.the_interval,
                     COALESCE(
-                        EXTRACT(year from t.the_interval)*10000 
-                        + EXTRACT('month' from t.the_interval)*100
-                        + EXTRACT('day' from t.the_interval), 19000101) as DateFK,
-                    COALESCE( to_char(t.the_interval, 'hh24mi'), '-1' ) AS TimeFK,
+                        EXTRACT(year from t.the_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from t.the_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from t.the_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateFK,
+                    COALESCE( to_char(t.the_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeFK,
                     COUNT(r1.ReportID) as NumNewReports,
                     COUNT(r2.ReportID) as NumClosedReports,
                     COALESCE(AVG(r1.TimeToClose), -1) as AverageCloseTime
@@ -809,10 +809,10 @@ def datamart_modreport(a_conn):
         ) (
             SELECT current_interval,
                 COALESCE(
-                    EXTRACT(year from current_interval)*10000 
-                    + EXTRACT('month' from current_interval)*100
-                    + EXTRACT('day' from current_interval), 19000101) as DateFK,
-                COALESCE( to_char(current_interval, 'hh24mi'), '-1' ) AS TimeFK,
+                    EXTRACT(year from current_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                    + EXTRACT('month' from current_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                    + EXTRACT('day' from current_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateFK,
+                COALESCE( to_char(current_interval AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeFK,
                 COUNT(ReportID) FILTER (WHERE ReportOpen = True) AS NumOpenReports,
                 COUNT(ReportID) FILTER (WHERE ModeratorAssigned IS NULL) AS NumUnassignedReports,
                 COUNT(ReportID) FILTER (WHERE ReportOpen = False) AS NumClosedReports,
