@@ -366,7 +366,6 @@ def load_report(a_conn, data):
     a_cursor.executemany(
         '''
         UPDATE core.report SET (
-            ReportID,
             ReportBy ,
             ReportFor,
             DateReported ,
