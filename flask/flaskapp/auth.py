@@ -146,7 +146,7 @@ def changepass_post():
     
     user = result.fetchone()
     
-    login_user(User(user), remember=False)
+    # login_user(User(user), remember=False)
     flash('You have changed your password successfully!')
     return redirect(url_for('main.profile'))
 
@@ -221,3 +221,82 @@ def add_listing():
     listing = result.fetchone()
 
     return {'status': 'success' if listing else 'error'}
+
+@auth.route('/user_profile', methods=['GET'])
+@jwt_required()
+def get_user_profile():
+    email = get_jwt_identity()
+
+    query = db.text('SELECT * FROM kkuser WHERE Email = :e')
+
+    result = db.session.execute(query,
+                              {'e': email})
+    
+    user = result.fetchone()
+
+    if not user:
+        return {'status': 'error', 'message': 'Email address not in use!'}
+    
+    data = {'email': user[1], 
+            'firstname': user[3], 
+            'role': user[5], 
+            'politeness': user[9], 
+            'honesty': user[10], 
+            'quickness': user[11], 
+            'numreviews': user[12]}
+    
+    return {'status': 'success', 'data': data}
+    
+@auth.route('/search_listings', methods=['POST'])
+@jwt_required()
+def search_listings():
+    data = request.json
+    search_term = data.get('search_term')
+    max_results = data.get('max_number_results')
+
+    query = db.text(f"SELECT * FROM listing WHERE listingname LIKE '%{search_term}%'")
+
+    result = db.session.execute(query)
+
+    # print(result)
+
+    searchlist = []
+    for listing in result.fetchall():
+        data = {'listingid': listing[0],
+                'userid': listing[1],
+                'listing_name': listing[2],
+                'listing_description': listing[3],
+                'asking_price': listing[4],
+                'category_type': listing[5],
+                'condition': listing[7],
+                'date_listed': listing[9]}
+        searchlist.append(data)
+
+    return {'status': 'success', 'data': searchlist}
+
+@auth.route('/listing_profile', methods=['POST'])
+@jwt_required()
+def get_listing():
+    data = request.json
+    listingid = data.get('listingid')
+
+    query = db.text(f"SELECT * FROM listing WHERE listingid = {listingid}")
+
+    result = db.session.execute(query)
+
+    listing = result.fetchone()
+
+    if not listing:
+        return {'status': 'error', 'message': 'Email address not in use!'}
+
+    data = {'listingid': listing[0],
+            'userid': listing[1],
+            'listing_name': listing[2],
+            'listing_description': listing[3],
+            'asking_price': listing[4],
+            'category_type': listing[5],
+            'condition': listing[7],
+            'date_listed': listing[9]}
+
+    return {'status': 'success', 'data': data}
+
