@@ -49,12 +49,13 @@ function Login(props) {
                 const accessToken = responseData?.data?.accessToken;
                 // const roles = responseData?.data?.roles;
 
+                const roles = 'U';
+
                 localStorage.setItem('token', accessToken);
                 localStorage.setItem('email', email);
-                // localStorage.setItem('roles', roles);
+                localStorage.setItem('roles', roles);
                 localStorage.setItem('password', password);
 
-                const roles = 'U';
                 setAuth({ email, password, roles, accessToken });
 
                 props.setToken(responseData.access_token);
