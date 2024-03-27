@@ -77,7 +77,7 @@ function HomePage() {
                 <div>
                     <ChatIcon style={{fontSize: 50}} id="chat-icon" />
                     <PostAddIcon style={{fontSize: 50}} id="add-post-icon" onClick={() => {
-                        navigate("/listing/create")
+                        navigate("/create")
                     }} />
                     <AccountCircleIcon style={{fontSize: 50}} id="profile-icon" />
                 </div>

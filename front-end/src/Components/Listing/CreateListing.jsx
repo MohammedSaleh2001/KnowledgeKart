@@ -2,32 +2,76 @@ import React, { useState } from 'react'
 import './Listing.css'
 
 import { Col, Button, Row, Container, Card, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 function CreateListing() {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [price, setPrice] = useState(0);
-    const [category, setCategory] = useState('');
+
+    const navigate = useNavigate()
+
+    // const [title, setTitle] = useState('');
+    // const [description, setDescription] = useState('');
+    // const [price, setPrice] = useState(0);
+    // const [category, setCategory] = useState('');
     const [image, setImage] = useState(null);
+
+    const [user, setUser] = useState(5);
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [asking_price, setAskingPrice] = useState(0.00);
+    const [category_type, setCategoryType] = useState('');
+    const [condition, setCondition] = useState("New");
+    const [date_listed, setDateListed] = useState("2024-03-12 00:00:00");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('description', description);
-        formData.append('price', price);
-        formData.append('category', category);
-        if (image) {
-            formData.append('image', image);
-        }
+
+        const token = localStorage.getItem('token');
+
+        // const formData = new FormData();
+        // formData.append('title', title);
+        // formData.append('description', description);
+        // formData.append('price', price);
+        // formData.append('category', category);
+        // formData.append('user', 'user_id_or_email');
+        // if (image) {
+        //     formData.append('image', image);
+        // }
+
+        var json = JSON.stringify({
+            "user" : user,
+            "name" : name,
+            "description" : description,
+            "asking_price" : asking_price,
+            "category_type" : 1,
+            "condition" : condition,
+            "date_listed" : date_listed
+        })
+        // var json = JSON.stringify({
+        //     "user" : 5,
+        //     "name" : "ECE 420 Textboook",
+        //     "description" : "required textbook for course",
+        //     "asking_price" : 20,
+        //     "category_type" : 1,
+        //     "condition" : "New",
+        //     "date_listed" : "2024-03-12 00:00:00"
+        // });
 
         try {
-            const response = await fetch('insert_api_here', {
+            console.log(json);
+            const response = await fetch('api/add_listing', {
                 method: 'POST',
-                body: formData,
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                },
+                body: json,
             });
             if (response.ok) {
                 console.log("Listing created successfully");
+                navigate('/home');
             } else {
                 console.log('Server error:', response.statusText)
             }
@@ -44,7 +88,7 @@ function CreateListing() {
                         <Form.Label id="create-listing-title">Create Listing</Form.Label>
                         <Form.Group>
                             <Form.Control onChange={(e) => {
-                                setTitle(e.target.value)
+                                setName(e.target.value)
                             }} type="text" placeholder="Enter Title" />
                         </Form.Group>
 
@@ -56,14 +100,14 @@ function CreateListing() {
 
                         <Form.Group>
                             <Form.Control onChange={(e) => {
-                                setPrice(e.target.value)
+                                setAskingPrice(parseFloat(e.target.value))
                             }} type="number" placeholder="Enter Price" />
                         </Form.Group>
 
                         <Form.Group>
                             <Form.Control onChange={(e) => {
-                                setCategory(e.target.value)
-                            }} type="text" placeholder="Enter Category" />
+                                setCategoryType(parseInt(e.target.value))
+                            }} type="number" placeholder="Enter Category" />
                         </Form.Group>
 
                         <Form.Group controlId="formFile">
