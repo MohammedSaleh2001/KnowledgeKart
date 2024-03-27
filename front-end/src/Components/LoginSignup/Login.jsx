@@ -1,22 +1,15 @@
-import React, { useState, useContext } from 'react';
-import AuthContext from '../../Context/AuthProvider';
-import './LoginSignup.css';
+import React, { useState } from 'react'
+import './LoginSignup.css'
 
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Login(props) {
-    const { auth, setAuth } = useContext(AuthContext);
-
-    const navigate = useNavigate();
-    // const location = useLocation();
-    // const from = location.state?.from?.pathname || "/";
+    const navigate = useNavigate()
     
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
+    const handleSubmit = async () => {
         if (email.trim() === '' || password.trim() === '') {
             alert('Enter email and password');
             return;
@@ -46,24 +39,13 @@ function Login(props) {
             if (response.ok) {
                 const responseData = await response.json();
 
-                const accessToken = responseData?.data?.accessToken;
-                // const roles = responseData?.data?.roles;
-
-                localStorage.setItem('token', accessToken);
-
-                const roles = ['U'];
-                setAuth({ email, password, roles, accessToken });
-                localStorage.setItem('email', email);
-                localStorage.setItem('roles', JSON.stringify(roles));
-                localStorage.setItem('password', password);
-
                 props.setToken(responseData.access_token);
 
                 console.log(responseData);
                 console.log(props);
                 console.log(props.token);
 
-                navigate('/home', { replace: true });
+                navigate('/home')
             } else {
                 throw new Error(`HTTP error: ${response.status}`);
             }
