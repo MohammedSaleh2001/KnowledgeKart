@@ -17,7 +17,6 @@ function CreateListing() {
         formData.append('description', description);
         formData.append('price', price);
         formData.append('category', category);
-        formData.append('category', category);
         if (image) {
             formData.append('image', image);
         }
@@ -68,6 +67,7 @@ function CreateListing() {
                         </Form.Group>
 
                         <Form.Group controlId="formFile">
+                            <Form.Label>Upload Image</Form.Label>
                             <Form.Control onChange={(e) => {
                                 setImage(e.target.files[0])
                             }} type="file" />

@@ -4,11 +4,15 @@ const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState(() => {
-        const savedToken = localStorage.getItem('token');
-        const savedRoles = JSON.parse(localStorage.getItem('roles'));
-        const savedEmail = localStorage.getItem('email');
-        const savedPassword = localStorage.getItem('password');
-        return savedToken ? { accessToken: savedToken, roles: savedRoles, email: savedEmail, password: savedPassword } : null;
+        try {
+            const savedToken = localStorage.getItem('token');
+            const savedRoles = localStorage.getItem('roles');
+            const savedEmail = localStorage.getItem('email');
+            const savedPassword = localStorage.getItem('password');
+            return savedToken ? { accessToken: savedToken, roles: savedRoles, email: savedEmail, password: savedPassword } : null;
+        } catch {
+            return null;
+        }
     });
 
     return (

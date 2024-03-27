@@ -50,20 +50,25 @@ function Login(props) {
                 // const roles = responseData?.data?.roles;
 
                 localStorage.setItem('token', accessToken);
-
-                const roles = ['U'];
-                setAuth({ email, password, roles, accessToken });
                 localStorage.setItem('email', email);
-                localStorage.setItem('roles', JSON.stringify(roles));
+                // localStorage.setItem('roles', roles);
                 localStorage.setItem('password', password);
+
+                const roles = 'U';
+                setAuth({ email, password, roles, accessToken });
 
                 props.setToken(responseData.access_token);
 
                 console.log(responseData);
-                console.log(props);
+                console.log(props);  // error
                 console.log(props.token);
 
-                navigate('/home', { replace: true });
+                if (responseData.status == 'success') {
+                    navigate('/home', { replace: true })
+                } else {
+                    alert('Could not log you in!');
+                    return;
+                }
             } else {
                 throw new Error(`HTTP error: ${response.status}`);
             }

@@ -8,7 +8,11 @@ import PostAddIcon from '@mui/icons-material/PostAdd';
 
 import ListingItem from './ListingItem'
 
+import { useNavigate } from "react-router-dom";  
+
 function HomePage() {
+
+    const navigate = useNavigate();
 
     const sample_listings = [
         {
@@ -72,7 +76,9 @@ function HomePage() {
                 </div>
                 <div>
                     <ChatIcon style={{fontSize: 50}} id="chat-icon" />
-                    <PostAddIcon style={{fontSize: 50}} id="add-post-icon" />
+                    <PostAddIcon style={{fontSize: 50}} id="add-post-icon" onClick={() => {
+                        navigate("/listing/create")
+                    }} />
                     <AccountCircleIcon style={{fontSize: 50}} id="profile-icon" />
                 </div>
             </div>
