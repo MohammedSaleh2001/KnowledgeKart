@@ -35,7 +35,7 @@ function App() {
             <Route path="/signup" element={<Signup token={token} setToken={setToken} />} />
             <Route path="/login" element={<Login token={token} setToken={setToken} />} />
             <Route path="/forgotpassword" element={<ForgotPassword token={token} setToken={setToken} />} />
-            <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
+            <Route element={<RequireAuth allowedRoles={ROLES.User} />}>
               <Route path="/home" element={<HomePage  token={token} setToken={setToken} />} />
               <Route path="/listing">
                 <Route path="create" element={<CreateListing token={token} setToken={setToken} />} />
