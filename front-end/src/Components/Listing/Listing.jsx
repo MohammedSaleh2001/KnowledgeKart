@@ -7,13 +7,21 @@ import PortraitIcon from '@mui/icons-material/Portrait';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import PhotoIcon from '@mui/icons-material/Photo';
 
+import { useNavigate } from "react-router-dom";  
+
 function Listing() {
+
+    const navigate = useNavigate();
+
     const { listingId } = useParams();
+
     return (
         <div id="listing_page_container">
             <div id="listing_top_div">
                 <div class="back-button">
-                    <ArrowBackIosNewIcon />
+                    <ArrowBackIosNewIcon onClick={() => {
+                        navigate("/home")
+                    }} />
                 </div>
             </div>
             <div id="listing_mid_div">

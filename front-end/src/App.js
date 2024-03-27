@@ -37,10 +37,12 @@ function App() {
             <Route path="/forgotpassword" element={<ForgotPassword token={token} setToken={setToken} />} />
             <Route element={<RequireAuth allowedRoles={ROLES.User} />}>
               <Route path="/home" element={<HomePage  token={token} setToken={setToken} />} />
-              <Route path="/listing">
+              {/* <Route path="/listing">
                 <Route path="create" element={<CreateListing token={token} setToken={setToken} />} />
                 <Route path=":listingId" element={<Listing />} />
-              </Route>  
+              </Route>   */}
+              <Route path="/create" element={<CreateListing token={token} setToken={setToken} />} />
+              <Route path="/listing:listingId" element={<Listing />} />
             </Route>
             {/* <Route path="/test" element={<Listing_Item 
               title="Insert Title Here"
