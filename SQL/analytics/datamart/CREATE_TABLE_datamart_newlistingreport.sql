@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS datamart.newlistingreport (
     NewListingReportDateFK bigint,
     NewListingReportTimeFK varchar,
     Category varchar,
+    Condition varchar,
     NumNewListings int,
     NumClosedListings int,
     NumSoldListings int,
@@ -10,5 +11,5 @@ CREATE TABLE IF NOT EXISTS datamart.newlistingreport (
     AverageSellTime numeric,
     AveragePriceSaleDifference numeric,
     AveragePercentSaleDifference numeric,
-    PRIMARY KEY(NewListingReportDate, Category)
+    PRIMARY KEY(NewListingReportDate, Category, Condition)
 )

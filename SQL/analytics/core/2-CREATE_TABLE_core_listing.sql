@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS core.listing (
     AskingPrice numeric NOT NULL,
     CategoryTypeID int REFERENCES core.dim_categorytype(CategoryTypeID),
     CategoryID int,
+    Condition varchar,
     /*
     ImageDirectory varchar,
     */
