@@ -1,9 +1,15 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import './Listing.css'
 
-function ListingItem({title, price}) {
+function ListingItem({id, title, price}) {
+
+    const navigate = useNavigate();
+
     return (
-        <div id="listing-container">
+        <div id="listing-container" style={{cursor: 'pointer'}} onClick={() => {
+            navigate(`/listing/${id}`)
+        }}>
             <div className="list-item-title">
                 {title}
             </div>
