@@ -1,0 +1,17 @@
+#view_profile_container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+}
+
+#view_profile_top {
+    display: flex;
+    padding: 10px 20px 10px 20px;
+}
+
+#view_profile_back_button {
+    background-color: orange;
+    padding: 5px 30px 5px 30px;
+    border-radius: 10px;
+}
