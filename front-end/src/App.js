@@ -5,8 +5,12 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './Context/AuthProvider';
 
-import {ForgotPassword, Login, LoginSignup, Signup} from './Components/LoginSignup/index'
+import {AnalyticsView} from './Components/Analytics/index'
+import {ChatMessage, ChatView} from './Components/Chat/index'
 import {CreateListing, HomePage, Listing} from './Components/Listing/index'
+import {ForgotPassword, Login, LoginSignup, Signup} from './Components/LoginSignup/index'
+import {ModerateInvestigate, ModerateReport, ModerateSuspend, ModerateView} from './Components/Moderate/index'
+import {EditProfile, ViewProfile} from './Components/Profile/index'
 
 import RequireAuth from "./Components/RequireAuth";
 
@@ -42,8 +46,17 @@ function App() {
                 <Route path=":listingId" element={<Listing />} />
               </Route>   */}
               <Route path="/create" element={<CreateListing token={token} setToken={setToken} />} />
-              <Route path="/listing:listingId" element={<Listing />} />
+              <Route path="/listing/:listingId" element={<Listing />} />
+              <Route path="/viewprofile/:email" element={<ViewProfile token={token} setToken={setToken} />} />
             </Route>
+            <Route path="/viewanalytics" element={<AnalyticsView token={token} setToken={setToken} />} />
+            <Route path="/chatmessage/:chatID" element={<ChatMessage token={token} setToken={setToken} />} />
+            <Route path="/chatview" element={<ChatView token={token} setToken={setToken} />} />
+            <Route path="/moderateinvestigate/:userID" element={<ModerateInvestigate token={token} setToken={setToken} />} />
+            <Route path="/moderatereport/:userID" element={<ModerateReport token={token} setToken={setToken} />} />
+            <Route path="/moderatesuspend/:userID" element={<ModerateSuspend token={token} setToken={setToken} />} />
+            <Route path="/moderateview" element={<ModerateView token={token} setToken={setToken} />} />
+            <Route path="/editprofile/:userID" element={<EditProfile token={token} setToken={setToken} />} />
             {/* <Route path="/test" element={<Listing_Item 
               title="Insert Title Here"
               description="Insert Description Here"

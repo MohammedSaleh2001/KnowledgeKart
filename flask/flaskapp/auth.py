@@ -299,4 +299,3 @@ def get_listing():
             'date_listed': listing[9]}
 
     return {'status': 'success', 'data': data}
-
