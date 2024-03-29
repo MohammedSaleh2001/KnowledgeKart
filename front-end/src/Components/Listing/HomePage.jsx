@@ -127,7 +127,9 @@ function HomePage() {
                     <PostAddIcon style={{fontSize: 50}} id="add-post-icon" onClick={() => {
                         navigate("/create")
                     }} />
-                    <AccountCircleIcon style={{fontSize: 50}} id="profile-icon" />
+                    <AccountCircleIcon style={{fontSize: 50, cursor: 'pointer'}} id="profile-icon" onClick={() => {
+                        navigate(`/viewprofile/${localStorage.getItem('email')}`)
+                    }} />
                 </div>
             </div>
             <div id="listview_container">
