@@ -13,70 +13,16 @@ import { useNavigate } from "react-router-dom";
 function HomePage() {
 
     const navigate = useNavigate();
-
-    // const sample_listings = [
-    //     {
-    //         id: 1,
-    //         title: "Listing 1",
-    //         price: 30.00,
-    //     },
-    //     {
-    //         id: 2,
-    //         title: "ENGG 130 Textbook",
-    //         price: 100.00
-    //     }
-    // ]
-    // const sample_recommended_listings = [
-    //     {
-    //         id: 3,
-    //         title: "ENGG 130 Textbook",
-    //         price: 100.00
-    //     },
-    //     {  
-    //         id: 4,
-    //         title: "PHYS 130 Textbook",
-    //         price: 90.00
-    //     },
-    //     {
-    //         id: 5,
-    //         title: "MATH 100 Textbook",
-    //         price: 50.00
-    //     },
-    //     {
-    //         id: 6,
-    //         title: "ENGL 199 Textbook",
-    //         price: 40.00
-    //     },
-    //     {
-    //         id: 7,
-    //         title: "MATH 102 Textbook",
-    //         price: 50.00
-    //     }
-    // ]
-    // const listingComponents = []
-    // for (const listing of sample_listings) {
-    //     listingComponents.push(<ListingItem
-    //         title={listing.title}
-    //         price={listing.price}
-    //     />)
-    // }
-    // const recommendedListingComponents = []
-    // for (const listing of sample_recommended_listings) {
-    //     recommendedListingComponents.push(<ListingItem
-    //         title={listing.title}
-    //         price={listing.price}
-    //     />)
-    // }
-
     const [listings, setListings] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("%");
 
     useEffect(() => {
-        fetchListings();
-    }, []);
+        fetchListings(searchTerm);
+    }, [searchTerm]);
 
-    const fetchListings = async () => {
+    const fetchListings = async (searchTerm) => {
         const token = localStorage.getItem('token');
         try {
             setIsLoading(true);
@@ -91,7 +37,7 @@ function HomePage() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    search_term: "%",
+                    search_term: `${searchTerm}`,
                     max_number_results: 10,
                 })
             });
@@ -120,14 +66,18 @@ function HomePage() {
         <div id="homepage-container">
             <div id="menu-container">
                 <div id="search-bar-container">
-                    <Searchbar />
+                    <Searchbar onSearch={(newSearchTerm) => {
+                        setSearchTerm(newSearchTerm);
+                    }} />
                 </div>
                 <div>
                     <ChatIcon style={{fontSize: 50}} id="chat-icon" />
                     <PostAddIcon style={{fontSize: 50}} id="add-post-icon" onClick={() => {
                         navigate("/create")
                     }} />
-                    <AccountCircleIcon style={{fontSize: 50}} id="profile-icon" />
+                    <AccountCircleIcon style={{fontSize: 50, cursor: 'pointer'}} id="profile-icon" onClick={() => {
+                        navigate(`/viewprofile/${localStorage.getItem('email')}`)
+                    }} />
                 </div>
             </div>
             <div id="listview_container">

@@ -47,6 +47,7 @@ function App() {
               </Route>   */}
               <Route path="/create" element={<CreateListing token={token} setToken={setToken} />} />
               <Route path="/listing/:listingId" element={<Listing />} />
+              <Route path="/viewprofile/:email" element={<ViewProfile token={token} setToken={setToken} />} />
             </Route>
             <Route path="/viewanalytics" element={<AnalyticsView token={token} setToken={setToken} />} />
             <Route path="/chatmessage/:chatID" element={<ChatMessage token={token} setToken={setToken} />} />
@@ -56,7 +57,6 @@ function App() {
             <Route path="/moderatesuspend/:userID" element={<ModerateSuspend token={token} setToken={setToken} />} />
             <Route path="/moderateview" element={<ModerateView token={token} setToken={setToken} />} />
             <Route path="/editprofile/:userID" element={<EditProfile token={token} setToken={setToken} />} />
-            <Route path="/viewprofile/:userID" element={<ViewProfile token={token} setToken={setToken} />} />
             {/* <Route path="/test" element={<Listing_Item 
               title="Insert Title Here"
               description="Insert Description Here"

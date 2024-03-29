@@ -58,8 +58,6 @@ function Listing() {
         return <div>Error: {error}</div>;
     }
 
-    console.log(listing);
-
     return (
         <div id="listing_page_container">
             <div id="listing_top_div">
@@ -69,10 +67,10 @@ function Listing() {
                     }} />
                 </div>
                 <div id="listing_title">
-                    {listing.listing_name || "Untitled Listing"}
+                    {listing?.listing_name || "Untitled Listing"}
                 </div>
                 <div id="listing_date">
-                    {"Date Listed: " + listing.date_listed || ""}
+                    {"Date Listed: " + listing?.date_listed || ""}
                 </div>
             </div>
             <div id="listing_mid_div">
@@ -84,14 +82,14 @@ function Listing() {
                         <div id="listing_mid_left_top_right">
                             <div id="listing_mid_left_top_right_top">
                                 <div id="listing_seller_name">
-                                    {listing.sellerName || "Seller Name"}
+                                    {listing?.sellerName || "Seller Name"}
                                 </div>
                                 <div id="listing_rating">
-                                    Rating: {listing.rating || "N/A"}
+                                    Rating: {listing?.rating || "N/A"}
                                 </div>
                             </div>
                             <div id="listing_mid_left_top_right_mid">
-                                {listing.sellerEmail || "Seller Email Not Available"}
+                                {listing?.sellerEmail || "Seller Email Not Available"}
                             </div>
                             <div id="listing_mid_left_top_right_bot">
                                 <div className="listing-button">
@@ -105,10 +103,10 @@ function Listing() {
                     </div>
                     <div id="listing_mid_left_bot">
                         <div id="listing_condition_of_product">
-                            Condition: {listing.condition || "N/A"}
+                            Condition: {listing?.condition || "N/A"}
                         </div>
                         <div id="listing_price_of_product">
-                            Price: {"$" + listing.asking_price || "N/A"}
+                            Price: {"$" + listing?.asking_price || "N/A"}
                         </div>
                     </div>
                 </div>
@@ -118,7 +116,7 @@ function Listing() {
             </div>
             <div id="listing_bot_div">
                 Description:<br></br>
-                {listing.listing_description || ""}
+                {listing?.listing_description || ""}
             </div>
         </div>
     )
