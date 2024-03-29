@@ -64,7 +64,7 @@ function Listing() {
         <div id="listing_page_container">
             <div id="listing_top_div">
                 <div class="back-button">
-                    <ArrowBackIosNewIcon onClick={() => {
+                    <ArrowBackIosNewIcon style={{cursor: 'pointer'}} onClick={() => {
                         navigate("/home")
                     }} />
                 </div>
