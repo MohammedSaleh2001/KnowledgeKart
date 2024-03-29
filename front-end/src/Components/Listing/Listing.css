@@ -313,19 +313,19 @@
   resize: none;
 }
 
-form {
+#create_listing_form {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
-form #create-listing-title {
+#create_listing_form #create-listing-title {
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 36px;
   font-weight: bold;
 }
-form #textarea-form-group {
+#create_listing_form #textarea-form-group {
   display: flex;
   flex-direction: column;
   flex-grow: 1;

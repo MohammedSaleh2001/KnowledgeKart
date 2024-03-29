@@ -56,7 +56,7 @@ function App() {
             <Route path="/moderatereport/:userID" element={<ModerateReport token={token} setToken={setToken} />} />
             <Route path="/moderatesuspend/:userID" element={<ModerateSuspend token={token} setToken={setToken} />} />
             <Route path="/moderateview" element={<ModerateView token={token} setToken={setToken} />} />
-            <Route path="/editprofile/:userID" element={<EditProfile token={token} setToken={setToken} />} />
+            <Route path="/editprofile/:email" element={<EditProfile token={token} setToken={setToken} />} />
             {/* <Route path="/test" element={<Listing_Item 
               title="Insert Title Here"
               description="Insert Description Here"
