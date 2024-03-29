@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './Listing.css'
 
 import Searchbar from './Searchbar'
@@ -53,20 +53,68 @@ function HomePage() {
     //         price: 50.00
     //     }
     // ]
-    const listingComponents = []
+    // const listingComponents = []
     // for (const listing of sample_listings) {
     //     listingComponents.push(<ListingItem
     //         title={listing.title}
     //         price={listing.price}
     //     />)
     // }
-    const recommendedListingComponents = []
+    // const recommendedListingComponents = []
     // for (const listing of sample_recommended_listings) {
     //     recommendedListingComponents.push(<ListingItem
     //         title={listing.title}
     //         price={listing.price}
     //     />)
     // }
+
+    const [listings, setListings] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetchListings();
+    }, []);
+
+    const fetchListings = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            setIsLoading(true);
+            const response = await fetch('api/search_listings', {
+                method: 'POST',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                mode: 'cors',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    search_term: "%",
+                    max_number_results: 10,
+                })
+            });
+            console.log(response);
+            if (!response.ok) {
+                throw new Error('Something went wrong!');
+            }
+            const data = await response.json();
+            setListings(data.data);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
     
     return (
         <div id="homepage-container">
@@ -84,13 +132,16 @@ function HomePage() {
             </div>
             <div id="listview_container">
                 <div id="list_items_div">
-                    {listingComponents}    
+                    {/* {listingComponents} */}
+                    {listings.map(listing => (
+                        <ListingItem key={listing.listingid} id={listing.listingid} title={listing.listing_name} price={listing.asking_price} />
+                    ))}
                 </div>
                 <div id="recommended_list">
                     <div id="recommended_list_title">
                         Recommended
                     </div>
-                    {recommendedListingComponents}
+                    {/* {recommendedListingComponents} */}
                 </div>
             </div>
         </div>
