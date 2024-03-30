@@ -84,7 +84,7 @@ function CreateListing() {
         <Container>
             <Card>
                 <Card.Body>
-                    <Form>
+                    <Form id="create_listing_form">
                         <Form.Label id="create-listing-title">Create Listing</Form.Label>
                         <Form.Group>
                             <Form.Control onChange={(e) => {

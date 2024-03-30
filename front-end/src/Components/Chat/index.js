@@ -1,4 +1,3 @@
-import ChatMessage from './ChatMessage'
-import ChatView from './ChatView'
+import ChatHomePage from './ChatHomePage'
 
-export { ChatMessage, ChatView };
+export { ChatHomePage }

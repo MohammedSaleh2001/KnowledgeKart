@@ -54,6 +54,27 @@ function HomePage() {
         }
     }
 
+    const handleLogout = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to log out');
+            }
+
+            localStorage.removeItem('token');
+            navigate('/');
+        } catch (error) {
+            console.log('Logout error: ', error);
+        }
+    }
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -78,6 +99,9 @@ function HomePage() {
                     <AccountCircleIcon style={{fontSize: 50, cursor: 'pointer'}} id="profile-icon" onClick={() => {
                         navigate(`/viewprofile/${localStorage.getItem('email')}`)
                     }} />
+                    <div onClick={handleLogout}>
+                        Logout
+                    </div>
                 </div>
             </div>
             <div id="listview_container">

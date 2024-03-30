@@ -49,6 +49,11 @@ function ViewProfile() {
                         navigate('/home');
                     }} />
                 </div>
+                <div id="edit_profile_button" onClick={() => {
+                    navigate(`/editprofile/${localStorage.getItem('email')}`)
+                }}>
+                    Edit Profile
+                </div>
             </div>
             <div id="view_profile_mid">
                 <div id="view_profile_mid_left">

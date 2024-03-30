@@ -16,7 +16,7 @@ function Searchbar({ onSearch }) {
                 onChange={(e) => {
                     setSearchTerm(e.target.value)
                 }}
-                onKeydown={(e) => {
+                onKeyDown={(e) => {
                     if (e.key == 'Enter') {
                         onSearch(searchTerm);
                     }
