@@ -1,11 +1,14 @@
 import React from 'react'
+import Messages from './Messages'
+import ChatInput from './ChatInput'
 
 import './Chat.css'
 
 const ChatBar = () => {
     return (
         <div id="chat_bar_container">
-            Chatbar
+            <Messages />
+            <ChatInput />
         </div>
     )
 }

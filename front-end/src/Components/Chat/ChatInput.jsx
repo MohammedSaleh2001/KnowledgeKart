@@ -4,8 +4,9 @@ import './Chat.css'
 
 const ChatInput = () => {
     return (
-        <div>
-
+        <div id="chat_input_container">
+            <input type="text" placeholder='Type something...' />
+            <div>Send</div>
         </div>
     )
 }

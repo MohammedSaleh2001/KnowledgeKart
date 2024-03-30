@@ -5,7 +5,7 @@
   height: 80vh;
   border: solid black 1px;
   border-radius: 10px;
-  background-color: #eee;
+  background-color: transparent;
   overflow: hidden;
 }
 #chat_home_page_container #chat_side_bar_container {
@@ -80,6 +80,68 @@
 #chat_listing_container #chat_listing_info_div #chat_listing_info_div_last_msg {
   font-size: 14px;
   color: lightgray;
+}
+
+#chat_bar_container {
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+}
+#chat_bar_container #messages-container {
+  background-color: #ddddf7;
+  padding: 10px;
+  flex-grow: 1;
+}
+#chat_bar_container #messages-container .message-container {
+  display: flex;
+  margin-bottom: 20px;
+}
+#chat_bar_container #messages-container .message-container #messageInfo {
+  padding-right: 10px;
+}
+#chat_bar_container #messages-container .message-container #messageInfo #messageDate {
+  font-size: 14px;
+  color: gray;
+}
+#chat_bar_container #messages-container .message-container #messageContent {
+  display: flex;
+  max-width: 50%;
+  background-color: white;
+  padding: 10px 20px;
+  align-items: center;
+  border-radius: 0px 10px 10px 10px;
+}
+#chat_bar_container #messages-container .message-container.owner {
+  flex-direction: row-reverse;
+}
+#chat_bar_container #messages-container .message-container.owner #messageInfo {
+  padding-left: 10px;
+}
+#chat_bar_container #messages-container .message-container.owner #messageContent {
+  border-radius: 10px 0px 10px 10px;
+  background-color: #8da4f1;
+  color: white;
+}
+#chat_bar_container #chat_input_container {
+  display: flex;
+  padding: 10px;
+  height: 50px;
+  background-color: white;
+  align-items: center;
+}
+#chat_bar_container #chat_input_container input {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex-grow: 1;
+  font-size: 18px;
+}
+#chat_bar_container #chat_input_container div {
+  padding: 10px 15px;
+  cursor: pointer;
+  color: white;
+  background-color: #8da4f1;
+  border-radius: 10px;
 }
 
 /*# sourceMappingURL=Chat.css.map */
