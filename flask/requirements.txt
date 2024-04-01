@@ -2,5 +2,6 @@ flask
 psycopg2
 flask-login
 flask-cors
+Flask-Mail
 Flask-SQLAlchemy
 Flask-JWT-Extended
