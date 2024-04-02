@@ -10,9 +10,26 @@ import json
 
 main = Blueprint('main', __name__)
 
-@main.route('/')
-def index():
-    return render_template('index.html')
+def get_user_profile_helper(columnkey, columnval):
+    query = db.text(f'SELECT * FROM kkuser WHERE {columnkey} = :e')
+
+    result = db.session.execute(query, {'e': columnval})
+    
+    user = result.fetchone()
+
+    if not user:
+        return None
+    
+    data =  {'userid': user[0],
+            'email': user[1], 
+            'firstname': user[3], 
+            'role': user[5], 
+            'politeness': user[9], 
+            'honesty': user[10], 
+            'quickness': user[11], 
+            'numreviews': user[12]}
+    
+    return data
 
 @main.route('/search_users', methods=['POST'])
 @jwt_required()
@@ -87,25 +104,12 @@ def get_user_profile():
         data = request.json
         email = data.get('email')
 
-    query = db.text('SELECT * FROM kkuser WHERE Email = :e')
+    user_data = get_user_profile_helper('email', email)
 
-    result = db.session.execute(query,
-                              {'e': email})
-    
-    user = result.fetchone()
-
-    if not user:
+    if not user_data:
         return {'status': 'error', 'message': 'Email address not in use!'}
     
-    data = {'email': user[1], 
-            'firstname': user[3], 
-            'role': user[5], 
-            'politeness': user[9], 
-            'honesty': user[10], 
-            'quickness': user[11], 
-            'numreviews': user[12]}
-    
-    return {'status': 'success', 'data': data}
+    return {'status': 'success', 'data': user_data}
    
 @main.route('/search_listings', methods=['POST'])
 @jwt_required()
@@ -151,22 +155,10 @@ def get_listing():
 
     sellerid = listing[1]
 
-    query = db.text(f"SELECT * FROM kkuser WHERE userid = {sellerid}")
+    seller_data = get_user_profile_helper('userid', sellerid)
 
-    result = db.session.execute(query)
-
-    seller = result.fetchone()
-
-    if not seller:
+    if not seller_data:
         return {'status': 'error', 'message': 'No seller!'}
-
-    seller_data = {'email': seller[1], 
-            'firstname': seller[3], 
-            'role': seller[5], 
-            'politeness': seller[9], 
-            'honesty': seller[10], 
-            'quickness': seller[11], 
-            'numreviews': seller[12]}
     
     data = {'listingid': listing[0],
             'seller': seller_data,
@@ -183,7 +175,7 @@ def get_listing():
 @jwt_required()
 def edit_user_profile():
     data = request.json
-    old_email = get_jwt_identity()  # Get current user by default
+    old_email = get_jwt_identity()
     new_email = data.get('new_email')
     
     query = db.text(f"UPDATE kkuser SET email = '{new_email}' WHERE email = '{old_email}'")
@@ -193,4 +185,62 @@ def edit_user_profile():
     db.session.commit()
     
     return redirect('/api/user_profile')
- 
+
+@main.route('/get_chat', methods=['POST'])
+@jwt_required()
+def get_chat():
+    data = request.json
+    email = get_jwt_identity()
+
+    user_data = get_user_profile_helper('email', email)
+
+    if not user_data:
+        return {'status': 'error', 'message': 'Email address not in use!'}
+
+    query = db.text(f"SELECT * FROM chat WHERE messageto = :i OR messagefrom = :i")
+
+    result = db.session.execute(query, {'i': user_data['userid']})
+
+    searchchat = []
+    for chatmsg in result.fetchall():
+        data = {'messageid': chatmsg[0],
+                'to': chatmsg[1],
+                'from': chatmsg[2],
+                'datesent': chatmsg[3],
+                'message': chatmsg[4]
+        }
+        searchchat.append(data)
+
+    return jsonify({'status': 'success', 'data': searchchat})
+
+@main.route('/send_chat', methods=['POST'])
+@jwt_required()
+def send_chat():
+    data = request.json
+    sender = get_jwt_identity()
+    receiver = data.get('receiver_email')
+    message = data.get('message')
+
+    sender_data = get_user_profile_helper('email', sender)
+    receiver_data = get_user_profile_helper('email', receiver)
+
+    if not sender_data or not receiver_data:
+        return {'status': 'error', 'message': 'Email address not in use!'}
+
+    query = db.text(
+            '''
+            INSERT INTO chat (messageto,
+                            messagefrom,
+                            datesent,
+                            message)
+            VALUES (:receiverid, :senderid, :datesent, :message)
+            ''')
+
+    result = db.session.execute(query, {'receiverid': receiver_data['userid'],
+                                        'senderid': sender_data['userid'],
+                                        'datesent': str(datetime.now()),
+                                        'message': message})
+
+    db.session.commit()
+
+    return {'status': 'success'}
