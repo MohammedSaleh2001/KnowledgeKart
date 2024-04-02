@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useChat } from './ChatContext';
+import { useChat } from '../../Context/ChatContext';
 
 import './Chat.css'
 
@@ -12,16 +12,33 @@ const ChatInput = () => {
     const sendMessage = async () => {
         if (!message.trim()) return;  // Prevent sending empty messages
 
-        const newMessage = {
-            from: 'SenderID',
-            to: activeChat.id,
-            message: message,
-            datasent: new Date().toISOString(),
-        }
-
+        const senderEmail = localStorage.getItem('email');
         const token = localStorage.getItem('token');
 
         try {
+            const userProfileResponse = await fetch('/api/user_profile', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: senderEmail }),
+            });
+
+            const userProfileData = await userProfileResponse.json();
+            if (!userProfileResponse.ok) {
+                throw new Error('Failed to fetch user profile');
+            }
+
+            const senderID = userProfileData.data.userid;
+
+            const newMessage = {
+                from: senderID,
+                to: activeChat.id,
+                message: message,
+                datasent: new Date().toISOString(),
+            }
+
             const response = await fetch('/api/send_chat', {
                 method: 'POST',
                 headers: {

@@ -7,6 +7,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 
 import ListingItem from './ListingItem'
+import UserItem from './UserItem'
 
 import { useNavigate } from "react-router-dom";  
 
@@ -17,16 +18,18 @@ function HomePage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("%");
+    const [choice, setChoice] = useState('Listing');
 
     useEffect(() => {
-        fetchListings(searchTerm);
-    }, [searchTerm]);
+        const endpoint = choice === 'Listing' ? '/api/search_listings' : '/api/search_users';
+        fetchListings(endpoint, searchTerm);
+    }, [searchTerm, choice]);
 
-    const fetchListings = async (searchTerm) => {
+    const fetchListings = async (endpoint, searchTerm) => {
         const token = localStorage.getItem('token');
         try {
             setIsLoading(true);
-            const response = await fetch('api/search_listings', {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 cache: 'no-cache',
                 credentials: 'same-origin',
@@ -41,11 +44,11 @@ function HomePage() {
                     max_number_results: 10,
                 })
             });
-            console.log(response);
             if (!response.ok) {
                 throw new Error('Something went wrong!');
             }
             const data = await response.json();
+            console.log(data.data);
             setListings(data.data);
         } catch (error) {
             setError(error.message);
@@ -57,21 +60,18 @@ function HomePage() {
     const handleLogout = async () => {
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch('/api/logout', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to log out');
-            }
-
             localStorage.removeItem('token');
             navigate('/');
         } catch (error) {
             console.log('Logout error: ', error);
+        }
+    }
+
+    const ToggleChoice = () => {
+        if (choice === 'Listing') {
+            setChoice('User');
+        } else {
+            setChoice('Listing');
         }
     }
 
@@ -86,14 +86,21 @@ function HomePage() {
     return (
         <div id="homepage-container">
             <div id="menu-container">
+                <div>
+                    <button onClick={ToggleChoice}>
+                        {choice}
+                    </button>
+                </div>
                 <div id="search-bar-container">
                     <Searchbar onSearch={(newSearchTerm) => {
                         setSearchTerm(newSearchTerm);
                     }} />
                 </div>
                 <div>
-                    <ChatIcon style={{fontSize: 50}} id="chat-icon" />
-                    <PostAddIcon style={{fontSize: 50}} id="add-post-icon" onClick={() => {
+                    <ChatIcon style={{fontSize: 50, cursor: 'pointer'}} id="chat-icon" onClick={() => {
+                        navigate(`/chat/${localStorage.getItem('email')}`)
+                    }} />
+                    <PostAddIcon style={{fontSize: 50, cursor: 'pointer'}} id="add-post-icon" onClick={() => {
                         navigate("/create")
                     }} />
                     <AccountCircleIcon style={{fontSize: 50, cursor: 'pointer'}} id="profile-icon" onClick={() => {
@@ -106,10 +113,15 @@ function HomePage() {
             </div>
             <div id="listview_container">
                 <div id="list_items_div">
-                    {/* {listingComponents} */}
-                    {listings.map(listing => (
-                        <ListingItem key={listing.listingid} id={listing.listingid} title={listing.listing_name} price={listing.asking_price} />
-                    ))}
+                    {choice === 'Listing' ? (
+                        listings.map(listing => (
+                            <ListingItem key={listing.listingid} id={listing.listingid} title={listing.listing_name} price={listing.asking_price} />
+                        ))
+                    ) : (
+                        listings.map(user => (
+                            <UserItem key={user.id} id={user.id} name={user.name} email={user.email} />
+                        ))
+                    )}
                 </div>
                 <div id="recommended_list">
                     <div id="recommended_list_title">
