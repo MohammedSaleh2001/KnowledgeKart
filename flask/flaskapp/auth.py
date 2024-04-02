@@ -123,9 +123,9 @@ def signup_post():
     
     user = result.fetchone()
     
-    verification_token = generate_verification_token(email)
-    send_verification_email(email, verification_token)
-    email_tokens.add(verification_token)
+    # verification_token = generate_verification_token(email)
+    # send_verification_email(email, verification_token)
+    # email_tokens.add(verification_token)
 
     access_token = create_access_token(identity=email)
     return {'status': 'success', 'access_token':access_token}
