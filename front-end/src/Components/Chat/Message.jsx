@@ -3,7 +3,7 @@ import PortraitIcon from '@mui/icons-material/Portrait';
 
 import './Chat.css'
 
-const Message = ({message}) => {
+const Message = ({message, datesent}) => {
     return (
         <div className="message-container owner">
             <div id="messageInfo">
@@ -11,7 +11,7 @@ const Message = ({message}) => {
                     <PortraitIcon style={{fontSize: 40}} />
                 </div>
                 <div id="messageDate">
-                    Just Now
+                    {datesent}
                 </div>
             </div>
             <div id="messageContent">
