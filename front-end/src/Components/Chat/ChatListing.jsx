@@ -3,10 +3,10 @@ import PortraitIcon from '@mui/icons-material/Portrait';
 
 import './Chat.css'
 
-const ChatListing = ({name}) => {
+const ChatListing = ({name, onClick }) => {
 
     return (
-        <div id="chat_listing_container">
+        <div id="chat_listing_container" onClick={onClick} style={{ cursor: 'pointer' }}>
             <div id="chat_listing_portrait">
                 <PortraitIcon style={{fontSize: 50}} />
             </div>
