@@ -201,7 +201,7 @@ def get_chat():
 
     result = db.session.execute(query, {'i': user_data['userid']})
 
-    searchchat = []
+    searchchat = dict()
     for chatmsg in result.fetchall():
         data = {'messageid': chatmsg[0],
                 'to': chatmsg[1],
@@ -209,9 +209,17 @@ def get_chat():
                 'datesent': chatmsg[3],
                 'message': chatmsg[4]
         }
-        searchchat.append(data)
 
-    return jsonify({'status': 'success', 'data': searchchat})
+        otherid = data['to'] if data['to'] != user_data['userid'] else data['from']
+        other_data = get_user_profile_helper('userid', otherid)
+        other = other_data['email']
+
+        if other not in searchchat:
+            searchchat[other] = list()
+
+        searchchat[other].append(data)
+
+    return {'status': 'success', 'data': searchchat}
 
 @main.route('/send_chat', methods=['POST'])
 @jwt_required()
