@@ -38,7 +38,7 @@ def search_users():
     search_term = data.get('search_term')
     max_results = data.get('max_number_results')
 
-    query = db.text(f"SELECT Email FROM kkuser WHERE Email LIKE '%{search_term}%'")
+    query = db.text(f"SELECT firstname, email FROM kkuser WHERE email LIKE '%{search_term}%'")
 
     result = db.session.execute(query)
 
@@ -46,7 +46,7 @@ def search_users():
 
     userlist = []
     for user in result.fetchall():
-        userlist.append(user[0])
+        userlist.append({'name': user[0], 'email': user[1]})
 
     return {'status': 'success', 'data': userlist}
 
