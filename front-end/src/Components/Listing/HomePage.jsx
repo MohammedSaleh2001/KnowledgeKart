@@ -97,8 +97,10 @@ function HomePage() {
                     }} />
                 </div>
                 <div>
-                    <ChatIcon style={{fontSize: 50}} id="chat-icon" />
-                    <PostAddIcon style={{fontSize: 50}} id="add-post-icon" onClick={() => {
+                    <ChatIcon style={{fontSize: 50, cursor: 'pointer'}} id="chat-icon" onClick={() => {
+                        navigate(`/chat/${localStorage.getItem('email')}`)
+                    }} />
+                    <PostAddIcon style={{fontSize: 50, cursor: 'pointer'}} id="add-post-icon" onClick={() => {
                         navigate("/create")
                     }} />
                     <AccountCircleIcon style={{fontSize: 50, cursor: 'pointer'}} id="profile-icon" onClick={() => {
@@ -111,10 +113,6 @@ function HomePage() {
             </div>
             <div id="listview_container">
                 <div id="list_items_div">
-                    {/* {listingComponents} */}
-                    {/* {listings.map(listing => (
-                        <ListingItem key={listing.listingid} id={listing.listingid} title={listing.listing_name} price={listing.asking_price} />
-                    ))} */}
                     {choice === 'Listing' ? (
                         listings.map(listing => (
                             <ListingItem key={listing.listingid} id={listing.listingid} title={listing.listing_name} price={listing.asking_price} />
