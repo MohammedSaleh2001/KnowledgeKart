@@ -8,7 +8,7 @@ function UserItem({id, name, email}) {
 
     return (
         <div id="listing-container" style={{cursor: 'pointer'}} onClick={() => {
-            navigate(`/viewprofile/:${email}/`)
+            navigate(`/viewprofile/${email}/`)
         }}>
             <div className="listing-item-title">
                 {name}
