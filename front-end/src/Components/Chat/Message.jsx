@@ -3,7 +3,7 @@ import PortraitIcon from '@mui/icons-material/Portrait';
 
 import './Chat.css'
 
-const Message = () => {
+const Message = ({message}) => {
     return (
         <div className="message-container owner">
             <div id="messageInfo">
@@ -15,7 +15,7 @@ const Message = () => {
                 </div>
             </div>
             <div id="messageContent">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sagittis.
+                {message}
             </div>
         </div>
     )
