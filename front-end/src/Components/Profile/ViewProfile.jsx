@@ -16,6 +16,7 @@ function ViewProfile() {
     const navigate = useNavigate();
     const { email } = useParams();
     const [userData, setUserData] = useState(null);
+    const [rating, setRating] = useState();
     const loggedInUserEmail = localStorage.getItem('email');
 
     const { activeChat } = useChat();
@@ -35,6 +36,7 @@ function ViewProfile() {
                 });
                 const data = await response.json();
                 if (data.status === 'success') {
+                    console.log(data.data);
                     setUserData(data.data)
                 } else {
                     console.error('Failed to fetch user profile:', data.message);
@@ -47,6 +49,22 @@ function ViewProfile() {
 
         fetchUserData();
     }, [email]);
+
+    useEffect(() => {
+        if (userData) {
+            try {
+                const honesty = parseFloat(userData.honesty);
+                const politeness = parseFloat(userData.politeness);
+                const quickness = parseFloat(userData.quickness);
+                const numreviews = userData.numreviews;
+
+                const calculatedRating = (honesty + politeness + quickness + numreviews) / 4;
+                setRating(calculatedRating.toFixed(2));
+            } catch (error) {
+                console.error("Error calculating the user's rating!")
+            }
+        }
+    }, [userData])
 
     const handleChatInitiation = async () => {
         const receiverEmail = email;
@@ -150,7 +168,7 @@ function ViewProfile() {
                         {email}
                     </div>
                     <div id="view_profile_rating">
-                        Insert Rating
+                        Rating: {rating || "Not Available"}
                     </div>
                     {!isViewingOwnProfile && (
                         <div id="view_profile_action_buttons">
@@ -167,7 +185,18 @@ function ViewProfile() {
                     )}
                 </div>
                 <div id="view_profile_mid_right">
-                    Description:<br />
+                    <div style={{'border-top': 'none'}}>
+                        Honesty: {userData?.honesty}
+                    </div>
+                    <div>
+                        Number of Reviews: {userData?.numreviews}
+                    </div>
+                    <div>
+                        Politeness: {userData?.politeness}
+                    </div>
+                    <div style={{'border-bottom': 'none'}}>
+                        Quickness: {userData?.quickness}
+                    </div>
                 </div>
             </div>
             <div id="view_profile_bot">
