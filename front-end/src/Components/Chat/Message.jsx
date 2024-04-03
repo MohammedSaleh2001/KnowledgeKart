@@ -3,9 +3,11 @@ import PortraitIcon from '@mui/icons-material/Portrait';
 
 import './Chat.css'
 
-const Message = ({message, datesent}) => {
+const Message = ({message, datesent, sentByCurrentUser}) => {
+    const messageContainerClass = `message-container ${sentByCurrentUser ? 'owner' : ''}`
+
     return (
-        <div className="message-container owner">
+        <div className={messageContainerClass}>
             <div id="messageInfo">
                 <div id="messageImage">
                     <PortraitIcon style={{fontSize: 40}} />
