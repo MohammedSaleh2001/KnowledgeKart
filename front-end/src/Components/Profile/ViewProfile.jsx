@@ -16,6 +16,7 @@ function ViewProfile() {
     const navigate = useNavigate();
     const { email } = useParams();
     const [userData, setUserData] = useState(null);
+    const loggedInUserEmail = localStorage.getItem('email');
 
     const { activeChat } = useChat();
     const { addMessageToActiveChat } = useChat();
@@ -121,6 +122,8 @@ function ViewProfile() {
         }
     }
 
+    const isViewingOwnProfile = email === loggedInUserEmail;
+
     return (
         <div id="view_profile_container">
             <div id="view_profile_top">
@@ -149,17 +152,19 @@ function ViewProfile() {
                     <div id="view_profile_rating">
                         Insert Rating
                     </div>
-                    <div id="view_profile_action_buttons">
-                        <div id="view_profile_email_button">
-                            Email
-                        </div>
-                        <div id="view_profile_chat_button" onClick={handleChatInitiation}>
-                            Chat
-                        </div>
-                        <div id="view_profile_report_button">
-                            Report
-                        </div>
-                    </div>
+                    {!isViewingOwnProfile && (
+                        <div id="view_profile_action_buttons">
+                            <div id="view_profile_email_button">
+                                Email
+                            </div>
+                            <div id="view_profile_chat_button" onClick={handleChatInitiation}>
+                                Chat
+                            </div>
+                            <div id="view_profile_report_button">
+                                Report
+                            </div>
+                        </div>    
+                    )}
                 </div>
                 <div id="view_profile_mid_right">
                     Description:<br />
