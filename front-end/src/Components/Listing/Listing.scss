@@ -8,6 +8,20 @@
         align-items: center;
         padding: 25px;
 
+        #toggle_button_div {
+            display: flex;
+            margin: 10px;
+            width: 50px;
+            justify-content: center;
+            align-items: center;
+            background-color: yellow;
+            padding: 10px 20px 10px 20px;
+            border: solid black 2px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
         #search-bar-container {
             flex-grow: 1;
             margin: 10px;

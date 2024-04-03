@@ -86,10 +86,8 @@ function HomePage() {
     return (
         <div id="homepage-container">
             <div id="menu-container">
-                <div>
-                    <button onClick={ToggleChoice}>
-                        {choice}
-                    </button>
+                <div id="toggle_button_div" onClick={ToggleChoice}>
+                    {choice}
                 </div>
                 <div id="search-bar-container">
                     <Searchbar onSearch={(newSearchTerm) => {
