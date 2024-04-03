@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import PortraitIcon from '@mui/icons-material/Portrait';
 
+import { useNavigate } from "react-router-dom";  
+
 import './Chat.css'
 
 const ChatNavbar = () => {
+
+    const navigate = useNavigate();
 
     const [userName, setUserName] = useState('');
 
@@ -29,7 +33,9 @@ const ChatNavbar = () => {
 
     return (
         <div id="chat_nav_bar_container">
-            <span>KK Chat</span>
+            <span style={{cursor: 'pointer'}} onClick={() => {
+                navigate('/home')
+            }}>Home</span>
             <div>
                 <div id="chat_nav_bar_portrait_icon_div">
                     <PortraitIcon style={{fontSize: 40}} />
