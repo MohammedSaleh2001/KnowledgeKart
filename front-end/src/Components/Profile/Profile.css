@@ -71,9 +71,24 @@
   border-radius: 5px;
 }
 #view_profile_container #view_profile_mid #view_profile_mid_right {
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
   padding: 10px;
   font-size: 20px;
+  justify-content: space-evenly;
+}
+#view_profile_container #view_profile_mid #view_profile_mid_right div {
+  display: flex;
+  flex-grow: 1;
+  justify-content: left;
+  align-items: center;
+  border-top: solid black 1px;
+  border-right: none;
+  border-bottom: solid black 1px;
+  border-left: none;
+  border-radius: 0px;
+  margin: 0px;
 }
 
 #edit_profile_container {
