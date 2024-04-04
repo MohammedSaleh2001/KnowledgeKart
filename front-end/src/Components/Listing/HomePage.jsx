@@ -52,6 +52,7 @@ function HomePage() {
             setListings(data.data);
         } catch (error) {
             setError(error.message);
+            navigate('/');
         } finally {
             setIsLoading(false);
         }

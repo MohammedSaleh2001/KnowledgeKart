@@ -152,6 +152,20 @@
   font-size: 20px;
   font-weight: bold;
 }
+#listing_page_container #listing_top_div #edit_button {
+  display: flex;
+  margin: 10px;
+  padding: 0px 10px 0px 10px;
+  background-color: yellow;
+  height: 100%;
+  border: 2px solid black;
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
 #listing_page_container #listing_mid_div {
   display: flex;
   width: 100vw;

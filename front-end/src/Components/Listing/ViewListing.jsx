@@ -19,6 +19,7 @@ function Listing() {
     const [listing, setListing] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [rating, setRating] = useState();
 
     useEffect(() => {
         const fetchListing = async () => {
@@ -39,6 +40,7 @@ function Listing() {
                     throw new Error('Could not fetch listing data');
                 }
                 const data = await response.json();
+                console.log("Listing:", data.data);
                 setListing(data.data);
             } catch (err) {
                 setError(err.message);
@@ -49,6 +51,22 @@ function Listing() {
 
         fetchListing();
     }, [listingId]);
+
+    useEffect(() => {
+        if (listing) {
+            try {
+                const honesty = parseFloat(listing.seller.honesty);
+                const politeness = parseFloat(listing.seller.politeness);
+                const quickness = parseFloat(listing.seller.quickness);
+                const numreviews = listing.seller.numreviews;
+
+                const calculatedRating = (honesty + politeness + quickness + numreviews) / 4;
+                setRating(calculatedRating.toFixed(2));
+            } catch (error) {
+                console.error("Error calculating the user's rating!")
+            }
+        }
+    }, [listing])
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -72,6 +90,11 @@ function Listing() {
                 <div id="listing_date">
                     {"Date Listed: " + listing?.date_listed || ""}
                 </div>
+                <div id="edit_button" onClick={() => {
+                    navigate(`/editlisting/${listingId}`);
+                }}>
+                    Edit
+                </div>
             </div>
             <div id="listing_mid_div">
                 <div id="listing_mid_left">
@@ -82,14 +105,14 @@ function Listing() {
                         <div id="listing_mid_left_top_right">
                             <div id="listing_mid_left_top_right_top">
                                 <div id="listing_seller_name">
-                                    {listing?.sellerName || "Seller Name"}
+                                    Name: {listing?.seller?.firstname || "Seller Name"}
                                 </div>
                                 <div id="listing_rating">
-                                    Rating: {listing?.rating || "N/A"}
+                                    Rating: {rating || "N/A"}
                                 </div>
                             </div>
                             <div id="listing_mid_left_top_right_mid">
-                                {listing?.sellerEmail || "Seller Email Not Available"}
+                                Email: {listing?.seller?.email || "Seller Email Not Available"}
                             </div>
                             <div id="listing_mid_left_top_right_bot">
                                 <div className="listing-button">
