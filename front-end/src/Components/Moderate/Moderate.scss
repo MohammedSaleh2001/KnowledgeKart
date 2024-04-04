@@ -51,10 +51,12 @@
     }
 
     #submit_button_div {
+        display: flex;
         padding: 10px;
 
         button {
-            width: 100%;
+            flex-grow: 1;
+            margin: 0px 2px 0px 2px;
             height: 30px;
             border: solid black 1px;
             border-radius: 10px;
@@ -123,14 +125,28 @@
                 }
             }
 
-            #investigate_button {
+            #action_buttons_div {
                 display: flex;
-                justify-content: center;
-                align-items: center;
-                background-color: lightgreen;
-                padding: 5px;
-                border: solid gray 1px;
-                border-radius: 10px;
+                flex-direction: row;
+
+                div {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin: 0px 2px 0px 2px;;
+                    padding: 5px;
+                    border: solid gray 1px;
+                    border-radius: 10px;
+                    cursor: pointer;
+                }
+
+                #suspend_button {
+                    background-color: red;
+                }
+
+                #investigate_button {
+                    background-color: lightgreen;
+                }    
             }
         }
     }

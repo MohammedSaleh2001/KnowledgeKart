@@ -11,8 +11,13 @@ function ReportInstance() {
                     Date Reported: Insert Date Here
                 </div>    
             </div>
-            <div id="investigate_button">
-                Investigate
+            <div id="action_buttons_div">
+                <div id="suspend_button">
+                    Suspend
+                </div>
+                <div id="investigate_button">
+                    Investigate
+                </div>    
             </div>
         </div>
     )
