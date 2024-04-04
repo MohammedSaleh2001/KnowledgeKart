@@ -8,7 +8,7 @@ function ModerateInvestigate() {
 
     const navigate = useNavigate();
 
-    const { userID } = useParams();
+    const { email } = useParams();
 
     return (
         <div id="moderate_investigate_container">
@@ -16,7 +16,7 @@ function ModerateInvestigate() {
                 Investigation Form
             </div>
             <div id="email_container">
-                <input type="email" placeholder="Enter Email" readonly="readonly"/>
+                <input type="email" placeholder="Enter Email" value={email} readonly="readonly"/>
             </div>
             <div id="textarea_container">
                 <textarea placeholder="Type Your Rationale..." readonly="readonly"/>
@@ -27,10 +27,14 @@ function ModerateInvestigate() {
                 }}>
                     Back
                 </div>
-                <div>
+                <div onClick={() => {
+                    navigate(`/viewprofile/${email}`);
+                }}>
                     View Profile
                 </div>
-                <div>
+                <div onClick={() => {
+                    navigate(`/chat/${email}`)
+                }}>
                     View Chat History
                 </div>
                 <div id="suspend_button">
