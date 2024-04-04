@@ -31,6 +31,58 @@ def get_user_profile_helper(columnkey, columnval):
     
     return data
 
+def search_listings_helper(query):
+    result = db.session.execute(query)
+
+    searchlist = []
+    for listing in result.fetchall():
+        data = {'listingid': listing[0],
+                'sellerid': listing[1],
+                'listing_name': listing[2],
+                'listing_description': listing[3],
+                'asking_price': listing[4],
+                'category_type': listing[5],
+                'condition': listing[7],
+                'date_listed': listing[9],
+                'datechanged': listing[11],
+                'listingstatus': listing[10],
+                'soldto': listing[12],
+                'soldprice': listing[13]}
+        searchlist.append(data)
+
+    return searchlist
+
+@main.route('/user_profile', methods=['GET', 'POST'])
+@jwt_required()
+def get_user_profile():
+    email = get_jwt_identity()  # Get current user by default
+
+    if request.method == 'POST':
+        data = request.json
+        email = data.get('email')
+
+    user_data = get_user_profile_helper('email', email)
+
+    if not user_data:
+        return {'status': 'error', 'message': 'Email address not in use!'}
+    
+    return {'status': 'success', 'data': user_data}
+
+@main.route('/edit_user_profile', methods=['POST'])
+@jwt_required()
+def edit_user_profile():
+    data = request.json
+    old_email = get_jwt_identity()
+    new_email = data.get('new_email')
+    
+    query = db.text(f"UPDATE kkuser SET email = '{new_email}' WHERE email = '{old_email}'")
+
+    result = db.session.execute(query)
+
+    db.session.commit()
+    
+    return redirect('/api/user_profile')
+
 @main.route('/search_users', methods=['POST'])
 @jwt_required()
 def search_users():
@@ -54,14 +106,18 @@ def search_users():
 @jwt_required()
 def add_listing():
     data = request.json
-    user = data.get('user')
-    name = data.get('name')
-    description = data.get('description')
+    
+    seller = get_jwt_identity()
+    seller_data = get_user_profile_helper('email', seller)
+    sellerid = seller_data['userid']
+
+    listing_name = data.get('listing_name')
+    listing_description = data.get('listing_description')
     asking_price = data.get('asking_price')
     category_type = data.get('category_type')
     # category = data.get('category')
     condition = data.get('condition')
-    date_listed = data.get('date_listed')
+    date_listed = str(datetime.now())
     
     query = db.text(
             '''
@@ -76,9 +132,9 @@ def add_listing():
             ''')
 
     db.session.execute(query, 
-                    {'user': user,
-                    'name': name,
-                    'desc': description,
+                    {'user': sellerid,
+                    'name': listing_name,
+                    'desc': listing_description,
                     'price': asking_price,
                     'cat': category_type,
                     'cond': condition,
@@ -86,30 +142,7 @@ def add_listing():
 
     db.session.commit()
 
-    query = db.text('SELECT * FROM listing WHERE listingname = :name')
-
-    result = db.session.execute(query,
-                              {'name': name})
-    
-    listing = result.fetchone()
-
-    return {'status': 'success' if listing else 'error'}
-
-@main.route('/user_profile', methods=['GET', 'POST'])
-@jwt_required()
-def get_user_profile():
-    email = get_jwt_identity()  # Get current user by default
-
-    if request.method == 'POST':
-        data = request.json
-        email = data.get('email')
-
-    user_data = get_user_profile_helper('email', email)
-
-    if not user_data:
-        return {'status': 'error', 'message': 'Email address not in use!'}
-    
-    return {'status': 'success', 'data': user_data}
+    return {'status': 'success'}
    
 @main.route('/search_listings', methods=['POST'])
 @jwt_required()
@@ -118,23 +151,9 @@ def search_listings():
     search_term = data.get('search_term')
     max_results = data.get('max_number_results')
 
-    query = db.text(f"SELECT * FROM listing WHERE listingname LIKE '%{search_term}%'")
+    query = db.text(f"SELECT * FROM listing WHERE listingname LIKE '%{search_term}%' LIMIT {max_results}")
 
-    result = db.session.execute(query)
-
-    # print(result)
-
-    searchlist = []
-    for listing in result.fetchall():
-        data = {'listingid': listing[0],
-                'userid': listing[1],
-                'listing_name': listing[2],
-                'listing_description': listing[3],
-                'asking_price': listing[4],
-                'category_type': listing[5],
-                'condition': listing[7],
-                'date_listed': listing[9]}
-        searchlist.append(data)
+    searchlist = search_listings_helper(query)
 
     return {'status': 'success', 'data': searchlist}
 
@@ -167,24 +186,87 @@ def get_listing():
             'asking_price': listing[4],
             'category_type': listing[5],
             'condition': listing[7],
-            'date_listed': listing[9]}
+            'date_listed': listing[9],
+            'datechanged': listing[11],
+            'listingstatus': listing[10],
+            'soldto': listing[12],
+            'soldprice': listing[13]}
 
     return {'status': 'success', 'data': data}
 
-@main.route('/edit_user_profile', methods=['POST'])
+@main.route('/get_user_listings', methods=['GET'])
 @jwt_required()
-def edit_user_profile():
-    data = request.json
-    old_email = get_jwt_identity()
-    new_email = data.get('new_email')
-    
-    query = db.text(f"UPDATE kkuser SET email = '{new_email}' WHERE email = '{old_email}'")
+def get_user_listings():
+    seller = get_jwt_identity()
+    seller_data = get_user_profile_helper('email', seller)
+    sellerid = seller_data['userid']
 
+    query = db.text(f"SELECT * FROM listing WHERE userid = '{sellerid}'")
+
+    searchlist = search_listings_helper(query)
+
+    return {'status': 'success', 'data': searchlist}
+
+@main.route('/edit_listing', methods=['POST'])
+@jwt_required()
+def edit_listing():
+    data = request.json
+    
+    seller = get_jwt_identity()
+    seller_data = get_user_profile_helper('email', seller)
+    sellerid = seller_data['userid']
+
+    listingid = data.get('listingid')
+
+    query = db.text(f"SELECT * FROM listing WHERE listingid = {listingid}")
     result = db.session.execute(query)
+    listing = result.fetchone()
+    if not listing:
+        return {'status': 'error', 'message': 'No such listing!'}
+    if sellerid != listing[1]:
+        return {'status': 'error', 'message': "User cannot edit other seller's listings"}
+
+    listing_name = data.get('listing_name')
+    listing_description = data.get('listing_description')
+    asking_price = data.get('asking_price')
+    category_type = data.get('category_type')
+    # category = data.get('category')
+    condition = data.get('condition')
+    date_changed = str(datetime.now())
+    status = data.get('status')
+    sold_to = data.get('sold_to')
+    sold_price = data.get('sold_price')
+
+    query = db.text(
+            '''
+            UPDATE listing SET  listingname = :name,
+                                listingdescription = :desc,
+                                askingprice = :price,
+                                categorytypeid = :cat,
+                                condition = :cond,
+                                datechanged = :date,
+                                listingstatus = :status,
+                                soldto = :soldto,
+                                soldprice = :soldprice 
+            WHERE listingid = :listingid              
+            ''')
+
+    db.session.execute(query, 
+                    {'name': listing_name,
+                    'desc': listing_description,
+                    'price': asking_price,
+                    'cat': category_type,
+                    'cond': condition,
+                    'date': date_changed,
+                    'status': status,
+                    'soldto': sold_to,
+                    'soldprice': sold_price,
+                    'listingid': listingid})
 
     db.session.commit()
-    
-    return redirect('/api/user_profile')
+
+    return {'status': 'success'}
+
 
 @main.route('/get_chat', methods=['POST'])
 @jwt_required()
