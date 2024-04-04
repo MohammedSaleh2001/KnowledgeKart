@@ -47,6 +47,7 @@ function App() {
                 <Route path="/listing/:listingId" element={<Listing />} />
                 <Route path="/editlisting/:listingId" element={<EditListing token={token} setToken={setToken} />} />
                 <Route path="/viewprofile/:email" element={<ViewProfile token={token} setToken={setToken} />} />
+                <Route path="/editprofile/:email" element={<EditProfile token={token} setToken={setToken} />} />
                 <Route path="/chat/:email" element={<ChatHomePage token={token} setToken={setToken} />} />
               </Route>
               <Route path="/viewanalytics" element={<AnalyticsView token={token} setToken={setToken} />} />
@@ -54,7 +55,6 @@ function App() {
               <Route path="/moderatereport/:email" element={<ModerateReport token={token} setToken={setToken} />} />
               <Route path="/moderatesuspend/:email" element={<ModerateSuspend token={token} setToken={setToken} />} />
               <Route path="/moderateview" element={<ModerateView token={token} setToken={setToken} />} />
-              <Route path="/editprofile/:email" element={<EditProfile token={token} setToken={setToken} />} />
             </Routes>
           </Router>
         </div>  
