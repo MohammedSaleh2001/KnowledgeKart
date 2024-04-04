@@ -94,9 +94,16 @@ function CreateListing() {
                             }} type="file" />
                         </Form.Group>
 
-                        <Button onClick={handleSubmit} variant="primary" type="submit">
-                            Submit
-                        </Button>
+                        <Form.Group>
+                            <Button onClick={handleSubmit} variant="primary" type="submit">
+                                Submit
+                            </Button>
+                            <Button variant="primary" type="submit" onClick={() => {
+                                navigate('/home');
+                            }}>
+                                Cancel
+                            </Button>
+                        </Form.Group>
                     </Form>        
                 </Card.Body>
             </Card>

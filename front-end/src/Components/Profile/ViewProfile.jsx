@@ -31,15 +31,16 @@ function ViewProfile() {
             const token = localStorage.getItem('token');
             try {
                 const response = await fetch('/api/user_profile', {
-                    method: 'GET',
+                    method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify({"email": email})
                 });
                 const data = await response.json();
                 if (data.status === 'success') {
-                    console.log(data.data);
+                    console.log("UserData", data.data);
                     setUserData(data.data)
                 } else {
                     console.error('Failed to fetch user profile:', data.message);
@@ -182,11 +183,13 @@ function ViewProfile() {
                         navigate('/home');
                     }} />
                 </div>
-                <div id="edit_profile_button" onClick={() => {
-                    navigate(`/editprofile/${localStorage.getItem('email')}`)
-                }}>
-                    Edit Profile
-                </div>
+                {isViewingOwnProfile && (
+                    <div id="edit_profile_button" onClick={() => {
+                        navigate(`/editprofile/${localStorage.getItem('email')}`)
+                    }}>
+                        Edit Profile
+                    </div>
+                )}
             </div>
             <div id="view_profile_mid">
                 <div id="view_profile_mid_left">
