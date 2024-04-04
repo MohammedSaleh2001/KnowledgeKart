@@ -1,12 +1,14 @@
 import React from 'react'
 
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import './Profile.css'
 
 function EditProfile() {
 
     const { email } = useParams();
+
+    const navigate = useNavigate();
 
     return (
         <div id="edit_profile_container">
@@ -22,6 +24,9 @@ function EditProfile() {
                 </div>
             </div>
             <div id="edit_profile_submit_div">
+                <button id="edit_profile_cancel_button" onClick={() => {
+                    navigate(`/viewprofile/${email}`);
+                }}>Cancel</button>
                 <button id="edit_profile_submit_button">Submit</button>
             </div>
         </div>

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import './Profile.css'
 
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import PortraitIcon from '@mui/icons-material/Portrait';
 
-import { useNavigate } from "react-router-dom";
-
 import { useChat } from '../../Context/ChatContext';
+
+import ListingItem from '../Listing/ListingItem';
 
 function ViewProfile() {
 
@@ -17,6 +17,9 @@ function ViewProfile() {
     const { email } = useParams();
     const [userData, setUserData] = useState(null);
     const [rating, setRating] = useState();
+    const [listings, setListings] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
     const loggedInUserEmail = localStorage.getItem('email');
 
     const { activeChat } = useChat();
@@ -47,7 +50,36 @@ function ViewProfile() {
             }
         };
 
+        const fetchListings = async () => {
+            const token = localStorage.getItem('token');
+            try {
+                setIsLoading(true);
+                const response = await fetch('/api/get_user_listings', {
+                    method: 'GET',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    mode: 'cors',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Something went wrong!');
+                }
+                const data = await response.json();
+                console.log("Profile listing is", data.data);
+                setListings(data.data);
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
         fetchUserData();
+        fetchListings();
     }, [email]);
 
     useEffect(() => {
@@ -200,7 +232,9 @@ function ViewProfile() {
                 </div>
             </div>
             <div id="view_profile_bot">
-
+                {listings.map(listing => (
+                    <ListingItem key={listing.listingid} id={listing.listingid} title={listing.listing_name} price={listing.asking_price} />
+                ))}
             </div>
         </div>
     )
