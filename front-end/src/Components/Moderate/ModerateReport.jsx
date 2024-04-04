@@ -28,6 +28,9 @@ function ModerateReport() {
                 <textarea placeholder="Type Your Rationale..." />
             </div>
             <div id="submit_button_div">
+                <button onClick={() => {
+                    navigate(`/viewprofile/${email}`)
+                }}>Cancel</button>
                 <button onClick={handleSubmit}>Submit</button>
             </div>
         </div>

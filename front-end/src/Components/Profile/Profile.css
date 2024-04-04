@@ -69,6 +69,7 @@
   margin: 2px;
   border: solid black 1px;
   border-radius: 5px;
+  cursor: pointer;
 }
 #view_profile_container #view_profile_mid #view_profile_mid_right {
   display: flex;

@@ -213,7 +213,9 @@ function ViewProfile() {
                             <div id="view_profile_chat_button" onClick={handleChatInitiation}>
                                 Chat
                             </div>
-                            <div id="view_profile_report_button">
+                            <div id="view_profile_report_button" onClick={() => {
+                                navigate(`/moderatereport/${email}`)
+                            }}>
                                 Report
                             </div>
                         </div>    
