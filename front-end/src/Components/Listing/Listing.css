@@ -253,6 +253,7 @@
   padding: 15px 20px 15px 20px;
   background-color: orange;
   border-radius: 10px;
+  cursor: pointer;
 }
 #listing_page_container #listing_mid_div #listing_mid_left #listing_mid_left_bot {
   display: flex;

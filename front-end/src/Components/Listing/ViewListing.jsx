@@ -20,6 +20,7 @@ function Listing() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [rating, setRating] = useState();
+    const [isOwner, setIsOwner] = useState(false);
 
     useEffect(() => {
         const fetchListing = async () => {
@@ -42,6 +43,8 @@ function Listing() {
                 const data = await response.json();
                 console.log("Listing:", data.data);
                 setListing(data.data);
+
+                setIsOwner(data.data.seller.email === localStorage.getItem('email'));
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -76,6 +79,43 @@ function Listing() {
         return <div>Error: {error}</div>;
     }
 
+    const initiateChatWithSeller = async () => {
+        const receiverEmail = listing?.seller?.email;
+        const message = "Hello, I'm interested in your listing.";
+        const senderEmail = localStorage.getItem('email');
+
+        if (!receiverEmail) {
+            console.error("Receiver email not found.");
+            return;
+        }
+        
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch('/api/send_chat', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    receiver_email: receiverEmail,
+                    message,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                navigate(`/chat/${senderEmail}`);
+            } else {
+                console.error('Failed to initiate chat:', data.message);
+            }
+        } catch (error) {
+            console.error('Error initiating chat:', error);
+        }
+    }
+
     return (
         <div id="listing_page_container">
             <div id="listing_top_div">
@@ -90,11 +130,13 @@ function Listing() {
                 <div id="listing_date">
                     {"Date Listed: " + listing?.date_listed || ""}
                 </div>
-                <div id="edit_button" onClick={() => {
-                    navigate(`/editlisting/${listingId}`);
-                }}>
-                    Edit
-                </div>
+                {isOwner && <div id="edit_button" onClick={() => {
+                        navigate(`/editlisting/${listingId}`);
+                    }}>
+                        Edit
+                    </div>    
+                }
+                
             </div>
             <div id="listing_mid_div">
                 <div id="listing_mid_left">
@@ -118,7 +160,7 @@ function Listing() {
                                 <div className="listing-button">
                                     Email
                                 </div>
-                                <div className="listing-button">
+                                <div className="listing-button" onClick={initiateChatWithSeller}>
                                     Chat
                                 </div>
                             </div>
