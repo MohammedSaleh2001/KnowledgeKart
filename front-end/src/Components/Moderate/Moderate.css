@@ -128,6 +128,9 @@
 #moderate_view_container #report_listings #report_instance_div #action_buttons_div #suspend_button {
   background-color: red;
 }
+#moderate_view_container #report_listings #report_instance_div #action_buttons_div #close_button {
+  background-color: yellow;
+}
 #moderate_view_container #report_listings #report_instance_div #action_buttons_div #investigate_button {
   background-color: lightgreen;
 }
@@ -190,6 +193,9 @@
   border: solid black 1px;
   border-radius: 10px;
   cursor: pointer;
+}
+#moderate_investigate_container #action_buttons_div #close_button {
+  background-color: yellow;
 }
 #moderate_investigate_container #action_buttons_div #suspend_button {
   background-color: red;

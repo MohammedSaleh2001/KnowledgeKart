@@ -19,6 +19,9 @@ function ReportInstance({ report }) {
                 <div id="suspend_button">
                     Suspend
                 </div>
+                <div id="close_button">
+                    Close
+                </div>
                 <div id="investigate_button" onClick={() => {
                     navigate(`/moderateinvestigate/${report.reportid}`);
                 }}>

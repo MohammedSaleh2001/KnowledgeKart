@@ -144,6 +144,10 @@
                     background-color: red;
                 }
 
+                #close_button {
+                    background-color: yellow;
+                }
+
                 #investigate_button {
                     background-color: lightgreen;
                 }    
@@ -215,6 +219,10 @@
             border: solid black 1px;
             border-radius: 10px;
             cursor: pointer;
+        }
+
+        #close_button {
+            background-color: yellow;
         }
 
         #suspend_button {

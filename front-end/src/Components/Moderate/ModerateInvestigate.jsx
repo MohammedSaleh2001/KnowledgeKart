@@ -9,6 +9,32 @@ function ModerateInvestigate() {
     const { reportId } = useParams();
     const [report, setReport] = useState(null);
 
+    const handleCloseReport = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch('/api/close_report', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    reportid: reportId,
+                    verdict: "Report is closed. No one was at fault."
+                }),
+            });
+            const data = await response.json();
+            if (response.ok && data.status === 'success') {
+                alert("Report closed successfully.");
+                navigate('/moderateview');
+            } else {
+                console.error('Failed to close report');
+            }
+        } catch (error) {
+            console.error('Error closing report:', error);
+        }
+    };
+
     useEffect(() => {
         const fetchReports = async () => {
             const token = localStorage.getItem('token');
@@ -71,6 +97,9 @@ function ModerateInvestigate() {
                     navigate(`/chat/${report.report_for_email}`)
                 }}>
                     View Chat History
+                </div>
+                <div id="close_button" onClick={handleCloseReport}>
+                    Close
                 </div>
                 <div id="suspend_button">
                     Suspend

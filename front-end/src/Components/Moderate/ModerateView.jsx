@@ -5,7 +5,7 @@ import ReportInstance from './ReportInstance'
 import './Moderate.css'
 
 function ModerateView() {
-    const [reports, setReports] = useState({});
+    const [reports, setReports] = useState([]);
 
     useEffect(() => {
         const fetchReports = async () => {
@@ -22,7 +22,8 @@ function ModerateView() {
                 const data = await response.json();
                 console.log("Reports data:", data.data);
                 if (response.ok && data.status === 'success') {
-                    setReports(data.data);
+                    const openReports = Object.values(data.data).filter(report => report.report_open);
+                    setReports(openReports);
                 } else {
                     console.error('Failed to fetch reports');
                 }
@@ -33,6 +34,8 @@ function ModerateView() {
 
         fetchReports();
     }, []);
+
+    console.log("Reports:", reports);
 
     return (
         <div id="moderate_view_container">
@@ -45,7 +48,7 @@ function ModerateView() {
                 </div>
             </div>
             <div id="report_listings">
-                {Object.values(reports).map((report) => (
+                {reports.map((report) => (
                     <ReportInstance key={report.reportid} report={report} />
                 ))}
             </div>
