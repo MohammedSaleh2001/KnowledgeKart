@@ -27,7 +27,9 @@ def get_user_profile_helper(columnkey, columnval):
             'politeness': user[9], 
             'honesty': user[10], 
             'quickness': user[11], 
-            'numreviews': user[12]}
+            'numreviews': user[12],
+            'blacklist': user[7],
+            'blacklisted_until': user[8]}
     
     return data
 
@@ -274,7 +276,6 @@ def edit_listing():
 
     return {'status': 'success'}
 
-
 @main.route('/get_reports', methods=['POST'])
 @jwt_required()
 def get_reports():
@@ -375,6 +376,27 @@ def add_report():
     db.session.commit()
 
     return {'status': 'success'} 
+
+@main.route('/suspend_user', methods=['POST'])
+@jwt_required()
+def suspend_user():
+    data = request.json
+    email = data.get('email')
+    blacklist = data.get('blacklist')
+    blacklisted_until = data.get('blacklisted_until')
+
+    query = db.text('''UPDATE kkuser SET blacklist = :blacklist, 
+                                        blacklisteduntil = :blacklisted_until 
+                        WHERE email = :email
+                    ''')
+
+    result = db.session.execute(query, {'blacklist': blacklist,
+                                        'blacklisted_until': blacklisted_until,
+                                        'email': email})
+
+    db.session.commit()
+    
+    return {'status': 'success', 'data': get_user_profile_helper('email', email)}
 
 @main.route('/get_chat', methods=['POST'])
 @jwt_required()
