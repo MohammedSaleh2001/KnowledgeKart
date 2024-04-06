@@ -72,10 +72,10 @@ def get_user_profile():
 @jwt_required()
 def edit_user_profile():
     data = request.json
-    old_email = get_jwt_identity()
-    new_email = data.get('new_email')
+    email = get_jwt_identity()
+    new_name = data.get('new_name')
     
-    query = db.text(f"UPDATE kkuser SET email = '{new_email}' WHERE email = '{old_email}'")
+    query = db.text(f"UPDATE kkuser SET firstname = '{new_name}' WHERE email = '{email}'")
 
     result = db.session.execute(query)
 
@@ -194,11 +194,15 @@ def get_listing():
 
     return {'status': 'success', 'data': data}
 
-@main.route('/get_user_listings', methods=['GET'])
+@main.route('/get_user_listings', methods=['POST'])
 @jwt_required()
 def get_user_listings():
-    seller = get_jwt_identity()
+    data = request.json
+    seller = data.get('email')
+    
     seller_data = get_user_profile_helper('email', seller)
+    if not seller_data:
+        return {'status': 'error', 'message': 'Email address not in use!'}
     sellerid = seller_data['userid']
 
     query = db.text(f"SELECT * FROM listing WHERE userid = '{sellerid}'")
@@ -267,6 +271,100 @@ def edit_listing():
 
     return {'status': 'success'}
 
+
+@main.route('/get_reports', methods=['POST'])
+@jwt_required()
+def get_reports():
+    data = request.json
+    # email = get_jwt_identity()
+    # user_data = get_user_profile_helper('email', email)
+    # if not user_data:
+    #     return {'status': 'error', 'message': 'Email address not in use!'}
+
+    query = db.text(f"SELECT * FROM report")
+    result = db.session.execute(query)
+
+    reports = dict()
+    for report in result.fetchall():
+        data = {'reportid': report[0],
+                'report_by': report[1],
+                'report_for': report[2],
+                'report_text': report[3],
+                'date_reported': report[4],
+                'moderator_assigned': report[5],
+                'report_open': report[6],
+                'date_closed': report[7],
+                'verdict': report[8]
+        }
+        reports[report[0]] = data
+
+    return {'status': 'success', 'data': reports}  
+
+@main.route('/close_report', methods=['POST'])
+@jwt_required()
+def close_report():
+    data = request.json
+    assignee = get_jwt_identity()
+    verdict = data.get('verdict')
+    reportid = data.get('reportid')
+    date_closed = str(datetime.now())
+
+    assignee_data = get_user_profile_helper('email', assignee)
+    assigneeid = assignee_data['userid']
+
+    query = db.text(
+            '''
+            UPDATE report SET verdict = :verdict
+                            reportopen = :reportopen,
+                            dateclosed = :dateclosed,
+                            moderatorassigned = :moderatorassigned)
+            VALUES (:receiverid, :senderid, :datesent, :message)
+            WHERE reportid = :reportid
+            ''')
+
+    result = db.session.execute(query, {'verdict': verdict,
+                                        'reportopen': False,
+                                        'dateclosed': date_closed,
+                                        'moderatorassigned': assigneeid,
+                                        'reportid': reportid})
+
+    db.session.commit()
+
+    return {'status': 'success'}
+
+@main.route('/add_report', methods=['POST'])
+@jwt_required()
+def add_report():
+    data = request.json
+    report_by = get_jwt_identity()
+    by_data = get_user_profile_helper('email', report_by)
+
+    message = data.get('message')
+
+    report_for = data.get('report_for')
+    for_data = get_user_profile_helper('email', report_for)
+
+    if not by_data or not for_data:
+        return {'status': 'error', 'message': 'Email address not in use!'}
+
+
+    query = db.text(
+            '''
+            INSERT INTO report (reportby,
+                            reportfor,
+                            datereported,
+                            reporttext)
+            VALUES (:reportby, :reportfor, :datereported, :reporttext)
+            ''')
+
+    result = db.session.execute(query, {'reportby': by_data['userid'],
+                                        'reportfor': for_data['userid'],
+                                        'datereported': str(datetime.now()),
+                                        'reporttext': message})
+
+    db.session.commit()
+
+    return {'status': 'success'} 
 
 @main.route('/get_chat', methods=['POST'])
 @jwt_required()
