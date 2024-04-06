@@ -64,27 +64,37 @@ function CreateListing() {
                     <Form id="create_listing_form">
                         <Form.Label id="create-listing-title">Create Listing</Form.Label>
                         <Form.Group>
+                            <Form.Label>Title</Form.Label>
                             <Form.Control onChange={(e) => {
                                 setName(e.target.value)
                             }} type="text" placeholder="Enter Title" />
                         </Form.Group>
 
                         <Form.Group id="textarea-form-group">
+                            <Form.Label>Description</Form.Label>
                             <Form.Control onChange={(e) => {
                                 setDescription(e.target.value)
                             }} as="textarea" placeholder="Enter Description" />
                         </Form.Group>
 
                         <Form.Group>
+                            <Form.Label>Price</Form.Label>
                             <Form.Control onChange={(e) => {
                                 setAskingPrice(parseFloat(e.target.value))
                             }} type="number" placeholder="Enter Price" />
                         </Form.Group>
 
                         <Form.Group>
-                            <Form.Control onChange={(e) => {
-                                setCategoryType(parseInt(e.target.value))
-                            }} type="number" placeholder="Enter Category" />
+                            <Form.Label>Category</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={category_type}
+                                onChange={(e) => setCategoryType(e.target.value)}
+                            >
+                                <option>Other</option>
+                                <option>Textbook</option>
+                                <option>Lab Equipment</option>
+                            </Form.Control>
                         </Form.Group>
 
                         <Form.Group controlId="formFile">
