@@ -310,15 +310,16 @@ def close_report():
     date_closed = str(datetime.now())
 
     assignee_data = get_user_profile_helper('email', assignee)
+    if not assignee_data:
+        return {'status': 'error', 'message': 'Email address not in use!'}
     assigneeid = assignee_data['userid']
 
     query = db.text(
             '''
-            UPDATE report SET verdict = :verdict
+            UPDATE report SET verdict = :verdict,
                             reportopen = :reportopen,
                             dateclosed = :dateclosed,
-                            moderatorassigned = :moderatorassigned)
-            VALUES (:receiverid, :senderid, :datesent, :message)
+                            moderatorassigned = :moderatorassigned 
             WHERE reportid = :reportid
             ''')
 
@@ -347,20 +348,24 @@ def add_report():
     if not by_data or not for_data:
         return {'status': 'error', 'message': 'Email address not in use!'}
 
-
     query = db.text(
             '''
             INSERT INTO report (reportby,
                             reportfor,
                             datereported,
-                            reporttext)
-            VALUES (:reportby, :reportfor, :datereported, :reporttext)
+                            reporttext,
+                            moderatorassigned,
+                            reportopen)
+            VALUES (:reportby, :reportfor, :datereported, :reporttext, :moderatorassigned, :reportopen)
             ''')
 
     result = db.session.execute(query, {'reportby': by_data['userid'],
                                         'reportfor': for_data['userid'],
                                         'datereported': str(datetime.now()),
-                                        'reporttext': message})
+                                        'reporttext': message,
+                                        'moderatorassigned': 3,
+                                        'reportopen': True
+                                        })
 
     db.session.commit()
 
