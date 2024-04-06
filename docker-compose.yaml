@@ -60,6 +60,8 @@ services:
     environment:
       SECRET_KEY: ${SECRET_KEY}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - image-volume:/etc/images
     networks:
       - db_nw
       - web_nw
@@ -160,6 +162,7 @@ volumes:
   db-volume:
   grafana-volume:
   node-modules:
+  image-volume:
 
 networks:
   db_nw:

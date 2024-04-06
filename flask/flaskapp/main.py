@@ -233,7 +233,10 @@ def edit_listing():
     listing_name = data.get('listing_name')
     listing_description = data.get('listing_description')
     asking_price = data.get('asking_price')
-    category_type = data.get('category_type')
+
+    category_map = {'other': 1, 'textbook': 2, 'lab equipment': 3}
+    category_type = category_map[data.get('category_type').lower()]
+
     # category = data.get('category')
     condition = data.get('condition')
     date_changed = str(datetime.now())
@@ -286,9 +289,11 @@ def get_reports():
 
     reports = dict()
     for report in result.fetchall():
+        by_data = get_user_profile_helper('userid', report[2])
         data = {'reportid': report[0],
                 'report_by': report[1],
                 'report_for': report[2],
+                'report_for_email': by_data['email'],
                 'report_text': report[3],
                 'date_reported': report[4],
                 'moderator_assigned': report[5],
