@@ -56,7 +56,7 @@ function ViewProfile() {
             try {
                 setIsLoading(true);
                 const response = await fetch('/api/get_user_listings', {
-                    method: 'GET',
+                    method: 'POST',
                     cache: 'no-cache',
                     credentials: 'same-origin',
                     mode: 'cors',
@@ -65,6 +65,7 @@ function ViewProfile() {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
+                    body: JSON.stringify({ "email": email })
                 });
                 if (!response.ok) {
                     throw new Error('Something went wrong!');
