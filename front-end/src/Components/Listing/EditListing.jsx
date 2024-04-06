@@ -121,11 +121,8 @@ function EditListing() {
                             }} type="number" placeholder="Enter Category" value={category_type} />
                         </Form.Group>
 
-                        <Form.Group controlId="formFile">
-                            <Form.Label>Upload Image</Form.Label>
-                            <Form.Control onChange={(e) => {
-                                setImage(e.target.files[0])
-                            }} type="file" />
+                        <Form.Group>
+                            <Form.Control></Form.Control>
                         </Form.Group>
                         
                         <Form.Group>
