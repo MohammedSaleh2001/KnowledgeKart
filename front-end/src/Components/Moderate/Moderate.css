@@ -82,6 +82,7 @@
   border: solid black 1px;
   border-radius: 10px;
   font-weight: bold;
+  cursor: pointer;
 }
 #moderate_view_container #report_listings {
   display: flex;
