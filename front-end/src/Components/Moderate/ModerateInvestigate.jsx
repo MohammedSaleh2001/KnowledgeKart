@@ -25,8 +25,8 @@ function ModerateInvestigate() {
             });
             const data = await response.json();
             if (response.ok && data.status === 'success') {
-                alert("Report closed successfully.");
                 navigate('/moderateview');
+                window.location.reload();
             } else {
                 console.error('Failed to close report');
             }
@@ -34,6 +34,35 @@ function ModerateInvestigate() {
             console.error('Error closing report:', error);
         }
     };
+
+    const handleSuspendUser = async () => {
+        const token = localStorage.getItem('token');
+        const blacklistedUntil = new Date(new Date().getTime() + (72 * 60 * 60 * 1000)).toISOString();
+
+        try {
+            const response = await fetch('/api/suspend_user', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: report.report_for_email,
+                    blacklist: true,
+                    blacklisted_until: blacklistedUntil,
+                }),
+            });
+            const data = await response.json();
+            if (response.ok && data.status === 'success') {
+                handleCloseReport();
+                window.location.reload();
+            } else {
+                console.log("Failed to suspend user.");
+            }
+        } catch (error) {
+            console.error('Error suspending user:', error);
+        }
+    }
 
     useEffect(() => {
         const fetchReports = async () => {
@@ -101,7 +130,7 @@ function ModerateInvestigate() {
                 <div id="close_button" onClick={handleCloseReport}>
                     Close
                 </div>
-                <div id="suspend_button">
+                <div id="suspend_button" onClick={handleSuspendUser}>
                     Suspend
                 </div>
             </div>

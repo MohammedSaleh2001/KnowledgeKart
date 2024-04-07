@@ -5,10 +5,12 @@ import ChatInput from './ChatInput'
 import './Chat.css'
 
 const ChatBar = () => {
+    const isUser = localStorage.getItem('roles') === 'U';
+
     return (
         <div id="chat_bar_container">
             <Messages />
-            <ChatInput />
+            {isUser && <ChatInput />}
         </div>
     )
 }

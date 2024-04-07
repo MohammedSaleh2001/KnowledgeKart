@@ -46,10 +46,8 @@ function Login(props) {
             if (response.ok) {
                 const responseData = await response.json();
 
-                const accessToken = responseData?.data?.accessToken;
-                // const roles = responseData?.data?.roles;
-
-                const roles = 'U';
+                const accessToken = responseData?.accessToken;
+                const roles = responseData?.role;
 
                 localStorage.setItem('token', accessToken);
                 localStorage.setItem('email', email);
@@ -65,7 +63,11 @@ function Login(props) {
                 console.log(props.token);
 
                 if (responseData.status == 'success') {
-                    navigate('/home', { replace: true })
+                    if (roles == 'U') {
+                        navigate('/home', { replace: true })    
+                    } else if (roles == 'M') {
+                        navigate('/moderateview', { replace: true })
+                    }
                 } else {
                     alert('Could not log you in!');
                     return;

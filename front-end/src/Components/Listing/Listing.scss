@@ -1,12 +1,16 @@
 #homepage-container {
     width: 100vw;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
 
     #menu-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 25px;
+        background-color: #8da4f1;
+        border-bottom: solid black 1px;
 
         #toggle_button_div {
             display: flex;
@@ -79,9 +83,11 @@
 
     #listview_container {
         display: flex;
+        flex-grow: 1;
+        overflow-y: scroll;
 
         #list_items_div {
-            width: 60vw;
+            width: 100%;
 
             #listing-container {
                 display: flex;
@@ -102,24 +108,6 @@
                     padding: 15px;
                     font-weight: bold;
                 }
-            }
-        }
-
-        #recommended_list {
-            width: 40vw;
-            background-color: #ccc;
-            margin: 10px;
-            border-radius: 20px;
-            border: solid black 2px;
-            overflow: hidden;
-
-            #recommended_list_title {
-                padding: 20px 0px 20px 0px;
-                font-weight: bold;
-                font-size: 36px;
-                text-align: center;
-                color: white;
-                background-color: black;
             }
         }
     }
@@ -379,10 +367,15 @@
     resize: none;
 }
 
+.form-label {
+    font-weight: bold;
+}
+
 #create_listing_form {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    overflow-y: scroll;
 
     #create-listing-title {
         display: flex;

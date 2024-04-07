@@ -6,10 +6,9 @@ import { useNavigate } from "react-router-dom";
 import './Chat.css'
 
 const ChatNavbar = () => {
-
     const navigate = useNavigate();
-
     const [userName, setUserName] = useState('');
+    const loggedInUserRole = localStorage.getItem('roles');
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -34,7 +33,11 @@ const ChatNavbar = () => {
     return (
         <div id="chat_nav_bar_container">
             <span style={{cursor: 'pointer'}} onClick={() => {
-                navigate('/home')
+                if (loggedInUserRole === 'U') {
+                    navigate('/home');
+                } else if (loggedInUserRole === 'M') {
+                    navigate(-1);
+                }
             }}>Home</span>
             <div>
                 <div id="chat_nav_bar_portrait_icon_div">

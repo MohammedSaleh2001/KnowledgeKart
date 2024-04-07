@@ -122,12 +122,6 @@ function HomePage() {
                         ))
                     )}
                 </div>
-                <div id="recommended_list">
-                    <div id="recommended_list_title">
-                        Recommended
-                    </div>
-                    {/* {recommendedListingComponents} */}
-                </div>
             </div>
         </div>
     )

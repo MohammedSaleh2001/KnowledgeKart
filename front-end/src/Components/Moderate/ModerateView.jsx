@@ -4,8 +4,12 @@ import ReportInstance from './ReportInstance'
 
 import './Moderate.css'
 
+import { useNavigate } from "react-router-dom";  
+
 function ModerateView() {
     const [reports, setReports] = useState([]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchReports = async () => {
@@ -35,15 +39,23 @@ function ModerateView() {
         fetchReports();
     }, []);
 
-    console.log("Reports:", reports);
+    const handleLogout = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            localStorage.removeItem('token');
+            navigate('/');
+        } catch (error) {
+            console.log('Logout error: ', error);
+        }
+    }
 
     return (
         <div id="moderate_view_container">
             <div id="moderate_view_navbar">
-                <div>
-                    Report
+                <div id="dashboard">
+                    Moderator Dashboard
                 </div>
-                <div>
+                <div id="logout_button" onClick={handleLogout}>
                     Logout
                 </div>
             </div>
