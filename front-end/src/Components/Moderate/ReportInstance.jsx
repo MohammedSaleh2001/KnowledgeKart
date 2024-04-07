@@ -22,6 +22,7 @@ function ReportInstance({ report }) {
             const data = await response.json();
             if (response.ok && data.status === 'success') {
                 navigate('/moderateview');
+                window.location.reload();
             } else {
                 console.error('Failed to close report');
             }

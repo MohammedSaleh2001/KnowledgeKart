@@ -25,8 +25,8 @@ function ModerateInvestigate() {
             });
             const data = await response.json();
             if (response.ok && data.status === 'success') {
-                alert("Report closed successfully.");
                 navigate('/moderateview');
+                window.location.reload();
             } else {
                 console.error('Failed to close report');
             }
@@ -54,7 +54,8 @@ function ModerateInvestigate() {
             });
             const data = await response.json();
             if (response.ok && data.status === 'success') {
-                navigate('/moderateview');
+                handleCloseReport();
+                window.location.reload();
             } else {
                 console.log("Failed to suspend user.");
             }

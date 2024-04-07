@@ -1,12 +1,16 @@
 #homepage-container {
   width: 100vw;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 #homepage-container #menu-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 25px;
+  background-color: #8da4f1;
+  border-bottom: solid black 1px;
 }
 #homepage-container #menu-container #toggle_button_div {
   display: flex;
@@ -69,9 +73,11 @@
 }
 #homepage-container #listview_container {
   display: flex;
+  flex-grow: 1;
+  overflow-y: scroll;
 }
 #homepage-container #listview_container #list_items_div {
-  width: 60vw;
+  width: 100%;
 }
 #homepage-container #listview_container #list_items_div #listing-container {
   display: flex;
@@ -90,22 +96,6 @@
   margin: 5px 15px 5px 15px;
   padding: 15px;
   font-weight: bold;
-}
-#homepage-container #listview_container #recommended_list {
-  width: 40vw;
-  background-color: #ccc;
-  margin: 10px;
-  border-radius: 20px;
-  border: solid black 2px;
-  overflow: hidden;
-}
-#homepage-container #listview_container #recommended_list #recommended_list_title {
-  padding: 20px 0px 20px 0px;
-  font-weight: bold;
-  font-size: 36px;
-  text-align: center;
-  color: white;
-  background-color: black;
 }
 
 #listing_page_container {
@@ -341,10 +331,15 @@
   resize: none;
 }
 
+.form-label {
+  font-weight: bold;
+}
+
 #create_listing_form {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  overflow-y: scroll;
 }
 #create_listing_form #create-listing-title {
   display: flex;

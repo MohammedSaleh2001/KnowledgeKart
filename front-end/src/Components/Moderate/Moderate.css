@@ -70,18 +70,20 @@
 }
 #moderate_view_container #moderate_view_navbar {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   background-color: gray;
   border-bottom: solid black 2px;
 }
 #moderate_view_container #moderate_view_navbar div {
-  background-color: black;
   color: white;
   padding: 10px;
-  margin: 5px 0px 5px 0px;
+  margin: 5px 10px 5px 10px;
+  font-weight: bold;
+}
+#moderate_view_container #moderate_view_navbar #logout_button {
+  background-color: black;
   border: solid black 1px;
   border-radius: 10px;
-  font-weight: bold;
   cursor: pointer;
 }
 #moderate_view_container #report_listings {

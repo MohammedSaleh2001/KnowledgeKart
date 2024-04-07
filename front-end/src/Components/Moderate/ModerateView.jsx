@@ -52,7 +52,10 @@ function ModerateView() {
     return (
         <div id="moderate_view_container">
             <div id="moderate_view_navbar">
-                <div onClick={handleLogout}>
+                <div id="dashboard">
+                    Moderator Dashboard
+                </div>
+                <div id="logout_button" onClick={handleLogout}>
                     Logout
                 </div>
             </div>

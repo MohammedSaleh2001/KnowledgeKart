@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import useToken from './Components/AuthToken/useToken'
 import './App.css';
 
@@ -15,18 +14,9 @@ import { ChatProvider } from './Context/ChatContext'
 
 import RequireAuth from "./Components/RequireAuth";
 
-// function requireAuth(nextState, replace, next) {
-//   if (!authenticated) {
-//     replace({
-//       pathname: "/login",
-//       state: {nextPathname: nextState.location.pathname}
-//     });
-//   }
-//   next();
-// }
-
 const ROLES = {
   'User': 'U',
+  'Moderator': 'M'
 }
 
 function App() {
@@ -44,17 +34,21 @@ function App() {
               <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
                 <Route path="/home" element={<HomePage  token={token} setToken={setToken} />} />
                 <Route path="/create" element={<CreateListing token={token} setToken={setToken} />} />
-                <Route path="/listing/:listingId" element={<Listing />} />
                 <Route path="/editlisting/:listingId" element={<EditListing token={token} setToken={setToken} />} />
-                <Route path="/viewprofile/:email" element={<ViewProfile token={token} setToken={setToken} />} />
                 <Route path="/editprofile/:email" element={<EditProfile token={token} setToken={setToken} />} />
+              </Route>
+              <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Moderator]} />}>
+                <Route path="/moderatereport/:email" element={<ModerateReport token={token} setToken={setToken} />} />
+                <Route path="/viewprofile/:email" element={<ViewProfile token={token} setToken={setToken} />} />
                 <Route path="/chat/:email" element={<ChatHomePage token={token} setToken={setToken} />} />
+                <Route path="/listing/:listingId" element={<Listing />} />
+              </Route>
+              <Route element={<RequireAuth allowedRoles={[ROLES.Moderator]} />}>
+                <Route path="/moderatesuspend/:email" element={<ModerateSuspend token={token} setToken={setToken} />} />
+                <Route path="/moderateview" element={<ModerateView token={token} setToken={setToken} />} />
+                <Route path="/moderateinvestigate/:reportId" element={<ModerateInvestigate token={token} setToken={setToken} />} />
               </Route>
               <Route path="/viewanalytics" element={<AnalyticsView token={token} setToken={setToken} />} />
-              <Route path="/moderateinvestigate/:reportId" element={<ModerateInvestigate token={token} setToken={setToken} />} />
-              <Route path="/moderatereport/:email" element={<ModerateReport token={token} setToken={setToken} />} />
-              <Route path="/moderatesuspend/:email" element={<ModerateSuspend token={token} setToken={setToken} />} />
-              <Route path="/moderateview" element={<ModerateView token={token} setToken={setToken} />} />
             </Routes>
           </Router>
         </div>  

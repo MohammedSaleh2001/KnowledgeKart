@@ -21,6 +21,7 @@ function ViewProfile() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const loggedInUserEmail = localStorage.getItem('email');
+    const loggedInUserRole = localStorage.getItem('roles');
 
     const { activeChat } = useChat();
     const { addMessageToActiveChat } = useChat();
@@ -175,16 +176,22 @@ function ViewProfile() {
     }
 
     const isViewingOwnProfile = email === loggedInUserEmail;
+    const isUser = localStorage.getItem('roles') === 'U';
 
     return (
         <div id="view_profile_container">
             <div id="view_profile_top">
                 <div id="view_profile_back_button">
                     <ArrowBackIosNewIcon style={{cursor: 'pointer'}} onClick={() => {
-                        navigate('/home');
+                        if (loggedInUserRole === 'U') {
+                            navigate('/home');    
+                        } else if (loggedInUserRole === 'M') {
+                            navigate(-1);
+                        }
+                        
                     }} />
                 </div>
-                {isViewingOwnProfile && (
+                {isViewingOwnProfile && isUser && (
                     <div id="edit_profile_button" onClick={() => {
                         navigate(`/editprofile/${localStorage.getItem('email')}`)
                     }}>
@@ -206,7 +213,7 @@ function ViewProfile() {
                     <div id="view_profile_rating">
                         Rating: {rating || "Not Available"}
                     </div>
-                    {!isViewingOwnProfile && (
+                    {!isViewingOwnProfile && isUser && (
                         <div id="view_profile_action_buttons">
                             <div id="view_profile_email_button">
                                 Email
