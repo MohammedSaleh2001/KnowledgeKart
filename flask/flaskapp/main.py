@@ -29,7 +29,8 @@ def get_user_profile_helper(columnkey, columnval):
             'quickness': user[11], 
             'numreviews': user[12],
             'blacklist': user[7],
-            'blacklisted_until': user[8]}
+            'blacklisted_until': user[8],
+            'verified': user[6]}
     
     return data
 
@@ -402,7 +403,7 @@ def suspend_user():
 @jwt_required()
 def get_chat():
     data = request.json
-    email = get_jwt_identity()
+    email = data.get('email')
 
     user_data = get_user_profile_helper('email', email)
 
