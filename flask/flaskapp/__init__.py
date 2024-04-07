@@ -29,11 +29,11 @@ def create_app():
     # Initialize Flask-Mail
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USERNAME'] = 'ragur@ualberta.ca'
-    app.config['MAIL_PASSWORD'] = 'nujden-currup-8Cavse'
+    app.config['MAIL_USERNAME'] = 'knowledgekart2024@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'kron gorw jjup lpnd'
     app.config['MAIL_USE_TLS'] = False
     app.config['MAIL_USE_SSL'] = True
-    app.config['MAIL_DEFAULT_SENDER'] = 'ragur@ualberta.ca'
+    app.config['MAIL_DEFAULT_SENDER'] = 'knowledgekart2024@gmail.com'
     app.config['BASE_URL'] = 'https://localhost/api'
 
     init_mail(app)
