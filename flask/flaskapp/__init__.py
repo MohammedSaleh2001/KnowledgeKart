@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
+from .verification import init_mail
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
@@ -24,6 +25,18 @@ def create_app():
     app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
     db_pass = os.environ['POSTGRES_PASSWORD']
     app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://postgres:{db_pass}@postgres:5432/main'
+
+    # Initialize Flask-Mail
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USERNAME'] = 'knowledgekart2024@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'kron gorw jjup lpnd'
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USE_SSL'] = True
+    app.config['MAIL_DEFAULT_SENDER'] = 'knowledgekart2024@gmail.com'
+    app.config['BASE_URL'] = 'https://localhost/api'
+
+    init_mail(app)
 
     db.init_app(app)
 

@@ -10,12 +10,17 @@ import json
 
 auth = Blueprint('auth', __name__)
 
-email_tokens = set()
+email_tokens = dict()
 
 # Used for testing
 import time
 @auth.route('/time')
 def get_current_time():
+    # email = 'ragur@ualberta.ca'
+    # verification_token = generate_verification_token()
+    # ok = send_verification_email(email, verification_token)
+    # email_tokens[email] = verification_token
+
     return {'time': time.time()}
 
 @auth.after_request
@@ -39,23 +44,16 @@ def refresh_expiring_jwts(response):
 def verify_email():
     token = request.args.get('token')
 
-    if (not token) or (token not in email_tokens):
+    if (not token) or (token not in email_tokens.values()):
         return {'status': 'error', 'msg:': 'Invalid verification token.'}
 
-    # Extract the email from the database record
-    email_tokens.pop(token)
+    email = [k for k, v in email_tokens.items() if v == token][0]
 
-    # Perform email verification (e.g., update user's email_verified status in the database)
-    # Here, you would typically update your user table to mark the email as verified
-    # For demonstration purposes, let's assume there's a users table with an email_verified column
-    # update_query = db.text('UPDATE users SET email_verified = true WHERE email = :email')
-    # db.session.execute(update_query, {'email': email})
-    # db.session.commit()
+    query = db.text('UPDATE kkuser SET verified = true WHERE email = :email')
+    db.session.execute(query, {'email': email})
+    db.session.commit()
 
-    # # Delete the verification token from the database (optional, depending on your requirements)
-    # delete_query = db.text('DELETE FROM email_verification WHERE token = :token')
-    # db.session.execute(delete_query, {'token': token})
-    # db.session.commit()
+    email_tokens.pop(email, None)
 
     return {'status': 'success', 'msg': 'Email verification successful. You can now log in.'}
 
@@ -105,8 +103,9 @@ def signup_post():
             '''
             INSERT INTO kkuser (Email,
                                 HashPass,
-                                FirstName)
-            VALUES (:email, :pass, :name)
+                                FirstName,
+                                Verified)
+            VALUES (:email, :pass, :name, false)
             ''')
     
     db.session.execute(query, 
@@ -123,9 +122,9 @@ def signup_post():
     
     user = result.fetchone()
     
-    # verification_token = generate_verification_token(email)
-    # send_verification_email(email, verification_token)
-    # email_tokens.add(verification_token)
+    verification_token = generate_verification_token()
+    ok = send_verification_email(email, verification_token)
+    email_tokens[email] = verification_token
 
     access_token = create_access_token(identity=email)
     return {'status': 'success', 'access_token':access_token}

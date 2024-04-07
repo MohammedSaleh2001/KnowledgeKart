@@ -1,3 +1,4 @@
+uuid
 flask
 psycopg2
 flask-login
