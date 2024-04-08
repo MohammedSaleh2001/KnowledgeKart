@@ -5,6 +5,8 @@ import Searchbar from './Searchbar'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ChatIcon from '@mui/icons-material/Chat';
 import PostAddIcon from '@mui/icons-material/PostAdd';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import ShieldIcon from '@mui/icons-material/Shield';
 
 import ListingItem from './ListingItem'
 import UserItem from './UserItem'
@@ -76,6 +78,13 @@ function HomePage() {
         }
     }
 
+    const handleAnalyticsRedirect = () => {
+        const baseURL = "https://localhost/";
+        window.location.href = `${baseURL}grafana/login`
+    }
+
+    const isOwnerOrAdmin = ['O', 'A'].includes(localStorage.getItem('roles'));
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -96,6 +105,12 @@ function HomePage() {
                     }} />
                 </div>
                 <div>
+                    {isOwnerOrAdmin && (<AnalyticsIcon style={{fontSize: 50, cursor: 'pointer'}} id="analytics-icon" onClick={() => {
+                        handleAnalyticsRedirect();
+                    }} />)}
+                    {isOwnerOrAdmin && (<ShieldIcon style={{fontSize: 50, cursor: 'pointer'}} id="shield-icon" onClick={() => {
+                        navigate('/moderateview');
+                    }} />)}
                     <ChatIcon style={{fontSize: 50, cursor: 'pointer'}} id="chat-icon" onClick={() => {
                         navigate(`/chat/${localStorage.getItem('email')}`)
                     }} />

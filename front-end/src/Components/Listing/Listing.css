@@ -47,6 +47,12 @@
 #homepage-container #menu-container div {
   display: flex;
 }
+#homepage-container #menu-container div #analytics-icon {
+  margin: 10px;
+}
+#homepage-container #menu-container div #shield-icon {
+  margin: 10px;
+}
 #homepage-container #menu-container div #chat-icon {
   position: relative;
   top: 5px;
