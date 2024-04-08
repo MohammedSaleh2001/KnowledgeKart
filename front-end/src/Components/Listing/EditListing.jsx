@@ -89,6 +89,22 @@ function EditListing() {
             console.error("Network error:", error);
         }
 
+        const statusToSend = "O"
+        switch (status) {
+            case "Open":
+                statusToSend = 'O';
+                break;
+            case "Closed":
+                statusToSend = 'C';
+                break;
+            case "Sold":
+                statusToSend = 'S';
+                break;
+            default:
+                statusToSend = 'O';
+                break;
+        }
+
         var json = JSON.stringify({
             "listingid": parseInt(listingId),
             "listing_name" : name,
@@ -96,7 +112,7 @@ function EditListing() {
             "asking_price" : asking_price,
             "category_type" : 1,
             "condition" : condition,
-            "status": status,
+            "status": statusToSend,
             "sold_to": soldTo,
             "sold_price": soldPrice,
         });
