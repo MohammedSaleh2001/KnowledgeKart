@@ -265,7 +265,7 @@ function ViewProfile() {
                     {userData?.firstname}'s Profile
                 </div>
                 {isViewingOwnProfile && isUser && (
-                    <div id="edit_profile_button" onClick={() => {
+                    <div id="edit_profile_button" style={{cursor: 'pointer'}} onClick={() => {
                         navigate(`/editprofile/${localStorage.getItem('email')}`)
                     }}>
                         Edit
