@@ -130,6 +130,13 @@ function Listing() {
         }
     }
 
+    const handleEmailSeller = () => {
+        if (listing && listing.seller && listing.seller.email) {
+            const mailToLink = `mailto:${listing.seller.email}`;
+            window.location.href = mailToLink;
+        }
+    }
+
     return (
         // <div id="listing_page_container">
         //     <div id="listing_top_div">
@@ -232,8 +239,8 @@ function Listing() {
                         Date Listed: {listing?.date_listed || ""}    
                     </div>
                     <div id="listing_action_button_div">
-                        <div>Email</div>
-                        <div>Chat</div>
+                        <div onClick={handleEmailSeller}>Email</div>
+                        <div onClick={initiateChatWithSeller}>Chat</div>
                     </div>    
                 </div>
             </div>
