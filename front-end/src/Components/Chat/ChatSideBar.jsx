@@ -6,12 +6,12 @@ import Chats from './Chats'
 
 import './Chat.css'
 
-const ChatSidebar = () => {
+const ChatSidebar = ({ email }) => {
     return (
         <div id="chat_side_bar_container">
             <ChatNavBar />
             <SearchChat />
-            <Chats />
+            <Chats email={email} />
         </div>
     )
 }

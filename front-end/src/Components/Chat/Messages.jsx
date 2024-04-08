@@ -4,7 +4,7 @@ import { useChat } from '../../Context/ChatContext';
 
 import './Chat.css'
 
-const Messages = () => {
+const Messages = ({ email }) => {
 
     const { activeChat } = useChat();
 
@@ -12,7 +12,6 @@ const Messages = () => {
 
     useEffect(() => {
         const fetchCurrentUserId = async () => {
-            const email = localStorage.getItem('email');
             const token = localStorage.getItem('token');
 
             try {
@@ -22,7 +21,7 @@ const Messages = () => {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email }),
+                    body: JSON.stringify({"email": email }),
                 });
 
                 const data = await response.json();
