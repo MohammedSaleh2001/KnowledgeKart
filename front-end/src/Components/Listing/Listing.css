@@ -354,4 +354,9 @@
   flex-grow: 1;
 }
 
+.input_readonly {
+  outline: none;
+  background-color: #f0f0f0;
+}
+
 /*# sourceMappingURL=Listing.css.map */
