@@ -179,8 +179,79 @@ function ViewProfile() {
     const isUser = localStorage.getItem('roles') === 'U';
 
     return (
+        // <div id="view_profile_container">
+        //     <div id="view_profile_top">
+        //         <div id="view_profile_back_button">
+        //             <ArrowBackIosNewIcon style={{cursor: 'pointer'}} onClick={() => {
+        //                 if (loggedInUserRole === 'U') {
+        //                     navigate('/home');    
+        //                 } else if (loggedInUserRole === 'M') {
+        //                     navigate(-1);
+        //                 }
+                        
+        //             }} />
+        //         </div>
+        //         {isViewingOwnProfile && isUser && (
+        //             <div id="edit_profile_button" onClick={() => {
+        //                 navigate(`/editprofile/${localStorage.getItem('email')}`)
+        //             }}>
+        //                 Edit Profile
+        //             </div>
+        //         )}
+        //     </div>
+        //     <div id="view_profile_mid">
+        //         <div id="view_profile_mid_left">
+        //             <PortraitIcon style={{fontSize: 250}}/>
+        //         </div>
+        //         <div id="view_profile_mid_mid">
+        //             <div id="view_profile_seller_name">
+        //                 {userData?.firstname}
+        //             </div>
+        //             <div id="view_profile_seller_email">
+        //                 {email}
+        //             </div>
+        //             <div id="view_profile_rating">
+        //                 Rating: {rating || "Not Available"}
+        //             </div>
+        //             {!isViewingOwnProfile && isUser && (
+        //                 <div id="view_profile_action_buttons">
+        //                     <div id="view_profile_email_button">
+        //                         Email
+        //                     </div>
+        //                     <div id="view_profile_chat_button" onClick={handleChatInitiation}>
+        //                         Chat
+        //                     </div>
+        //                     <div id="view_profile_report_button" onClick={() => {
+        //                         navigate(`/moderatereport/${email}`)
+        //                     }}>
+        //                         Report
+        //                     </div>
+        //                 </div>    
+        //             )}
+        //         </div>
+        //         <div id="view_profile_mid_right">
+        //             <div style={{'border-top': 'none'}}>
+        //                 Honesty: {userData?.honesty}
+        //             </div>
+        //             <div>
+        //                 Number of Reviews: {userData?.numreviews}
+        //             </div>
+        //             <div>
+        //                 Politeness: {userData?.politeness}
+        //             </div>
+        //             <div style={{'border-bottom': 'none'}}>
+        //                 Quickness: {userData?.quickness}
+        //             </div>
+        //         </div>
+        //     </div>
+        //     <div id="view_profile_bot">
+        //         {listings.map(listing => (
+        //             <ListingItem key={listing.listingid} id={listing.listingid} title={listing.listing_name} price={listing.asking_price} />
+        //         ))}
+        //     </div>
+        // </div>
         <div id="view_profile_container">
-            <div id="view_profile_top">
+            <div id="profile_header">
                 <div id="view_profile_back_button">
                     <ArrowBackIosNewIcon style={{cursor: 'pointer'}} onClick={() => {
                         if (loggedInUserRole === 'U') {
@@ -188,30 +259,42 @@ function ViewProfile() {
                         } else if (loggedInUserRole === 'M') {
                             navigate(-1);
                         }
-                        
                     }} />
                 </div>
+                <div id="profile_title">
+                    {userData?.firstname}'s Profile
+                </div>
                 {isViewingOwnProfile && isUser && (
-                    <div id="edit_profile_button" onClick={() => {
+                    <div id="edit_profile_button" style={{cursor: 'pointer'}} onClick={() => {
                         navigate(`/editprofile/${localStorage.getItem('email')}`)
                     }}>
-                        Edit Profile
+                        Edit
                     </div>
                 )}
             </div>
-            <div id="view_profile_mid">
-                <div id="view_profile_mid_left">
-                    <PortraitIcon style={{fontSize: 250}}/>
-                </div>
-                <div id="view_profile_mid_mid">
-                    <div id="view_profile_seller_name">
-                        {userData?.firstname}
+            <div id="about_container">
+                <div id="about_container_title">About</div>
+                <div id="about_container_body">
+                    <div>
+                        Name: {userData?.firstname}
                     </div>
-                    <div id="view_profile_seller_email">
-                        {email}
+                    <div>
+                        Email: {email}
                     </div>
-                    <div id="view_profile_rating">
+                    <div>
                         Rating: {rating || "Not Available"}
+                    </div>
+                    <div>
+                        Honesty: {userData?.honesty}
+                    </div>
+                    <div>
+                        Number of Reviews: {userData?.numreviews}
+                    </div>
+                    <div>
+                        Politeness: {userData?.politeness}
+                    </div>
+                    <div>
+                        Quickness: {userData?.quickness}
                     </div>
                     {!isViewingOwnProfile && isUser && (
                         <div id="view_profile_action_buttons">
@@ -229,22 +312,9 @@ function ViewProfile() {
                         </div>    
                     )}
                 </div>
-                <div id="view_profile_mid_right">
-                    <div style={{'border-top': 'none'}}>
-                        Honesty: {userData?.honesty}
-                    </div>
-                    <div>
-                        Number of Reviews: {userData?.numreviews}
-                    </div>
-                    <div>
-                        Politeness: {userData?.politeness}
-                    </div>
-                    <div style={{'border-bottom': 'none'}}>
-                        Quickness: {userData?.quickness}
-                    </div>
-                </div>
             </div>
-            <div id="view_profile_bot">
+            <div id="user_listing_container">
+                <div id="user_listing_container_label">Listings</div>
                 {listings.map(listing => (
                     <ListingItem key={listing.listingid} id={listing.listingid} title={listing.listing_name} price={listing.asking_price} />
                 ))}

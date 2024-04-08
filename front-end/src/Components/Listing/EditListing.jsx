@@ -89,6 +89,22 @@ function EditListing() {
             console.error("Network error:", error);
         }
 
+        const statusToSend = "O"
+        switch (status) {
+            case "Open":
+                statusToSend = 'O';
+                break;
+            case "Closed":
+                statusToSend = 'C';
+                break;
+            case "Sold":
+                statusToSend = 'S';
+                break;
+            default:
+                statusToSend = 'O';
+                break;
+        }
+
         var json = JSON.stringify({
             "listingid": parseInt(listingId),
             "listing_name" : name,
@@ -96,7 +112,7 @@ function EditListing() {
             "asking_price" : asking_price,
             "category_type" : 1,
             "condition" : condition,
-            "status": status,
+            "status": statusToSend,
             "sold_to": soldTo,
             "sold_price": soldPrice,
         });
@@ -163,12 +179,12 @@ function EditListing() {
                             </Form.Control>
                         </Form.Group>
 
-                        <Form.Group controlId="formFile">
+                        {/* <Form.Group controlId="formFile">
                             <Form.Label>Upload Image</Form.Label>
                             <Form.Control onChange={(e) => {
                                 setImage(e.target.files[0])
                             }} type="file" />
-                        </Form.Group>
+                        </Form.Group> */}
 
                         <Form.Group>
                             <Form.Label>Status</Form.Label>
@@ -186,8 +202,10 @@ function EditListing() {
                         <Form.Group>
                             <Form.Label>Sold To</Form.Label>
                             <Form.Control
+                                // className="input_readonly"
+                                className={status !== 'Sold' ? "input_readonly" : ""}
                                 type="text"
-                                placeholder="Sold To"
+                                placeholder={status !== 'Sold' ? '' : "Enter Email Address"}
                                 value={status !== 'Sold' ? '' : soldTo}
                                 onChange={(e) => setSoldTo(e.target.value)}
                                 readOnly={status !== 'Sold' ? "readonly" : false} // Only editable when status is 'Closed'
@@ -197,8 +215,9 @@ function EditListing() {
                         <Form.Group>
                             <Form.Label>Sold Price</Form.Label>
                             <Form.Control
+                                className={status !== 'Sold' ? "input_readonly" : ""}
                                 type="number"
-                                placeholder="Sold Price"
+                                placeholder={status !== 'Sold' ? '' : "Enter Price"}
                                 value={status !== 'Sold' ? '' : soldPrice}
                                 onChange={(e) => setSoldPrice(e.target.value)}
                                 readOnly={status !== 'Sold' ? "readonly" : false} // Only editable when status is 'Closed'

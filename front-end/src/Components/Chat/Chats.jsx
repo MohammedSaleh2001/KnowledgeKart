@@ -5,7 +5,7 @@ import './Chat.css'
 
 import ChatListing from './ChatListing'
 
-const Chats = () => {
+const Chats = ({ email }) => {
 
     const { setActiveChat } = useChat();
 
@@ -24,7 +24,7 @@ const Chats = () => {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({})
+                body: JSON.stringify({"email": email})
             });
 
             if (!response.ok) {

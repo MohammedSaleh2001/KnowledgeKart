@@ -40,29 +40,21 @@ function EditProfile() {
     return (
         <div id="edit_profile_container">
             <div id="edit_profile_title">Edit Profile</div>
-            <form onSubmit={handleSubmit}>
-                <div id="edit_first_name_div">
-                    <div>Edit Name:</div>
-                    <input
-                        type="text"
-                        placeholder="Enter Name"
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                    />
-                </div>
-                <div id="edit_picture_div">
-                    <div>Edit Picture:</div>
-                    <div>
-                        <input type="file" />    
-                    </div>
-                </div>
-                <div id="edit_profile_submit_div">
-                    <button type="button" id="edit_profile_cancel_button" onClick={() => {
-                        navigate(`/viewprofile/${email}`);
-                    }}>Cancel</button>
-                    <button type="submit" id="edit_profile_submit_button">Submit</button>
-                </div>    
-            </form>
+            <div id="edit_first_name_div">
+                <div id="edit_first_name_div_title">Edit Name</div>
+                <input
+                    type="text"
+                    placeholder="Enter Name"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                />
+            </div>
+            <div id="edit_profile_submit_div">
+                <button type="button" id="edit_profile_cancel_button" onClick={() => {
+                    navigate(`/viewprofile/${email}`);
+                }}>Cancel</button>
+                <button type="submit" id="edit_profile_submit_button" onClick={handleSubmit}>Submit</button>
+            </div>
         </div>
     )
 }

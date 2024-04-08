@@ -97,13 +97,6 @@ function CreateListing() {
                             </Form.Control>
                         </Form.Group>
 
-                        <Form.Group controlId="formFile">
-                            <Form.Label>Upload Image</Form.Label>
-                            <Form.Control onChange={(e) => {
-                                setImage(e.target.files[0])
-                            }} type="file" />
-                        </Form.Group>
-
                         <Form.Group>
                             <Button onClick={handleSubmit} variant="primary" type="submit">
                                 Submit
