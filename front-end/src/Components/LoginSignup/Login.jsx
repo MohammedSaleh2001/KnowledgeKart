@@ -52,7 +52,7 @@ function Login(props) {
                 localStorage.setItem('token', accessToken);
                 localStorage.setItem('email', email);
                 localStorage.setItem('roles', roles);
-                localStorage.setItem('password', password);
+                // localStorage.setItem('password', password);
 
                 setAuth({ email, password, roles, accessToken });
 
@@ -63,7 +63,7 @@ function Login(props) {
                 console.log(props.token);
 
                 if (responseData.status == 'success') {
-                    if (roles == 'U') {
+                    if (roles === 'U' || roles === 'O' || roles === 'A') {
                         navigate('/home', { replace: true })    
                     } else if (roles == 'M') {
                         navigate('/moderateview', { replace: true })
