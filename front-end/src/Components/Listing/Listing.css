@@ -100,6 +100,7 @@
 
 #view_listing_container {
   width: 80%;
+  padding: 10px;
   background-color: #ddddf7;
   border: solid black 2px;
   border-radius: 10px;
