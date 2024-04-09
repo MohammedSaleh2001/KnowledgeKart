@@ -6,7 +6,7 @@ import { AuthProvider } from './Context/AuthProvider';
 
 import {AnalyticsView} from './Components/Analytics/index'
 import {ChatHomePage} from './Components/Chat/index'
-import {CreateListing, HomePage, Listing, EditListing} from './Components/Listing/index'
+import {CreateListing, HomePage, Listing, EditListing, RateSeller} from './Components/Listing/index'
 import {ForgotPassword, Login, LoginSignup, Signup} from './Components/LoginSignup/index'
 import {ModerateInvestigate, ModerateReport, Suspend, ModerateView} from './Components/Moderate/index'
 import {EditProfile, ViewProfile} from './Components/Profile/index'
@@ -33,6 +33,7 @@ function App() {
               <Route path="/signup" element={<Signup token={token} setToken={setToken} />} />
               <Route path="/login" element={<Login token={token} setToken={setToken} />} />
               <Route path="/forgotpassword" element={<ForgotPassword token={token} setToken={setToken} />} />
+              <Route path="/rateseller/:emailToken" element={<RateSeller token={token} setToken={setToken} />} />
               <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin, ROLES.Owner]} />}>
                 <Route path="/home" element={<HomePage token={token} setToken={setToken} />} />
                 <Route path="/create" element={<CreateListing token={token} setToken={setToken} />} />

@@ -34,7 +34,7 @@ def create_app():
     app.config['MAIL_USE_TLS'] = False
     app.config['MAIL_USE_SSL'] = True
     app.config['MAIL_DEFAULT_SENDER'] = 'knowledgekart2024@gmail.com'
-    app.config['BASE_URL'] = 'https://localhost/api'
+    app.config['BASE_URL'] = 'https://localhost'
 
     init_mail(app)
 

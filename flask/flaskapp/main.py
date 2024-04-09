@@ -119,7 +119,10 @@ def add_listing():
     listing_name = data.get('listing_name')
     listing_description = data.get('listing_description')
     asking_price = data.get('asking_price')
-    category_type = data.get('category_type')
+
+    category_map = {'other': 1, 'textbook': 2, 'lab equipment': 3}
+    category_type = category_map[data.get('category_type').lower()]
+
     # category = data.get('category')
     condition = data.get('condition')
     date_listed = str(datetime.now())
@@ -277,7 +280,7 @@ def edit_listing():
 
     db.session.commit()
 
-    if status == 'C':
+    if status == 'S' and sold_to is not None:
         buyer_data = get_user_profile_helper('userid', sold_to)
         verification_token = generate_verification_token()
         ok = send_review_email(seller_data['email'], buyer_data['email'], verification_token)
