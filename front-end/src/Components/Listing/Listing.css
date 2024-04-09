@@ -148,18 +148,21 @@
 #view_listing_container #about_container #about_container_body {
   padding: 0px 10px 0px 10px;
 }
-#view_listing_container #about_container #about_container_body #listing_action_button_div {
+#view_listing_container #about_container #about_container_body #listing_chat_div {
   display: flex;
-}
-#view_listing_container #about_container #about_container_body #listing_action_button_div div {
-  display: flex;
-  justify-content: center;
   align-items: center;
-  margin: 2px 5px 5px 2px;
-  background-color: #ffc107;
-  padding: 5px;
   border: solid black 1px;
-  border-radius: 5px;
+  background-color: white;
+}
+#view_listing_container #about_container #about_container_body #listing_chat_div input {
+  height: 30px;
+  resize: none;
+  flex-grow: 1;
+  outline: none;
+  border: none;
+  font-size: 12px;
+}
+#view_listing_container #about_container #about_container_body #listing_chat_div #send_icon {
   cursor: pointer;
 }
 #view_listing_container #about_container #about_container_body div {
@@ -208,6 +211,18 @@
   font-weight: bold;
   font-size: 16px;
   margin: 2px 0px 2px 0px;
+}
+#view_listing_container #seller_container #listing_email_div {
+  display: flex;
+  width: 50px;
+  justify-content: center;
+  align-items: center;
+  margin: 2px 5px 5px 2px;
+  background-color: #ffc107;
+  padding: 5px;
+  border: solid black 1px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .container {
