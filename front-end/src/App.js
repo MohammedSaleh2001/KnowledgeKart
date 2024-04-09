@@ -8,7 +8,7 @@ import {AnalyticsView} from './Components/Analytics/index'
 import {ChatHomePage} from './Components/Chat/index'
 import {CreateListing, HomePage, Listing, EditListing} from './Components/Listing/index'
 import {ForgotPassword, Login, LoginSignup, Signup} from './Components/LoginSignup/index'
-import {ModerateInvestigate, ModerateReport, ModerateSuspend, ModerateView} from './Components/Moderate/index'
+import {ModerateInvestigate, ModerateReport, Suspend, ModerateView} from './Components/Moderate/index'
 import {EditProfile, ViewProfile} from './Components/Profile/index'
 import { ChatProvider } from './Context/ChatContext'
 
@@ -34,7 +34,7 @@ function App() {
               <Route path="/login" element={<Login token={token} setToken={setToken} />} />
               <Route path="/forgotpassword" element={<ForgotPassword token={token} setToken={setToken} />} />
               <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin, ROLES.Owner]} />}>
-                <Route path="/home" element={<HomePage  token={token} setToken={setToken} />} />
+                <Route path="/home" element={<HomePage token={token} setToken={setToken} />} />
                 <Route path="/create" element={<CreateListing token={token} setToken={setToken} />} />
                 <Route path="/editlisting/:listingId" element={<EditListing token={token} setToken={setToken} />} />
                 <Route path="/editprofile/:email" element={<EditProfile token={token} setToken={setToken} />} />
@@ -46,11 +46,10 @@ function App() {
                 <Route path="/listing/:listingId" element={<Listing />} />
               </Route>
               <Route element={<RequireAuth allowedRoles={[ROLES.Moderator, ROLES.Admin, ROLES.Owner]} />}>
-                <Route path="/moderatesuspend/:email" element={<ModerateSuspend token={token} setToken={setToken} />} />
                 <Route path="/moderateview" element={<ModerateView token={token} setToken={setToken} />} />
                 <Route path="/moderateinvestigate/:reportId" element={<ModerateInvestigate token={token} setToken={setToken} />} />
+                <Route path="/suspend/:reportId" element={<Suspend token={token} setToken={setToken} />} />
               </Route>
-              <Route path="/viewanalytics" element={<AnalyticsView token={token} setToken={setToken} />} />
             </Routes>
           </Router>
         </div>  
