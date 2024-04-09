@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
-from .verification import generate_verification_token, send_verification_email
+from .verification import generate_verification_token, send_review_email
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone, timedelta
 from flask_cors import cross_origin
@@ -9,6 +9,8 @@ from . import db
 import json
 
 main = Blueprint('main', __name__)
+
+review_tokens = dict()
 
 def get_user_profile_helper(columnkey, columnval):
     query = db.text(f'SELECT * FROM kkuser WHERE {columnkey} = :e')
@@ -90,10 +92,10 @@ def edit_user_profile():
 @jwt_required()
 def search_users():
     data = request.json
-    search_term = data.get('search_term')
+    search_term = data.get('search_term').strip().lower()
     max_results = data.get('max_number_results')
 
-    query = db.text(f"SELECT firstname, email FROM kkuser WHERE email LIKE '%{search_term}%'")
+    query = db.text(f"SELECT firstname, email FROM kkuser WHERE email LIKE '%{search_term}%' LIMIT {max_results}")
 
     result = db.session.execute(query)
 
@@ -154,7 +156,7 @@ def search_listings():
     search_term = data.get('search_term')
     max_results = data.get('max_number_results')
 
-    query = db.text(f"SELECT * FROM listing WHERE listingname LIKE '%{search_term}%' LIMIT {max_results}")
+    query = db.text(f"SELECT * FROM listing WHERE LOWER(listingname) LIKE LOWER('%{search_term}%') LIMIT {max_results}")
 
     searchlist = search_listings_helper(query)
 
@@ -275,7 +277,33 @@ def edit_listing():
 
     db.session.commit()
 
+    if status == 'C':
+        buyer_data = get_user_profile_helper('userid', sold_to)
+        verification_token = generate_verification_token()
+        ok = send_review_email(seller_data['email'], buyer_data['email'], verification_token)
+        review_tokens[listingid] = {'seller': seller_data['email'],
+                                   'buyer': buyer_data['email'],
+                                   'token': verification_token}
+
     return {'status': 'success'}
+
+@main.route('/review_email', methods=['GET'])
+def review_email():
+    token = request.args.get('token')
+
+    # if (not token) or (token not in review_tokens.values()):
+    #     return {'status': 'error', 'msg:': 'Invalid verification token.'}
+
+    # email = [k for k, v in review_tokens.items() if v == token][0]
+
+    # query = db.text('UPDATE kkuser SET verified = true WHERE email = :email')
+    # db.session.execute(query, {'email': email})
+    # db.session.commit()
+
+    # review_tokens.pop(email, None)
+
+    return {'status': 'success', 'msg': 'Email verification successful. You can now log in.'}
+
 
 @main.route('/get_reports', methods=['POST'])
 @jwt_required()

@@ -29,3 +29,20 @@ def send_verification_email(recipient, token):
         # Handle email sending errors
         print(f"Error sending verification email: {e}")
         return False
+
+def send_review_email(seller, buyer, token):
+    subject = f"Rate the seller: {seller}"
+    sender = current_app.config['MAIL_USERNAME']
+    review_link = f"{current_app.config['BASE_URL']}/review_email?token={token}"
+    body = f"Please click the following link to be directed to a review form to rate the seller for the transaction: {review_link}"
+
+    # Send the email
+    msg = Message(subject, sender=sender, recipients=[buyer])
+    msg.body = body
+    try:
+        mail.send(msg)
+        return True
+    except Exception as e:
+        # Handle email sending errors
+        print(f"Error sending verification email: {e}")
+        return False
