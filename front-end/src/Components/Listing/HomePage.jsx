@@ -128,7 +128,7 @@ function HomePage() {
             <div id="listview_container">
                 <div id="list_items_div">
                     {choice === 'Listing' ? (
-                        listings.map(listing => (
+                        listings.filter(listing => listing.listingstatus === "O").map(listing => (
                             <ListingItem key={listing.listingid} id={listing.listingid} title={listing.listing_name} price={listing.asking_price} />
                         ))
                     ) : (

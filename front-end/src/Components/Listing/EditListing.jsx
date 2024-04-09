@@ -125,9 +125,10 @@ function EditListing() {
             "category_type" : category_type,
             "condition" : condition,
             "status": statusToSend,
-            "sold_to": soldTo,
+            "sold_to": soldToId,
             "sold_price": soldPrice,
         });
+        console.log("json:", json);
         try {
             const response = await fetch('/api/edit_listing', {
                 method: 'POST',
@@ -190,13 +191,6 @@ function EditListing() {
                                 <option>Lab Equipment</option>
                             </Form.Control>
                         </Form.Group>
-
-                        {/* <Form.Group controlId="formFile">
-                            <Form.Label>Upload Image</Form.Label>
-                            <Form.Control onChange={(e) => {
-                                setImage(e.target.files[0])
-                            }} type="file" />
-                        </Form.Group> */}
 
                         <Form.Group>
                             <Form.Label>Status</Form.Label>
