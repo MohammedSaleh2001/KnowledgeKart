@@ -139,7 +139,7 @@ def signup_post():
     
     verification_token = generate_verification_token()
     ok = send_verification_email(email, verification_token)
-    email_tokens[email] = verification_token
+    email_tokens[email.strip().lower()] = verification_token
 
     access_token = create_access_token(identity=email)
     return {'status': 'success', 'access_token':access_token}
