@@ -29,7 +29,7 @@ function CreateListing() {
             "listing_name" : name,
             "listing_description" : description,
             "asking_price" : asking_price,
-            "category_type" : 1,
+            "category_type" : category_type,
             "condition" : condition,
         });
 

@@ -24,6 +24,7 @@ function Listing() {
     const [isOwner, setIsOwner] = useState(false);
     const [status, setStatus] = useState("Open");
     const [chatMsg, setChatMsg] = useState("");
+    const [category, setCategory] = useState("Other");
 
     useEffect(() => {
         const fetchListing = async () => {
@@ -59,6 +60,20 @@ function Listing() {
                         break;
                     default:
                         setStatus('Open');
+                        break;
+                }
+                switch (data.data.category_type) {
+                    case 1:
+                        setCategory("Other");
+                        break;
+                    case 2:
+                        setCategory("Textbook");
+                        break;
+                    case 3:
+                        setCategory("Lab Equipment");
+                        break;
+                    default:
+                        setCategory("Other");
                         break;
                 }
             } catch (err) {
@@ -170,6 +185,9 @@ function Listing() {
                     </div> 
                     <div>
                         Status: {status}
+                    </div>
+                    <div>
+                        Category: {category}
                     </div>
                     <div id="listing_date_div">
                         Date Listed: {listing?.date_listed || ""}    
