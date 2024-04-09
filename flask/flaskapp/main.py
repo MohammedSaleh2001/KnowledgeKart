@@ -245,7 +245,6 @@ def edit_listing():
     category_map = {'other': 1, 'textbook': 2, 'lab equipment': 3}
     category_type = category_map[data.get('category_type').lower()]
 
-    # category = data.get('category')
     condition = data.get('condition')
     date_changed = str(datetime.now())
     status = data.get('status')

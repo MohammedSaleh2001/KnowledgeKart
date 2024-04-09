@@ -48,7 +48,7 @@ function Listing() {
                 console.log("Listing:", data.data);
                 setListing(data.data);
                 setIsOwner(data.data.seller.email === localStorage.getItem('email'));
-                switch (data.data.listingStatus) {
+                switch (data.data.listingstatus) {
                     case 'O':
                         setStatus("Open");
                         break;
