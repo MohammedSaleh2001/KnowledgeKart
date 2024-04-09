@@ -12,6 +12,10 @@ auth = Blueprint('auth', __name__)
 
 email_tokens = dict()
 
+def convert_date(date_string):
+    date_format = "%a, %d %b %Y %H:%M:%S %Z"
+    return datetime.strptime(date_string, date_format)
+
 # Used for testing
 import time
 @auth.route('/time')
@@ -60,7 +64,7 @@ def verify_email():
 @auth.route('/login', methods=['POST'])
 def login_post():
     data = request.json
-    email = data.get('email')
+    email = data.get('email').strip().lower()
     password = data.get('password')
     # remember = True if request.form.get('remember') else False
 
@@ -77,7 +81,17 @@ def login_post():
     if not user or not check_password_hash(user[2], password):
         return {'status': 'error', 'message': 'Please check your login details!'} # if the user doesn't exist or password is wrong
 
-    # print(user)
+    # if user is blacklisted
+    if user[7]:
+        blacklisted_until = user[8]
+        current_date = datetime.now()
+
+        if blacklisted_until > current_date:
+            return {'status': 'error', 'message': f'User is blacklisted until {user[8]}'}
+        else:
+            query = db.text('UPDATE kkuser SET blacklist = false, blacklisteduntil = null WHERE email = :email')
+            db.session.execute(query, {'email': email})
+            db.session.commit()
 
     access_token = create_access_token(identity=email)
     return {'status': 'success', 'access_token':access_token, 'role':user[5]}
@@ -85,12 +99,13 @@ def login_post():
 @auth.route('/signup', methods=['POST'])
 def signup_post():
     data = request.json
-    email = data.get('email')
+    email = data.get('email').strip().lower()
     name = data.get('name')
     password = data.get('password')
 
-    # Add check for ualberta address
-
+    if not email.endswith('@ualberta.ca'):
+        return {'status': 'error', 'message': 'Not a ualberta email!'}
+    
     query = db.text('SELECT Email FROM kkuser WHERE Email = :e')
 
     user = db.session.execute(query,
