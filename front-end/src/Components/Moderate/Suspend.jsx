@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from "react-router-dom"
 
-import './Moderate.css'
-
-function ModerateInvestigate() {
+function Suspend() {
     const navigate = useNavigate();
     const { reportId } = useParams();
     const [report, setReport] = useState(null);
+    const [hours, setHours] = useState(null);
+    const [rationale, setRationale] = useState('');
 
-    const handleCloseReport = async () => {
+    const handleCloseReport = async (rationale) => {
         const token = localStorage.getItem('token');
         try {
             const response = await fetch('/api/close_report', {
@@ -20,7 +20,8 @@ function ModerateInvestigate() {
                 },
                 body: JSON.stringify({
                     reportid: reportId,
-                    verdict: "Report is closed. No one was at fault."
+                    // verdict: "Report is closed. No one was at fault."
+                    verdict: rationale
                 }),
             });
             const data = await response.json();
@@ -37,7 +38,7 @@ function ModerateInvestigate() {
 
     const handleSuspendUser = async () => {
         const token = localStorage.getItem('token');
-        const blacklistedUntil = new Date(new Date().getTime() + (72 * 60 * 60 * 1000)).toISOString();
+        const blacklistedUntil = new Date(new Date().getTime() + (hours * 60 * 60 * 1000)).toISOString();
 
         try {
             const response = await fetch('/api/suspend_user', {
@@ -54,7 +55,7 @@ function ModerateInvestigate() {
             });
             const data = await response.json();
             if (response.ok && data.status === 'success') {
-                handleCloseReport();
+                handleCloseReport(rationale);
                 window.location.reload();
             } else {
                 console.log("Failed to suspend user.");
@@ -96,48 +97,42 @@ function ModerateInvestigate() {
         fetchReports();
     }, [reportId, navigate])
 
-    if (!report) {
-        return <div>Loading...</div>
-    }
-
     return (
-        <div id="moderate_investigate_container">
+        <div id="suspend_container">
             <div id="title">
-                Investigation Form
+                Suspend
             </div>
             <div id="email_container">
-                <input type="email" placeholder="Enter Email" value={report.report_for_email} readonly="readonly"/>
+                <input
+                    type="email"
+                    placeholder="Enter Email"
+                    value={report?.report_for_email}
+                    readOnly
+                />
             </div>
-            <div id="textarea_container">
-                <textarea placeholder="Type Your Rationale..." value={report.report_text} readonly="readonly"/>
+            <div id="duration_container">
+                <input
+                    type="number"
+                    placeholder="Enter Duration (in Hours)"
+                    value={hours}
+                    onChange={(e) => setHours(e.target.value)}
+                />
+            </div>
+            <div id="rationale_container">
+                <textarea
+                    placeholder="Type Your Rationale"
+                    value={rationale}
+                    onChange={(e) => setRationale(e.target.value)}
+                />
             </div>
             <div id="action_buttons_div">
-                <div onClick={() => {
-                    navigate('/moderateview');
-                }}>
-                    Back
-                </div>
-                <div onClick={() => {
-                    navigate(`/viewprofile/${report.report_for_email}`);
-                }}>
-                    View Profile
-                </div>
-                <div onClick={() => {
-                    navigate(`/chat/${report.report_for_email}`)
-                }}>
-                    View Chat History
-                </div>
-                <div id="close_button" onClick={handleCloseReport}>
-                    Close
-                </div>
-                <div id="suspend_button" onClick={() => {
-                    navigate(`/suspend/${reportId}`)
-                }}>
-                    Suspend
-                </div>
+                <button onClick={() => {
+                    navigate(`/moderateinvestigate/${reportId}`)
+                }}>Cancel</button>
+                <button onClick={handleSuspendUser}>Submit</button>
             </div>
         </div>
     )
 }
 
-export default ModerateInvestigate;
+export default Suspend;
