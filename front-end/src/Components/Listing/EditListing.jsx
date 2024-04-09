@@ -39,10 +39,23 @@ function EditListing() {
                 const data = await response.json();
                 if (response.ok) {
                     console.log("data.data:", data.data);
+                    switch (data.data.category_type) {
+                        case 1:
+                            setCategoryType("Other");
+                            break;
+                        case 2:
+                            setCategoryType("Textbook");
+                            break;
+                        case 3:
+                            setCategoryType("Lab Equipment");
+                            break;
+                        default:
+                            setCategoryType("Other");
+                            break;
+                    }
                     setName(data.data.listing_name);
                     setDescription(data.data.listing_description);
                     setAskingPrice(data.data.asking_price);
-                    setCategoryType(data.data.category_type);
                     setCondition(data.data.condition);
                     setStatus(data.data.listingstatus);
                     setSoldTo(data.data.soldto);
@@ -82,14 +95,13 @@ function EditListing() {
                 console.log("Fetched Buyer id successfully!");
                 soldToId = response?.data.userid;
             } else {
-                alert("The email address does not exist.");
-                return;
+                console.log("Sold to user does not exist.");
             }
         } catch (error) {
             console.error("Network error:", error);
         }
 
-        const statusToSend = "O"
+        var statusToSend = "O"
         switch (status) {
             case "Open":
                 statusToSend = 'O';
@@ -110,7 +122,7 @@ function EditListing() {
             "listing_name" : name,
             "listing_description" : description,
             "asking_price" : asking_price,
-            "category_type" : 1,
+            "category_type" : category_type,
             "condition" : condition,
             "status": statusToSend,
             "sold_to": soldTo,

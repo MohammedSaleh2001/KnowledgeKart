@@ -72,7 +72,9 @@ function ReportInstance({ report }) {
                 </div>    
             </div>
             <div id="action_buttons_div">
-                <div id="suspend_button" onClick={handleSuspendUser}>
+                <div id="suspend_button" onClick={() => {
+                    navigate(`/suspend/${report.reportid}`)
+                }}>
                     Suspend
                 </div>
                 <div id="close_button" onClick={handleCloseReport}>
