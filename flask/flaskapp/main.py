@@ -95,7 +95,7 @@ def search_users():
     search_term = data.get('search_term').strip().lower()
     max_results = data.get('max_number_results')
 
-    query = db.text(f"SELECT firstname, email FROM kkuser WHERE email LIKE '%{search_term}%' LIMIT {max_results}")
+    query = db.text(f"SELECT firstname, email FROM kkuser WHERE email LIKE '%{search_term}%' AND LOWER(userrole) = LOWER('U') LIMIT {max_results}")
 
     result = db.session.execute(query)
 
