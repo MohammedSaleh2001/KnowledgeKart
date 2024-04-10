@@ -18,6 +18,7 @@
         font-size: 24px;
         background-color: gray;
         color: white;
+        border-bottom: solid black 1px;
     }
 
     #input_email_container {
@@ -118,7 +119,7 @@
             #report_instance_info {
                 div {
                     display: flex;
-                    justify-content: center;
+                    justify-content: left;
                     align-items: center;
                 }
 
@@ -259,6 +260,7 @@
         font-size: 24px;
         background-color: gray;
         color: white;
+        border-bottom: solid black 1px;
     }
 
     #email_container {

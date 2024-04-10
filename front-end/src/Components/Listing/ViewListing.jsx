@@ -92,9 +92,8 @@ function Listing() {
                 const honesty = parseFloat(listing.seller.honesty);
                 const politeness = parseFloat(listing.seller.politeness);
                 const quickness = parseFloat(listing.seller.quickness);
-                const numreviews = listing.seller.numreviews;
 
-                const calculatedRating = (honesty + politeness + quickness + numreviews) / 4;
+                const calculatedRating = (honesty + politeness + quickness) / 3;
                 setRating(calculatedRating.toFixed(2));
             } catch (error) {
                 console.error("Error calculating the user's rating!")
@@ -155,6 +154,20 @@ function Listing() {
         }
     }
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('en-CA', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            timeZone: 'America/Edmonton',
+            timeZoneName: 'short',
+        }).format(date);
+    };
+
     const isNotVerified = localStorage.getItem('roles') === 'V';
 
     return (
@@ -192,7 +205,7 @@ function Listing() {
                         Category: {category}
                     </div>
                     <div id="listing_date_div">
-                        Date Listed: {listing?.date_listed || ""}    
+                        Date Listed: {formatDate(listing?.date_listed) || "Not Available"}    
                     </div>
                     {!isOwner && !isNotVerified && (<div id="listing_chat_div">
                         <input

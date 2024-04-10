@@ -94,16 +94,15 @@
 }
 #chat_bar_container #messages-container .message-container {
   display: flex;
+  flex-direction: column;
   margin-bottom: 20px;
 }
-#chat_bar_container #messages-container .message-container #messageInfo {
+#chat_bar_container #messages-container .message-container #messageTop {
+  display: flex;
+  flex-direction: row;
   padding-right: 10px;
 }
-#chat_bar_container #messages-container .message-container #messageInfo #messageDate {
-  font-size: 14px;
-  color: gray;
-}
-#chat_bar_container #messages-container .message-container #messageContent {
+#chat_bar_container #messages-container .message-container #messageTop #messageContent {
   display: flex;
   max-width: 50%;
   background-color: white;
@@ -111,16 +110,24 @@
   align-items: center;
   border-radius: 0px 10px 10px 10px;
 }
-#chat_bar_container #messages-container .message-container.owner {
-  flex-direction: row-reverse;
+#chat_bar_container #messages-container .message-container #messageBottom {
+  display: flex;
 }
-#chat_bar_container #messages-container .message-container.owner #messageInfo {
+#chat_bar_container #messages-container .message-container #messageBottom #messageDate {
+  font-size: 14px;
+  color: gray;
+}
+#chat_bar_container #messages-container .message-container.owner #messageTop {
+  flex-direction: row-reverse;
   padding-left: 10px;
 }
-#chat_bar_container #messages-container .message-container.owner #messageContent {
+#chat_bar_container #messages-container .message-container.owner #messageTop #messageContent {
   border-radius: 10px 0px 10px 10px;
   background-color: #8da4f1;
   color: white;
+}
+#chat_bar_container #messages-container .message-container.owner #messageBottom {
+  justify-content: right;
 }
 #chat_bar_container #chat_input_container {
   display: flex;

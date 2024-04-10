@@ -12,7 +12,7 @@ const ChatListing = ({name, onClick }) => {
             </div>
             <div id="chat_listing_info_div">
                 <div id="chat_listing_info_div_name">{name}</div>
-                <div id="chat_listing_info_div_last_msg">Last Message Goes Here</div>
+                {/* <div id="chat_listing_info_div_last_msg">Last Message Goes Here</div> */}
             </div>
         </div>
     )

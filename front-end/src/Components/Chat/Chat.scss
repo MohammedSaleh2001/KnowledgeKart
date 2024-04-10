@@ -106,37 +106,48 @@
 
         .message-container {
             display: flex;
+            flex-direction: column;
             margin-bottom: 20px;
         
-            #messageInfo {
+            #messageTop {
+                display: flex;
+                flex-direction: row;
                 padding-right: 10px;
+
+                #messageContent {
+                    display: flex;
+                    max-width: 50%;
+                    background-color: white;
+                    padding: 10px 20px;
+                    align-items: center;
+                    border-radius: 0px 10px 10px 10px;
+                }
+            }
         
+            #messageBottom {
+                display: flex;
+
                 #messageDate {
                     font-size: 14px;
                     color: gray;
                 }
             }
-        
-            #messageContent {
-                display: flex;
-                max-width: 50%;
-                background-color: white;
-                padding: 10px 20px;
-                align-items: center;
-                border-radius: 0px 10px 10px 10px;
-            }
 
             &.owner {
-                flex-direction: row-reverse;
 
-                #messageInfo {
+                #messageTop {
+                    flex-direction: row-reverse;
                     padding-left: 10px;
+
+                    #messageContent {
+                        border-radius: 10px 0px 10px 10px;
+                        background-color: #8da4f1;
+                        color: white;
+                    }
                 }
 
-                #messageContent {
-                    border-radius: 10px 0px 10px 10px;
-                    background-color: #8da4f1;
-                    color: white;
+                #messageBottom {
+                    justify-content: right;
                 }
             }
         }
