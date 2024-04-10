@@ -21,6 +21,10 @@ function HomePage() {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("%");
     const [choice, setChoice] = useState('Listing');
+    const [categoryFilter, setCategoryFilter] = useState('');
+    const [conditionFilter, setConditionFilter] = useState('');
+    const [dateSort, setDateSort] = useState('');
+    const [priceSort, setPriceSort] = useState('');
 
     useEffect(() => {
         const endpoint = choice === 'Listing' ? '/api/search_listings' : '/api/search_users';
@@ -126,6 +130,50 @@ function HomePage() {
                     </div>
                 </div>
             </div>
+            {(choice === "Listing") && (<div id="search_filter_container">
+                    <select
+                        name="Category"
+                        id="category_filter"
+                        value={categoryFilter}
+                        onChange={e => setCategoryFilter(e.target.value)}
+                    >
+                        <option>All</option>
+                        <option>Other</option>
+                        <option>Textbook</option>
+                        <option>Lab Equipment</option>
+                    </select>
+                    <select
+                        name="Condition"
+                        id="condition_filter"
+                        value={conditionFilter}
+                        onChange={e => setConditionFilter(e.target.value)}
+                    >
+                        <option>All</option>
+                        <option>New</option>
+                        <option>Very Good</option>
+                        <option>Good</option>
+                        <option>Used</option>
+                        <option>Very Used</option>
+                    </select>
+                    <select
+                        name="Date Listed"
+                        id="date_listed_sort"
+                        value={dateSort}
+                        onChange={e => setDateSort(e.target.value)}
+                    >
+                        <option>Newest to Oldest</option>
+                        <option>Oldest to Newest</option>
+                    </select>
+                    <select
+                        name="Price"
+                        id="price_sort"
+                        value={priceSort}
+                        onChange={e => setPriceSort(e.target.value)}
+                    >
+                        <option>High to Low</option>
+                        <option>Low to High</option>
+                    </select>
+            </div>)}
             <div id="listview_container">
                 <div id="list_items_div">
                     {choice === 'Listing' ? (

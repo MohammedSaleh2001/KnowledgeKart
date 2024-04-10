@@ -173,6 +173,21 @@ function EditListing() {
                         </Form.Group>
 
                         <Form.Group>
+                            <Form.Label>Condition</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={condition}
+                                onChange={(e) => setCondition(e.target.value)}
+                            >
+                                <option>New</option>
+                                <option>Very Good</option>
+                                <option>Good</option>
+                                <option>Used</option>
+                                <option>Very Used</option>
+                            </Form.Control>
+                        </Form.Group>
+
+                        <Form.Group>
                             <Form.Label>Price</Form.Label>
                             <Form.Control onChange={(e) => {
                                 setAskingPrice(parseFloat(e.target.value))
