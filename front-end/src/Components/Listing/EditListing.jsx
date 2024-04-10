@@ -18,7 +18,7 @@ function EditListing() {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [asking_price, setAskingPrice] = useState(0.00);
-    const [category_type, setCategoryType] = useState('');
+    const [category_type, setCategoryType] = useState('Other');
     const [condition, setCondition] = useState("New");
     const [status, setStatus] = useState('open');
     const [soldTo, setSoldTo] = useState('');
@@ -170,6 +170,21 @@ function EditListing() {
                             <Form.Control onChange={(e) => {
                                 setDescription(e.target.value)
                             }} as="textarea" placeholder="Enter Description" value={description} />
+                        </Form.Group>
+
+                        <Form.Group>
+                            <Form.Label>Condition</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={condition}
+                                onChange={(e) => setCondition(e.target.value)}
+                            >
+                                <option>New</option>
+                                <option>Very Good</option>
+                                <option>Good</option>
+                                <option>Used</option>
+                                <option>Very Used</option>
+                            </Form.Control>
                         </Form.Group>
 
                         <Form.Group>

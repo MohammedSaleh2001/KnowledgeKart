@@ -7,6 +7,7 @@ from flask_cors import cross_origin
 from .models import User
 from . import db
 import json
+import sys
 
 main = Blueprint('main', __name__)
 
@@ -36,26 +37,62 @@ def get_user_profile_helper(columnkey, columnval):
     
     return data
 
-def search_listings_helper(query):
-    result = db.session.execute(query)
+def search_listings_helper(query, search_term, category_filter, condition_filter, max_results):
+    if max_results != -1:
+        params = {
+            'search_term': f'%{search_term}%',
+            'category_filter': category_filter,
+            'condition_filter': condition_filter,
+            'max_results': max_results,
+        }
+        query += " LIMIT :max_results"
+        # print("query:" + query, file=sys.stderr)
+        # result = db.session.execute(query)
+        result = db.session.execute(db.text(query), params)    
+    
+        searchlist = []
+        for listing in result.fetchall():
+            data = {'listingid': listing[0],
+                    'sellerid': listing[1],
+                    'listing_name': listing[2],
+                    'listing_description': listing[3],
+                    'asking_price': listing[4],
+                    'category_type': listing[5],
+                    'condition': listing[7],
+                    'date_listed': listing[9],
+                    'datechanged': listing[11],
+                    'listingstatus': listing[10],
+                    'soldto': listing[12],
+                    'soldprice': listing[13]}
+            searchlist.append(data)
 
-    searchlist = []
-    for listing in result.fetchall():
-        data = {'listingid': listing[0],
-                'sellerid': listing[1],
-                'listing_name': listing[2],
-                'listing_description': listing[3],
-                'asking_price': listing[4],
-                'category_type': listing[5],
-                'condition': listing[7],
-                'date_listed': listing[9],
-                'datechanged': listing[11],
-                'listingstatus': listing[10],
-                'soldto': listing[12],
-                'soldprice': listing[13]}
-        searchlist.append(data)
+        return searchlist
+    else:
+        params = {
+            'search_term': f'%{search_term}%',
+            'category_filter': category_filter,
+            'condition_filter': condition_filter,
+        }
+        result = db.session.execute(db.text(query), params)    
+    
+        searchlist = []
+        for listing in result.fetchall():
+            data = {'listingid': listing[0],
+                    'sellerid': listing[1],
+                    'listing_name': listing[2],
+                    'listing_description': listing[3],
+                    'asking_price': listing[4],
+                    'category_type': listing[5],
+                    'condition': listing[7],
+                    'date_listed': listing[9],
+                    'datechanged': listing[11],
+                    'listingstatus': listing[10],
+                    'soldto': listing[12],
+                    'soldprice': listing[13]}
+            searchlist.append(data)
 
-    return searchlist
+        return searchlist
+
 
 @main.route('/user_profile', methods=['GET', 'POST'])
 @jwt_required()
@@ -157,11 +194,35 @@ def add_listing():
 def search_listings():
     data = request.json
     search_term = data.get('search_term')
+    category_filter = data.get('category_filter', -1)
+    condition_filter = data.get('condition_filter', 'All')
+    date_sort = data.get('date_sort', 'None')
+    price_sort = data.get('price_sort', 'None')
     max_results = data.get('max_number_results')
 
-    query = db.text(f"SELECT * FROM listing WHERE LOWER(listingname) LIKE LOWER('%{search_term}%') LIMIT {max_results}")
+    # query = db.text(f"SELECT * FROM listing WHERE LOWER(listingname) LIKE LOWER('%{search_term}%') LIMIT {max_results}")
+    query = "SELECT * FROM listing WHERE listingstatus = 'O' AND LOWER(listingname) LIKE LOWER(:search_term)"
 
-    searchlist = search_listings_helper(query)
+    if category_filter != -1:
+        query += " AND categorytypeid = :category_filter"
+    if condition_filter != 'All':
+        query += " AND condition = :condition_filter"
+    order_clause = []
+    if date_sort != 'None':
+        if date_sort == 'Newest to Oldest':
+            order_clause.append("datelisted DESC")
+        elif date_sort == 'Oldest to Newest':
+            order_clause.append("datelisted ASC")
+    if price_sort != 'None':
+        if price_sort == 'High to Low':
+            order_clause.append("askingprice DESC")
+        elif price_sort == 'Low to High':
+            order_clause.append("askingprice ASC")
+    if order_clause:
+        query += " ORDER BY " + ", ".join(order_clause)
+
+    # searchlist = search_listings_helper(query)
+    searchlist = search_listings_helper(query, search_term, category_filter, condition_filter, max_results)
 
     return {'status': 'success', 'data': searchlist}
 
@@ -213,9 +274,10 @@ def get_user_listings():
         return {'status': 'error', 'message': 'Email address not in use!'}
     sellerid = seller_data['userid']
 
-    query = db.text(f"SELECT * FROM listing WHERE userid = '{sellerid}'")
+    # query = db.text(f"SELECT * FROM listing WHERE userid = '{sellerid}'")
+    query = f"SELECT * FROM listing WHERE userid = '{sellerid}'"
 
-    searchlist = search_listings_helper(query)
+    searchlist = search_listings_helper(query, f"%{'%'}%", -1, 'All', -1)
 
     return {'status': 'success', 'data': searchlist}
 

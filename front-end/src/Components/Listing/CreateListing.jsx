@@ -5,20 +5,12 @@ import { Col, Button, Row, Container, Card, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 function CreateListing() {
-
     const navigate = useNavigate()
-
-    // const [title, setTitle] = useState('');
-    // const [description, setDescription] = useState('');
-    // const [price, setPrice] = useState(0);
-    // const [category, setCategory] = useState('');
-    const [image, setImage] = useState(null);
-
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [asking_price, setAskingPrice] = useState(0.00);
-    const [category_type, setCategoryType] = useState('');
-    const [condition, setCondition] = useState("New");
+    const [category_type, setCategoryType] = useState('Other');
+    const [condition, setCondition] = useState('New');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -78,6 +70,21 @@ function CreateListing() {
                         </Form.Group>
 
                         <Form.Group>
+                            <Form.Label>Condition</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={condition}
+                                onChange={e => setCondition(e.target.value)}
+                            >
+                                <option>New</option>
+                                <option>Very Good</option>
+                                <option>Good</option>
+                                <option>Used</option>
+                                <option>Very Used</option>
+                            </Form.Control>
+                        </Form.Group>
+
+                        <Form.Group>
                             <Form.Label>Price</Form.Label>
                             <Form.Control onChange={(e) => {
                                 setAskingPrice(parseFloat(e.target.value))
@@ -89,7 +96,7 @@ function CreateListing() {
                             <Form.Control
                                 as="select"
                                 value={category_type}
-                                onChange={(e) => setCategoryType(e.target.value)}
+                                onChange={e => setCategoryType(e.target.value)}
                             >
                                 <option>Other</option>
                                 <option>Textbook</option>
