@@ -31,44 +31,28 @@ function ReportInstance({ report }) {
         }
     };
 
-    const handleSuspendUser = async () => {
-        const token = localStorage.getItem('token');
-        const blacklistedUntil = new Date(new Date().getTime() + (72 * 60 * 60 * 1000)).toISOString();
-        try {
-            const response = await fetch('/api/suspend_user', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: report.report_for_email,
-                    blacklist: true,
-                    blacklisted_until: blacklistedUntil,
-                }),
-            });
-            const data = await response.json();
-            if (response.ok && data.status === 'success') {
-                handleCloseReport();
-                alert("User succesfully suspended.");
-                navigate('/moderateview');
-                window.location.reload();
-            } else {
-                console.log("Failed to suspend user.");
-            }
-        } catch (error) {
-            console.error('Error suspending user:', error);
-        }
-    }
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat('en-CA', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            timeZone: 'America/Edmonton',
+            timeZoneName: 'short',
+        }).format(date);
+    };
 
     return (
         <div id="report_instance_div">
             <div id="report_instance_info">
                 <div id="report_instance_email">
-                    Report: {report.report_for_email}
+                    Report for {report.report_for_email}
                 </div>
                 <div id="report_instance_date">
-                    Date Reported: {report.date_reported}
+                    Date Reported: {formatDate(report.date_reported)}
                 </div>    
             </div>
             <div id="action_buttons_div">

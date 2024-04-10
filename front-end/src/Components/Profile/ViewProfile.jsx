@@ -91,9 +91,8 @@ function ViewProfile() {
                 const honesty = parseFloat(userData.honesty);
                 const politeness = parseFloat(userData.politeness);
                 const quickness = parseFloat(userData.quickness);
-                const numreviews = userData.numreviews;
 
-                const calculatedRating = (honesty + politeness + quickness + numreviews) / 4;
+                const calculatedRating = (honesty + politeness + quickness) / 3;
                 setRating(calculatedRating.toFixed(2));
             } catch (error) {
                 console.error("Error calculating the user's rating!")

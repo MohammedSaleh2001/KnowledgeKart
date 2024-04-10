@@ -18,6 +18,7 @@
   font-size: 24px;
   background-color: gray;
   color: white;
+  border-bottom: solid black 1px;
 }
 #moderate_report_container #input_email_container {
   padding: 10px;
@@ -103,7 +104,7 @@
 }
 #moderate_view_container #report_listings #report_instance_div #report_instance_info div {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
 }
 #moderate_view_container #report_listings #report_instance_div #report_instance_info #report_instance_email {
@@ -224,6 +225,7 @@
   font-size: 24px;
   background-color: gray;
   color: white;
+  border-bottom: solid black 1px;
 }
 #suspend_container #email_container {
   padding: 10px;
