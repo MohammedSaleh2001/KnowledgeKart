@@ -9,8 +9,8 @@ function CreateListing() {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [asking_price, setAskingPrice] = useState(0.00);
-    const [category_type, setCategoryType] = useState('');
-    const [condition, setCondition] = useState('');
+    const [category_type, setCategoryType] = useState('Other');
+    const [condition, setCondition] = useState('New');
 
     const handleSubmit = async (e) => {
         e.preventDefault();

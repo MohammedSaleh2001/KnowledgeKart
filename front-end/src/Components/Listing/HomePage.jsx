@@ -21,20 +21,32 @@ function HomePage() {
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("%");
     const [choice, setChoice] = useState('Listing');
-    const [categoryFilter, setCategoryFilter] = useState('');
-    const [conditionFilter, setConditionFilter] = useState('');
-    const [dateSort, setDateSort] = useState('');
-    const [priceSort, setPriceSort] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('-1');
+    const [conditionFilter, setConditionFilter] = useState('All');
+    const [dateSort, setDateSort] = useState('None');
+    const [priceSort, setPriceSort] = useState('None');
 
     useEffect(() => {
         const endpoint = choice === 'Listing' ? '/api/search_listings' : '/api/search_users';
         fetchListings(endpoint, searchTerm);
-    }, [searchTerm, choice]);
+    }, [searchTerm, choice, categoryFilter, conditionFilter, dateSort, priceSort]);
 
     const fetchListings = async (endpoint, searchTerm) => {
         const token = localStorage.getItem('token');
+
         try {
             setIsLoading(true);
+
+            var bodyToSend = JSON.stringify({
+                search_term: `${searchTerm}`,
+                max_number_results: 10,
+                category_filter: parseInt(categoryFilter),
+                condition_filter: conditionFilter,
+                date_sort: dateSort,
+                price_sort: priceSort
+            });
+            console.log("bodyToSend:", bodyToSend);
+
             const response = await fetch(endpoint, {
                 method: 'POST',
                 cache: 'no-cache',
@@ -45,16 +57,13 @@ function HomePage() {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    search_term: `${searchTerm}`,
-                    max_number_results: 10,
-                })
+                body: bodyToSend,
             });
             if (!response.ok) {
                 throw new Error('Something went wrong!');
             }
             const data = await response.json();
-            console.log(data.data);
+            console.log("data.data", data.data);
             setListings(data.data);
         } catch (error) {
             setError(error.message);
@@ -137,10 +146,10 @@ function HomePage() {
                         value={categoryFilter}
                         onChange={e => setCategoryFilter(e.target.value)}
                     >
-                        <option>All</option>
-                        <option>Other</option>
-                        <option>Textbook</option>
-                        <option>Lab Equipment</option>
+                        <option value='-1'>All</option>
+                        <option value='1'>Other</option>
+                        <option value='2'>Textbook</option>
+                        <option value='3'>Lab Equipment</option>
                     </select>
                     <select
                         name="Condition"
@@ -161,6 +170,7 @@ function HomePage() {
                         value={dateSort}
                         onChange={e => setDateSort(e.target.value)}
                     >
+                        <option>None</option>
                         <option>Newest to Oldest</option>
                         <option>Oldest to Newest</option>
                     </select>
@@ -170,8 +180,9 @@ function HomePage() {
                         value={priceSort}
                         onChange={e => setPriceSort(e.target.value)}
                     >
-                        <option>High to Low</option>
+                        <option>None</option>
                         <option>Low to High</option>
+                        <option>High to Low</option>
                     </select>
             </div>)}
             <div id="listview_container">

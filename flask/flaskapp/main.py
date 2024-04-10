@@ -7,6 +7,7 @@ from flask_cors import cross_origin
 from .models import User
 from . import db
 import json
+import sys
 
 main = Blueprint('main', __name__)
 
@@ -36,8 +37,16 @@ def get_user_profile_helper(columnkey, columnval):
     
     return data
 
-def search_listings_helper(query):
-    result = db.session.execute(query)
+def search_listings_helper(query, search_term, category_filter, condition_filter, max_results):
+    params = {
+        'search_term': f'%{search_term}%',
+        'category_filter': category_filter,
+        'condition_filter': condition_filter,
+        'max_results': max_results,
+    }
+    print("query:" + query, file=sys.stderr)
+    # result = db.session.execute(query)
+    result = db.session.execute(db.text(query), params)
 
     searchlist = []
     for listing in result.fetchall():
@@ -157,11 +166,36 @@ def add_listing():
 def search_listings():
     data = request.json
     search_term = data.get('search_term')
+    category_filter = data.get('category_filter', -1)
+    condition_filter = data.get('condition_filter', 'All')
+    date_sort = data.get('date_sort', 'None')
+    price_sort = data.get('price_sort', 'None')
     max_results = data.get('max_number_results')
 
-    query = db.text(f"SELECT * FROM listing WHERE LOWER(listingname) LIKE LOWER('%{search_term}%') LIMIT {max_results}")
+    # query = db.text(f"SELECT * FROM listing WHERE LOWER(listingname) LIKE LOWER('%{search_term}%') LIMIT {max_results}")
+    query = "SELECT * FROM listing WHERE listingstatus = 'O' AND LOWER(listingname) LIKE LOWER(:search_term)"
 
-    searchlist = search_listings_helper(query)
+    if category_filter != -1:
+        query += " AND categorytypeid = :category_filter"
+    if condition_filter != 'All':
+        query += " AND condition = :condition_filter"
+    order_clause = []
+    if date_sort != 'None':
+        if date_sort == 'Newest to Oldest':
+            order_clause.append("datelisted DESC")
+        elif date_sort == 'Oldest to Newest':
+            order_clause.append("datelisted ASC")
+    if price_sort != 'None':
+        if price_sort == 'High to Low':
+            order_clause.append("askingprice DESC")
+        elif price_sort == 'Low to High':
+            order_clause.append("askingprice ASC")
+    if order_clause:
+        query += " ORDER BY " + ", ".join(order_clause)
+    query += " LIMIT :max_results"
+
+    # searchlist = search_listings_helper(query)
+    searchlist = search_listings_helper(query, search_term, category_filter, condition_filter, max_results)
 
     return {'status': 'success', 'data': searchlist}
 
