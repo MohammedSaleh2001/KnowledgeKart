@@ -183,7 +183,8 @@ function ViewProfile() {
             <div id="profile_header">
                 <div id="view_profile_back_button">
                     <ArrowBackIosNewIcon style={{cursor: 'pointer'}} onClick={() => {
-                        if (loggedInUserRole === 'U') {
+                        // if (loggedInUserRole === 'U' ) {
+                        if (['U', 'V', 'O', 'A'].includes(loggedInUserRole)) {
                             navigate('/home');    
                         } else if (loggedInUserRole === 'M') {
                             navigate(-1);

@@ -84,6 +84,7 @@ function HomePage() {
     }
 
     const isOwnerOrAdmin = ['O', 'A'].includes(localStorage.getItem('roles'));
+    const isNotVerified = localStorage.getItem('roles') === 'V';
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -111,15 +112,15 @@ function HomePage() {
                     {isOwnerOrAdmin && (<ShieldIcon style={{fontSize: 50, cursor: 'pointer'}} id="shield-icon" onClick={() => {
                         navigate('/moderateview');
                     }} />)}
-                    <ChatIcon style={{fontSize: 50, cursor: 'pointer'}} id="chat-icon" onClick={() => {
+                    {!isNotVerified && (<ChatIcon style={{fontSize: 50, cursor: 'pointer'}} id="chat-icon" onClick={() => {
                         navigate(`/chat/${localStorage.getItem('email')}`)
-                    }} />
-                    <PostAddIcon style={{fontSize: 50, cursor: 'pointer'}} id="add-post-icon" onClick={() => {
+                    }} />)}
+                    {!isNotVerified && (<PostAddIcon style={{fontSize: 50, cursor: 'pointer'}} id="add-post-icon" onClick={() => {
                         navigate("/create")
-                    }} />
-                    <AccountCircleIcon style={{fontSize: 50, cursor: 'pointer'}} id="profile-icon" onClick={() => {
+                    }} />)}
+                    {!isNotVerified && <AccountCircleIcon style={{fontSize: 50, cursor: 'pointer'}} id="profile-icon" onClick={() => {
                         navigate(`/viewprofile/${localStorage.getItem('email')}`)
-                    }} />
+                    }} />}
                     <div onClick={handleLogout}>
                         Logout
                     </div>

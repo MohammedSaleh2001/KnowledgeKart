@@ -8,8 +8,6 @@ function Login(props) {
     const { auth, setAuth } = useContext(AuthContext);
 
     const navigate = useNavigate();
-    // const location = useLocation();
-    // const from = location.state?.from?.pathname || "/";
     
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -51,16 +49,39 @@ function Login(props) {
 
                 localStorage.setItem('token', accessToken);
                 localStorage.setItem('email', email);
-                localStorage.setItem('roles', roles);
-                // localStorage.setItem('password', password);
 
                 setAuth({ email, password, roles, accessToken });
 
                 props.setToken(responseData.access_token);
 
-                console.log(responseData);
+                console.log("responseData:", responseData);
                 console.log(props);  // error
                 console.log(props.token);
+
+                // ----- Check user verification ----- //
+                const profileResponse = await fetch('/api/user_profile', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({"email": email})
+                });
+                const profileData = await profileResponse.json();
+                if (profileData.status === 'success') {
+                    // console.log("profileData.data:", profileData.data);
+                    // localStorage.setItem('isVerified', profileData.data.verified);
+                    if (profileData.data.verified) {
+                        console.log("User is verified!");
+                        localStorage.setItem('roles', roles);
+                    } else {
+                        console.log("User is not verified!")
+                        localStorage.setItem('roles', 'V')
+                    }
+                } else {
+                    console.log("Cannot retrieve profile data.");
+                }
+                // ----- End Check User Verification ----- //
 
                 if (responseData.status == 'success') {
                     if (roles === 'U' || roles === 'O' || roles === 'A') {

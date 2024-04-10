@@ -100,7 +100,7 @@ function Listing() {
                 console.error("Error calculating the user's rating!")
             }
         }
-    }, [listing])
+    }, [listing]);
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -155,6 +155,8 @@ function Listing() {
         }
     }
 
+    const isNotVerified = localStorage.getItem('roles') === 'V';
+
     return (
         <div id="view_listing_container">
             <div id="listing_header">
@@ -192,7 +194,7 @@ function Listing() {
                     <div id="listing_date_div">
                         Date Listed: {listing?.date_listed || ""}    
                     </div>
-                    {!isOwner && <div id="listing_chat_div">
+                    {!isOwner && !isNotVerified && (<div id="listing_chat_div">
                         <input
                             type="text"
                             placeholder="Chat with the seller"
@@ -200,7 +202,7 @@ function Listing() {
                             onChange={e => setChatMsg(e.target.value)}
                         />
                         <SendIcon id="send_icon" onClick={initiateChatWithSeller} />
-                    </div>}
+                    </div>)}
                 </div>
             </div>
             <div id="listing_description_container">
@@ -237,9 +239,9 @@ function Listing() {
                     <div>
                         Quickness: {listing?.seller?.quickness}
                     </div>
-                    {!isOwner && <div id="listing_email_div" onClick={handleEmailSeller}>
+                    {!isOwner && !isNotVerified && (<div id="listing_email_div" onClick={handleEmailSeller}>
                         Email
-                    </div>}   
+                    </div>)}   
                 </div>
             </div>
         </div>
