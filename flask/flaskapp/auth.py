@@ -186,29 +186,26 @@ def change_password():
     return {'status': 'success'}
 
 @auth.route('/reset_password', methods=['POST'])
-@jwt_required()
 def reset_password():
     data = request.json
-    email = data.get('email')
+    email = data.get('email').strip().lower()
     new_password = data.get('new_password')
 
-    # print('login_post:', data)
-
     query = db.text('SELECT * FROM kkuser WHERE Email = :e')
-
-    result = db.session.execute(query,
-                              {'e': email})
-    
+    result = db.session.execute(query, {'e': email})
     user = result.fetchone()
     
-    # take the user-supplied password, hash it, and compare it to the hashed password in the database
     if not user:
         return {'status': 'error', 'message': 'Email is not registered'} # if the user doesn't exist or password is wrong
 
-    query = db.text(f"UPDATE kkuser SET hashpass = '{generate_password_hash(new_password)}' WHERE email = '{email}'")
+    query = db.text(f"UPDATE kkuser SET hashpass = :hashpass, verified = false WHERE email = :email")
 
-    result = db.session.execute(query)
+    result = db.session.execute(query, {'email': email, 'hashpass': generate_password_hash(new_password)})
 
     db.session.commit()
+
+    verification_token = generate_verification_token()
+    ok = send_verification_email(email, verification_token)
+    email_tokens[email] = verification_token
 
     return {'status': 'success', 'data': data}

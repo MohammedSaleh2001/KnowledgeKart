@@ -14,7 +14,7 @@ function ForgotPassword(props) {
         e.preventDefault();
 
         if (newPassword !== confirmPassword) {
-            setErrorMessage("Passwords do not match.");
+            alert("Passwords do not match.");
             return;
         }
 
@@ -39,7 +39,7 @@ function ForgotPassword(props) {
             }
         } catch (error) {
             console.error('Error resetting password:', error);
-            setErrorMessage('An error occurred while resetting the password.');
+            alert('An error occurred while resetting the password.');
         }
     };
 
