@@ -241,16 +241,16 @@ function Listing() {
                         Rating: {rating || "N/A"}
                     </div>
                     <div>
-                        Honesty: {listing?.seller?.honesty}
-                    </div>
-                    <div>
                         Number of Reviews: {listing?.seller?.numreviews}
                     </div>
                     <div>
-                        Politeness: {listing?.seller?.politeness}
+                        Honesty: {parseFloat(listing?.seller?.honesty).toFixed(2)}
                     </div>
                     <div>
-                        Quickness: {listing?.seller?.quickness}
+                        Politeness: {parseFloat(listing?.seller?.politeness).toFixed(2)}
+                    </div>
+                    <div>
+                        Quickness: {parseFloat(listing?.seller?.quickness).toFixed(2)}
                     </div>
                     {!isOwner && !isNotVerified && (<div id="listing_email_div" onClick={handleEmailSeller}>
                         Email

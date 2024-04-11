@@ -10,6 +10,7 @@ function RateSeller() {
     const [quickness, setQuickness] = useState();
 
     const { emailToken } = useParams();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -38,6 +39,7 @@ function RateSeller() {
         } catch (error) {
             console.error("Network error:", error);
         }
+        navigate('/home');
     };
 
     return (
