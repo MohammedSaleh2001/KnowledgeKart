@@ -6,16 +6,38 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function RateSeller() {
     const [honesty, setHonesty] = useState();
-    const [numReviews, setNumReviews] = useState();
     const [politeness, setPoliteness] = useState();
     const [quickness, setQuickness] = useState();
 
     const { emailToken } = useParams();
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        // Here you can submit the rating data to your backend or perform any other necessary actions
-        console.log("Seller Rating:", { honesty, numReviews, politeness, quickness });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch('/api/submit_review', {
+                method: 'POST',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                },
+                body: JSON.stringify({"review_token": emailToken,
+                                    "honesty": parseInt(honesty),
+                                    "politeness": parseInt(politeness),
+                                    "quickness": parseInt(quickness)}),
+            });
+
+            const data = await response.json();
+            if (response.ok && (data.status === 'success')) {
+                console.log("Submitted review successfully!");
+            } else {
+                console.log("Error: Invalid token");
+            }
+        } catch (error) {
+            console.error("Network error:", error);
+        }
     };
 
     return (
@@ -31,12 +53,6 @@ function RateSeller() {
                     onChange={e => setHonesty(e.target.value)}
                 />
             </div>
-            {/* <div id="num_reviews_input" className="input_div">
-                <input
-                    type="number"
-                    placeholder="Enter their number of reviews."
-                />
-            </div> */}
             <div id="politeness_input" className="input_div">
                 <input
                     type="number"
@@ -54,7 +70,7 @@ function RateSeller() {
                 />
             </div>
             <div id="action_buttons_div">
-                <button>Submit</button>
+                <button onClick={handleSubmit} variant="primary" type="submit">Submit</button>
                 <button>Skip</button>
             </div>
         </div>

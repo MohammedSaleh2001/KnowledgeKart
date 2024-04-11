@@ -93,6 +93,12 @@ def login_post():
             db.session.execute(query, {'email': email})
             db.session.commit()
 
+    # if user is unverified resend the verification email
+    if not user[6]:
+        verification_token = generate_verification_token()
+        ok = send_verification_email(email, verification_token)
+        email_tokens[email] = verification_token
+
     access_token = create_access_token(identity=email)
     return {'status': 'success', 'access_token':access_token, 'role':user[5]}
 
@@ -139,7 +145,7 @@ def signup_post():
     
     verification_token = generate_verification_token()
     ok = send_verification_email(email, verification_token)
-    email_tokens[email.strip().lower()] = verification_token
+    email_tokens[email] = verification_token
 
     access_token = create_access_token(identity=email)
     return {'status': 'success', 'access_token':access_token}

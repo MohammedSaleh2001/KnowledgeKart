@@ -351,23 +351,58 @@ def edit_listing():
 
     return {'status': 'success'}
 
-@main.route('/review_email', methods=['GET'])
-def review_email():
-    token = request.args.get('token')
+@main.route('/submit_review', methods=['POST'])
+def submit_review():
+    data = request.json
+    token = data.get('review_token')
+    honesty = data.get('honesty')
+    politeness = data.get('politeness')
+    quickness = data.get('quickness')
 
-    # if (not token) or (token not in review_tokens.values()):
-    #     return {'status': 'error', 'msg:': 'Invalid verification token.'}
+    for k, v in review_tokens.items():
+        if v['token'] == token:            
+            listingid = k
+            seller = v['seller']
+            buyer = v['buyer']
 
-    # email = [k for k, v in review_tokens.items() if v == token][0]
+            seller_data = get_user_profile_helper('email', seller)
+            numreviews = seller_data['numreviews'] + 1
+            honesty = (honesty + seller_data['honesty']*seller_data['numreviews']) / numreviews
+            politeness = (politeness + seller_data['politeness']*seller_data['numreviews']) / numreviews
+            quickness = (quickness + seller_data['quickness']*seller_data['numreviews']) / numreviews
+            review_tokens.pop(listingid)
 
-    # query = db.text('UPDATE kkuser SET verified = true WHERE email = :email')
-    # db.session.execute(query, {'email': email})
-    # db.session.commit()
+            query = db.text('''UPDATE kkuser SET numreviews = :numreviews,
+                                                honesty = :honesty,
+                                                politeness = :politeness,
+                                                quickness = :quickness
+                              WHERE email = :email''')
+            db.session.execute(query, {'email': seller,
+                                       'numreviews': numreviews,
+                                       'honesty': honesty,
+                                       'politeness': politeness,
+                                       'quickness': quickness})
+            db.session.commit()
 
-    # review_tokens.pop(email, None)
+            return {'status': 'success'}
+        
+    return {'status': 'error', 'msg': 'Invalid review token'}
 
-    return {'status': 'success', 'msg': 'Email verification successful. You can now log in.'}
+@main.route('/get_review', methods=['POST'])
+def get_review():
+    data = request.json
+    token = data.get('review_token')
 
+    for k, v in review_tokens.items():
+        if v['token'] == token:
+            res = {'status': 'success',
+                   'listingid': k,
+                   'seller': v['seller'],
+                   'buyer': v['buyer']}
+            review_tokens.pop(token)
+            return res
+    
+    return {'status': 'error', 'msg': 'Invalid review token'}
 
 @main.route('/get_reports', methods=['POST'])
 @jwt_required()

@@ -90,10 +90,10 @@ function EditListing() {
             });
 
             const data = await response.json();
-
-            if (response.ok && data.data && data.data.userid) {
+            if (response.ok && (data.status === 'success')) {
                 console.log("Fetched Buyer id successfully!");
-                soldToId = response?.data.userid;
+                // console.log(data.data);
+                soldToId = data.data.userid;
             } else {
                 console.log("Sold to user does not exist.");
             }
