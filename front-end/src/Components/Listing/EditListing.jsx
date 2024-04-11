@@ -57,9 +57,20 @@ function EditListing() {
                     setDescription(data.data.listing_description);
                     setAskingPrice(data.data.asking_price);
                     setCondition(data.data.condition);
-                    setStatus(data.data.listingstatus);
-                    setSoldTo(data.data.soldto);
+                    setSoldTo(data.data.seller.email);
                     setSoldPrice(data.data.soldprice);
+                    var currentStatus;
+                    switch (data.data.listingstatus) {
+                        case "O":
+                            currentStatus = 'Open'; break;
+                        case "C":
+                            currentStatus = 'Closed'; break;
+                        case "S":
+                            currentStatus = 'Sold'; break;
+                        default:
+                            currentStatus = 'Open'; break;
+                    }
+                    setStatus(currentStatus);
                 } else {
                     console.error('Failed to fetch listing details');
                 }
@@ -90,10 +101,9 @@ function EditListing() {
             });
 
             const data = await response.json();
-
-            if (response.ok && data.data && data.data.userid) {
+            if (response.ok && (data.status === 'success')) {
                 console.log("Fetched Buyer id successfully!");
-                soldToId = response?.data.userid;
+                soldToId = data.data.userid;
             } else {
                 console.log("Sold to user does not exist.");
             }

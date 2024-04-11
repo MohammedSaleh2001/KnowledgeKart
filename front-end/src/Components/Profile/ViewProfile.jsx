@@ -214,16 +214,16 @@ function ViewProfile() {
                         Rating: {rating || "Not Available"}
                     </div>
                     <div>
-                        Honesty: {userData?.honesty}
-                    </div>
-                    <div>
                         Number of Reviews: {userData?.numreviews}
                     </div>
                     <div>
-                        Politeness: {userData?.politeness}
+                        Honesty: {parseFloat(userData?.honesty).toFixed(2)}
                     </div>
                     <div>
-                        Quickness: {userData?.quickness}
+                        Politeness: {parseFloat(userData?.politeness).toFixed(2)}
+                    </div>
+                    <div>
+                        Quickness: {parseFloat(userData?.quickness).toFixed(2)}
                     </div>
                     {!isViewingOwnProfile && isUser && (
                         <div id="view_profile_action_buttons">
