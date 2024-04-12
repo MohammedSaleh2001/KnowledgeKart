@@ -39,6 +39,7 @@ function App() {
               <Route path="/rateseller/:emailToken" element={<RateSeller token={token} setToken={setToken} />} />
               <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Unverified, ROLES.Admin, ROLES.Owner]} />}>
                 <Route path="/home" element={<HomePage token={token} setToken={setToken} />} />
+                <Route path="/editprofile/:email" element={<EditProfile token={token} setToken={setToken} />} />
               </Route>
               <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Unverified, ROLES.Moderator, ROLES.Admin, ROLES.Owner]} />}>
                 <Route path="/viewprofile/:email" element={<ViewProfile token={token} setToken={setToken} />} />
@@ -47,7 +48,6 @@ function App() {
               <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin, ROLES.Owner]} />}>
                 <Route path="/create" element={<CreateListing token={token} setToken={setToken} />} />
                 <Route path="/editlisting/:listingId" element={<EditListing token={token} setToken={setToken} />} />
-                <Route path="/editprofile/:email" element={<EditProfile token={token} setToken={setToken} />} />
               </Route>
               <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Moderator, ROLES.Admin, ROLES.Owner]} />}>
                 <Route path="/moderatereport/:email" element={<ModerateReport token={token} setToken={setToken} />} />

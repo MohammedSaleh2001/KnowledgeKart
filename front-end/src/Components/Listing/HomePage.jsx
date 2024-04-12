@@ -131,7 +131,7 @@ function HomePage() {
                     {!isNotVerified && (<PostAddIcon style={{fontSize: 50, cursor: 'pointer'}} id="add-post-icon" onClick={() => {
                         navigate("/create")
                     }} />)}
-                    {!isNotVerified && <AccountCircleIcon style={{fontSize: 50, cursor: 'pointer'}} id="profile-icon" onClick={() => {
+                    {<AccountCircleIcon style={{fontSize: 50, cursor: 'pointer'}} id="profile-icon" onClick={() => {
                         navigate(`/viewprofile/${localStorage.getItem('email')}`)
                     }} />}
                     <div onClick={handleLogout}>

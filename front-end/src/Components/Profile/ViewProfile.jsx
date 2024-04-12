@@ -175,7 +175,7 @@ function ViewProfile() {
     }
 
     const isViewingOwnProfile = email === loggedInUserEmail;
-    const isUser = localStorage.getItem('roles') === 'U';
+    const isVerifiedUser = localStorage.getItem('roles') === 'U';
 
     return (
         <div id="view_profile_container">
@@ -193,7 +193,7 @@ function ViewProfile() {
                 <div id="profile_title">
                     {userData?.firstname}'s Profile
                 </div>
-                {isViewingOwnProfile && isUser && (
+                {isViewingOwnProfile && (
                     <div id="edit_profile_button" style={{cursor: 'pointer'}} onClick={() => {
                         navigate(`/editprofile/${localStorage.getItem('email')}`)
                     }}>
@@ -228,7 +228,7 @@ function ViewProfile() {
                     <div>
                         Quickness: {parseFloat(userData?.quickness).toFixed(2)}
                     </div>
-                    {!isViewingOwnProfile && isUser && (
+                    {!isViewingOwnProfile && isVerifiedUser && (
                         <div id="view_profile_action_buttons">
                             <div id="view_profile_email_button">
                                 Email
