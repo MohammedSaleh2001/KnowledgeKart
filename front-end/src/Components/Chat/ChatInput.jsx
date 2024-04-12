@@ -36,7 +36,7 @@ const ChatInput = () => {
                 from: senderID,
                 to: activeChat.id,
                 message: message,
-                datasent: new Date().toISOString(),
+                datesent: new Date().toISOString(),
             }
 
             const response = await fetch('/api/send_chat', {
