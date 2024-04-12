@@ -97,3 +97,19 @@ def send_contact_email(seller, buyer):
         # Handle email sending errors
         print(f"Error sending contact email: {e}")
         return False
+    
+def send_verdict_email(report_by, report_for, verdict):
+    subject = f"Verdict for the report filed against by {report_by}"
+    sender = current_app.config['MAIL_USERNAME']
+    body = verdict
+
+    # Send the email
+    msg = Message(subject, sender=sender, recipients=[report_for])
+    msg.body = body
+    try:
+        mail.send(msg)
+        return True
+    except Exception as e:
+        # Handle email sending errors
+        print(f"Error sending contact email: {e}")
+        return False  

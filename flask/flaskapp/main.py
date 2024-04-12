@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
-from .verification import generate_verification_token, send_rateseller_email, send_ratebuyer_email, send_contact_email
+from .verification import generate_verification_token, send_rateseller_email, send_ratebuyer_email, send_contact_email, send_verdict_email
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone, timedelta
 from flask_cors import cross_origin
@@ -473,6 +473,16 @@ def close_report():
                                         'reportid': reportid})
 
     db.session.commit()
+
+    try:
+        query = db.text(f"SELECT * FROM report WHERE reportid = :reportid")
+        report = db.session.execute(query, {'reportid': reportid}).fetchone()
+        if report:
+            by_data = get_user_profile_helper('userid', report[1])
+            for_data = get_user_profile_helper('userid', report[2])
+            send_verdict_email(by_data['email'], for_data['email'], verdict)
+    except:
+        print("failed to send verdict email!")
 
     return {'status': 'success'}
 

@@ -56,7 +56,7 @@ function Suspend() {
             const data = await response.json();
             if (response.ok && data.status === 'success') {
                 handleCloseReport(rationale);
-                window.location.reload();
+                // window.location.reload();
             } else {
                 console.log("Failed to suspend user.");
             }
@@ -78,7 +78,7 @@ function Suspend() {
                     body: JSON.stringify({}),
                 });
                 const data = await response.json();
-                if (response.ok && data.status == 'success') {
+                if (response.ok && data.status === 'success') {
                     const specificReport = data.data[reportId];
                     if (specificReport) {
                         setReport(specificReport);
