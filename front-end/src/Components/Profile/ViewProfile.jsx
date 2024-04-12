@@ -167,7 +167,8 @@ function ViewProfile() {
     }
 
     const isViewingOwnProfile = email === loggedInUserEmail;
-    const isVerifiedUser = localStorage.getItem('roles') === 'U';
+    // const isVerifiedUser = localStorage.getItem('roles') === 'U';
+    const isNotVerified = localStorage.getItem('roles') === 'V';
 
     return (
         <div id="view_profile_container">
@@ -220,7 +221,7 @@ function ViewProfile() {
                     <div>
                         Quickness: {parseFloat(userData?.quickness).toFixed(2)}
                     </div>
-                    {!isViewingOwnProfile && isVerifiedUser && (
+                    {!isViewingOwnProfile && !isNotVerified && (
                         <div id="view_profile_action_buttons">
                             <div id="view_profile_email_button">
                                 Email
