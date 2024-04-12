@@ -11,7 +11,7 @@ There are several containers in the compose file:
   - etl (analytics process)
   - init-grafana (initial grafana script)
 
-** TO RUN: **
+<b> TO RUN: </b>
 
 Ensure you have either Docker Desktop, or Docker Engine and Docker CLI.
 See: https://docs.docker.com/get-docker/
@@ -65,7 +65,17 @@ This clears all images and allows for a fresh run.
 
 ## Functional Requirements
 
-Here are listed functional requirements not completely accomplished in main code.
+Here is further description on some functional requirements.
+
+EMAIL FRS:
+- The best way to evaluate that emails are working is register using your own ualberta email, and joe@ualberta.ca, since he has an active listing.
+
+FR18:
+- There are two verdicts, close and suspend, but will mark the report as closed in the database.
+- The difference is that suspend is reflected in the kkuser table in main.
+
+FR20:
+- Administrative users can file a report against a user, to ensure that a reason will be given, which allows them to suspend. 
 
 FR21: 
 - See SQL/analytics/core, where there are three fact tables, and the "sale" fact table being core_listing.
@@ -77,8 +87,12 @@ FR22:
 
 FR23:
 - See SQL/analytics/datamart, where there are 6 reports aggregating information.
+- For the final sentence, the use of "such as" was deliberate, as at the time what would be visualized. We formally decided to use category and condition.
+
+FR24:
+- Data mart updates are done first by update_etl changing the core database, and core_etl re-performing the operations
 
 FR25:
 - The analytics dashboard is refreshed every minute (see top right corner)
 - Slicing is done through the time picker in the top right, and specific date/time dimensions on the top left
-- Dicing is done through category and condition. There are figures/graphs already diced by category.
+- Dicing is done through category and condition. There are figures/graphs already diced by status.

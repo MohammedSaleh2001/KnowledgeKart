@@ -720,249 +720,425 @@ def update_report_delta(a_conn):
 
     return True
 
+# Update ETL Functions
 
-class TestETL(unittest.TestCase):
+
+def update_get_user_delta(a_conn):
+
+    a_cursor = a_conn.cursor() 
+
+    a_cursor.execute("SELECT MAX(UserID) FROM core.delta")
+
+    analytics_max = a_cursor.fetchone()
+
+    return analytics_max[0]
+    
+def update_extract_transform_users(m_conn, a_delta):
+    m_cursor = m_conn.cursor()
+
+    # Note that UserID is last, since the update needs it in the last position
+    m_cursor.execute(
+            '''
+            SELECT  u.Email,
+                    u.FirstName,
+                    u.DateJoined,
+                    COALESCE(
+                        EXTRACT(year from u.DateJoined AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from u.DateJoined AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from u.DateJoined AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateJoinedFK,
+                    COALESCE( to_char(u.DateJoined AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeJoinedFK,
+                    u.UserRole,
+                    u.Verified,
+                    u.Blacklist,
+                    u.Politeness,
+                    u.Honesty,
+                    u.Quickness,
+                    u.NumReviews,
+                    COALESCE(mt.cnt + mf.cnt, 0) as NumMessages,
+                    COALESCE(nl.NumListings, 0) as NumListings,
+                    COALESCE(nsl.NumSoldListings, 0) as NumSoldListings,
+                    COALESCE(ncl.NumClosedListings, 0) as NumClosedListings,
+                    COALESCE(nbl.NumListingsBought, 0) as NumListingsBought,
+                    COALESCE(nr.NumReports, 0) as NumberOfReports,
+                    (u.Honesty + u.Quickness + u.Politeness) / 3 as AvgUserRating,
+                    u.UserID
+                    
+            FROM
+            kkuser u
+            LEFT JOIN (SELECT MessageTo as UserID, COUNT(*) as cnt
+                    FROM chat
+                    GROUP BY MessageTo) mt ON u.UserID = mt.UserID
+            LEFT JOIN (SELECT MessageFrom as UserID, COUNT(*) as cnt
+                    FROM chat
+                    GROUP BY MessageFrom) mf ON u.UserID = mf.UserID
+            LEFT JOIN (
+                SELECT UserID, COUNT(*) AS NumListings
+                FROM listing
+                WHERE ListingStatus = 'O'
+                GROUP BY UserID
+            ) nl ON nl.UserID = u.UserID
+            LEFT JOIN (
+                SELECT UserID, COUNT(*) AS NumSoldListings
+                FROM listing
+                WHERE ListingStatus = 'S'
+                GROUP BY UserID
+            ) nsl ON nsl.UserID = u.UserID
+            LEFT JOIN (
+                SELECT UserID, COUNT(*) AS NumClosedListings
+                FROM listing
+                WHERE ListingStatus = 'C'
+                GROUP BY UserID
+            ) ncl ON ncl.UserID = u.UserID
+            LEFT JOIN (
+                SELECT SoldTo as UserID, COUNT(*) AS NumListingsBought
+                FROM listing
+                WHERE ListingStatus = 'S'
+                GROUP BY SoldTo
+            ) nbl ON nbl.UserID = u.UserID
+            LEFT JOIN (
+                SELECT ReportFor as UserID, COUNT(*) AS NumReports
+                FROM report
+                GROUP BY ReportFor
+            ) nr ON nr.UserID = u.UserID
+            WHERE u.UserID <= %s
+            '''
+        , (a_delta,))
+    
+    return m_cursor.fetchall()
+
+def update_load_users(a_conn, data):
+    a_cursor = a_conn.cursor()
+
+    a_cursor.executemany(
+        '''
+        UPDATE core.kkuser SET (
+            Email, 
+            FirstName,
+            DateJoined ,
+            DateJoinedFK ,
+            TimeJoinedFK,
+            UserRole,
+            Verified ,
+            Blacklist ,
+            Politeness ,
+            Honesty ,
+            Quickness ,
+            NumReviews ,
+            NumberOfChats,
+            NumberOfListings ,
+            NumberOfSoldListings ,
+            NumberOfClosedListings ,
+            NumberOfBoughtListings ,
+            NumberOfReports,
+            AvgUserRating 
+        ) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+             %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        WHERE UserID = %s;
+        '''
+        , data
+    )
+
+    a_conn.commit()
+
+    return True
+
+
+
+def update_get_listing_delta(a_conn):
+
+    a_cursor = a_conn.cursor() 
+
+    a_cursor.execute("SELECT MAX(ListingID) FROM core.delta")
+
+    analytics_max = a_cursor.fetchone()
+
+    return analytics_max[0]
+    
+def update_extract_transform_listing(m_conn, a_delta):
+    m_cursor = m_conn.cursor()
+
+    m_cursor.execute(
+            '''
+            SELECT  l.UserID,
+                    l.AskingPrice,
+                    l.CategoryTypeID,
+                    l.CategoryID,
+                    l.Condition,
+                    l.DateListed,
+                    COALESCE(
+                        EXTRACT(year from l.DateListed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from l.DateListed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from l.DateListed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateListedFK,
+                    COALESCE( to_char(l.DateListed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeListedFK,
+                    l.ListingStatus,
+                    l.DateChanged,
+                    COALESCE(
+                        EXTRACT(year from l.DateChanged AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from l.DateChanged AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from l.DateChanged AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateChangedFK,
+                    COALESCE( to_char(l.DateChanged AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeChangedFK,
+                    l.SoldTo,
+                    l.SoldPrice,
+                    CASE WHEN l.ListingStatus = 'O' THEN -1
+                         ELSE EXTRACT('day' FROM (l.DateChanged - l.DateListed)) * 24 * 60 
+                            + EXTRACT('hour' FROM (l.DateChanged- l.DateListed)) * 60
+                            + EXTRACT('minute' FROM (l.DateChanged - l.DateListed)) 
+                    END as TimeToClose,
+                    CASE WHEN l.ListingStatus != 'S' THEN -999999
+                         ELSE l.AskingPrice - l.SoldPrice
+                    END as DifferenceAskingSoldPrice,
+                    l.ListingID
+            FROM listing l
+            WHERE l.ListingID <= %s
+            ORDER BY ListingID ASC
+            '''
+        , (a_delta,))
+    
+    return m_cursor.fetchall()
+
+def update_load_listing(a_conn, data):
+    a_cursor = a_conn.cursor()
+
+    # ON CONFLICT should never evaluate ideally
+    a_cursor.executemany(
+        '''
+        UPDATE core.listing SET (
+            UserID ,
+            AskingPrice ,
+            CategoryTypeID ,
+            CategoryID ,
+            Condition,
+            DateListed,
+            DateListedFK ,
+            TimeListedFK ,
+            ListingStatus,
+            DateChanged ,
+            DateChangedFK ,
+            TimeChangedFK ,
+            SoldTo ,
+            SoldPrice ,
+            TimeToClose ,
+            DifferenceAskingSoldPrice 
+        ) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                  %s, %s, %s, %s, %s, %s)
+        WHERE ListingID = %s;
+        '''
+        , data
+    )
+
+    a_conn.commit()
+
+    return True
+
+
+def update_get_report_delta(a_conn):
+
+    a_cursor = a_conn.cursor() 
+
+    a_cursor.execute("SELECT MAX(ReportID) FROM core.delta")
+
+    analytics_max = a_cursor.fetchone()
+
+    return analytics_max[0]
+    
+def update_extract_transform_report(m_conn, a_delta):
+    m_cursor = m_conn.cursor()
+
+    m_cursor.execute(
+            '''
+            SELECT  r.ReportBy,
+                    r.ReportFor,
+                    r.DateReported,
+                    COALESCE(
+                        EXTRACT(year from r.DateReported AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from r.DateReported AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from r.DateReported AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateReportedFK,
+                    COALESCE( to_char(r.DateReported AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeReportedFK,
+                    r.ModeratorAssigned,
+                    r.ReportOpen,
+                    r.DateClosed,
+                    COALESCE(
+                        EXTRACT(year from r.DateClosed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*10000 
+                        + EXTRACT('month' from r.DateClosed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton')*100
+                        + EXTRACT('day' from r.DateClosed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton'), 19000101) as DateClosedFK,
+                    COALESCE( to_char(r.DateClosed AT TIME ZONE 'UTC' AT TIME ZONE 'America/Edmonton', 'hh24mi'), '-1' ) AS TimeClosedFK,
+                    CASE WHEN r.ReportOpen = True THEN -1
+                        ELSE EXTRACT('day' FROM (r.DateClosed - r.DateReported)) * 24 * 60 
+                            + EXTRACT('hour' FROM (r.DateClosed- r.DateReported)) * 60
+                            + EXTRACT('minute' FROM (r.DateClosed - r.DateReported)) 
+                    END as TimeToClose,
+                    r.ReportID
+            FROM report r
+            WHERE r.ReportID <= %s
+            '''
+        , (a_delta,))
+    
+    return m_cursor.fetchall()
+
+def update_load_report(a_conn, data):
+    a_cursor = a_conn.cursor()
+
+    # ON CONFLICT should never evaluate ideally
+    a_cursor.executemany(
+        '''
+        UPDATE core.report SET (
+            ReportBy ,
+            ReportFor,
+            DateReported ,
+            DateReportedFK ,
+            TimeReportedFK ,
+            ModeratorAssigned,
+            ReportOpen ,
+            DateClosed ,
+            DateClosedFK ,
+            TimeClosedFK ,
+            TimeToClose 
+        ) = (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                  %s)
+        WHERE ReportID = %s;
+        '''
+        , data
+    )
+
+    a_conn.commit()
+
+    return True
+
+
+class TestUpdateETL(unittest.TestCase):
 
     def test_a_get_delta(self):
-        main_max, a_delta = get_user_delta(m_conn, a_conn)
-        self.assertEqual(main_max, 8)
-        self.assertEqual(a_delta, 0)
+        a_delta = update_get_user_delta(a_conn)
+        self.assertEqual(a_delta, 8)
 
     def test_b_extract_transform_users(self):
-        data = extract_transform_users(m_conn, 0)
+        # Give Joe a listing
+
+        m_cursor.execute(
+            '''
+            INSERT INTO listing (
+                UserID,
+                ListingName ,
+                ListingDescription ,
+                AskingPrice ,
+                Condition,
+                DateListed
+            ) VALUES (
+                4,
+                'Sample',
+                'Like new and hardly used',
+                10000,
+                'New',
+                '2024-04-12'::TIMESTAMP
+            )
+            '''
+        )
+
+        data = update_extract_transform_users(m_conn, 8)
         joe = data[3]
 
-        self.assertEqual(joe[9], 2.0)
-        self.assertEqual(joe[10], 4.0)
-        self.assertEqual(joe[11], 5.0)
-        self.assertEqual(joe[12], 1)
+        # Joe now has two listings
+        self.assertEqual(joe[13], 2)
 
     def test_c_load_users(self):
 
-        data = extract_transform_users(m_conn, 0)
+        data = update_extract_transform_users(m_conn, 8)
 
-        load_users(a_conn, data)
+        update_load_users(a_conn, data)
 
-        a_cursor.execute("SELECT Politeness, Honesty, Quickness, NumReviews FROM core.kkuser WHERE email = 'joe@ualberta.ca'")
-
-        result = a_cursor.fetchone()
-
-        self.assertEqual(result[0], 2.0)
-        self.assertEqual(result[1], 4.0)
-        self.assertEqual(result[2], 5.0)
-        self.assertEqual(result[3], 1)
-
-    def test_d_newuserreport(self):
-        data = extract_transform_users(m_conn, 0)
-
-        load_users(a_conn, data)
-
-        datamart_newuserreport(a_conn)
-
-        # Three users joined at midnight UTC
-        a_cursor.execute("SELECT NumNewUsers FROM datamart.newuserreport WHERE NewUserReportDate = '2024-03-11 00:00:00'::TIMESTAMP")
+        a_cursor.execute("SELECT NumberOfListings FROM core.kkuser WHERE email = 'joe@ualberta.ca'")
 
         result = a_cursor.fetchone()
 
-        self.assertEqual(result[0], 3)
-
-    def test_e_userreport(self):
-        data = extract_transform_users(m_conn, 0)
-
-        load_users(a_conn, data)
-
-        datamart_userreport(a_conn)
-
-        a_cursor.execute('''
-                         SELECT NumUnverifiedUsers, NumVerifiedUsers, NumBlacklistedUsers, NumTotalUsers, AvgUserRating
-                         FROM datamart.userreport 
-                         ORDER BY UserReportDate DESC
-                         LIMIT 1
-                         ''')
-
-        result = a_cursor.fetchone()
-
-        # 8 users verified, 8 total, avg rating 3.4
-        self.assertEqual(result[0], 0)
-        self.assertEqual(result[1], 8)
-        self.assertEqual(result[2], 0)
-        self.assertEqual(result[3], 8)
-        self.assertAlmostEqual(float(result[4]), 3.4)
-
-    def test_f_update_delta(self):
-
-        update_user_delta(a_conn)
-
-        a_cursor.execute('''
-                         SELECT UserID FROM core.delta
-                         ''')
-
-        result = a_cursor.fetchone()
-
-        self.assertEqual(result[0], 8)
-
-    def test_g_get_dimcategorytype(self):
-
-        get_dim_categorytype(m_conn, a_conn)
-
-        a_cursor.execute('''
-                         SELECT Category FROM core.dim_categorytype
-                         ''')
-
-        result = a_cursor.fetchall()
-        
-        self.assertEqual(result[0][0], 'Other')
-        self.assertEqual(result[1][0], 'Textbook')
-        self.assertEqual(result[2][0], 'Lab Equipment')
-
+        self.assertEqual(result[0], 2)
 
     def test_h_get_delta(self):
-        main_max, a_delta = get_listing_delta(m_conn, a_conn)
-        self.assertEqual(main_max, 6)
-        self.assertEqual(a_delta, 0)
+        a_delta = update_get_listing_delta(a_conn)
+        self.assertEqual(a_delta, 6)
 
     def test_i_extract_transform_listing(self):
-        data = extract_transform_listing(m_conn, 0)
 
-        # Sale from Bob to Tim, History 100 textbook. Asked for 10, sold for 5, 2 and 2/3 days later.
-        listing3 = data[2]
-        
-        self.assertEqual(listing3[15], 3840)
-        self.assertEqual(listing3[16], 5)
+        # Mark Joe's listing as sold
+
+        m_cursor.execute(
+            '''
+            UPDATE listing SET (
+                ListingStatus,
+                DateChanged,
+                SoldTo,
+                SoldPrice
+            ) = (
+                'S',
+                '2024-03-13'::TIMESTAMP,
+                1,
+                50)
+            WHERE ListingID = 1
+            '''
+        )
+
+        # Query was modified with ORDER BY, but this does not affect main code, since in actuality it doesn't need order, but here I do.
+        data = update_extract_transform_listing(m_conn, 6)
+
+        # Sell one day later, which is 1440 minutes, at a 25 loss.
+        listing3 = data[0]
+
+        self.assertEqual(listing3[14], 1440)
+        self.assertEqual(listing3[15], 25)
 
     def test_j_load_listing(self):
 
+        data = update_extract_transform_listing(m_conn, 6)
 
-        data = extract_transform_listing(m_conn, 0)
+        update_load_listing(a_conn, data)
 
-        load_listing(a_conn, data)
-
-        a_cursor.execute("SELECT TimeToClose, DifferenceAskingSoldPrice FROM core.listing WHERE ListingID = 3")
-
-        result = a_cursor.fetchone()
-
-        self.assertEqual(result[0], 3840)
-        self.assertEqual(result[1], 5)
-
-    def test_k_newlistingreport(self):
-
-
-        datamart_newlistingreport(a_conn)
-
-        # One new textbook listing sold at 12 UTC on the 13th of March
-        a_cursor.execute('''SELECT NumSoldListings, AverageSellTime, AveragePriceSaleDifference, AveragePercentSaleDifference 
-                         FROM datamart.newlistingreport 
-                         WHERE NewListingReportDate = '2024-03-13 12:00:00'::TIMESTAMP
-                         AND Category = 'Textbook'
-                         AND Condition = 'New' ''')
+        a_cursor.execute("SELECT TimeToClose, DifferenceAskingSoldPrice FROM core.listing WHERE ListingID = 1")
 
         result = a_cursor.fetchone()
 
-        self.assertEqual(result[0], 1)
-        self.assertEqual(float(result[1]), 2160.0)
-        self.assertEqual(float(result[2]), 0.0)
-        self.assertEqual(float(result[3]), 100.0)
-
-    def test_l_listingreport(self):
-
-
-        datamart_listingreport(a_conn)
-
-        # One new textbook listing sold at 12 UTC on the 13th of March
-        a_cursor.execute('''SELECT NumOpenListings, NumClosedListings, NumSoldListings
-                         FROM datamart.listingreport 
-                         ORDER BY ListingReportDate DESC
-                         LIMIT 1 ''')
-
-        result = a_cursor.fetchone()
-
-        self.assertEqual(result[0], 1)
-        self.assertEqual(result[1], 0)
-        self.assertEqual(result[2], 5)
-
-    def test_m_update_delta(self):
-
-        update_listing_delta(a_conn)
-
-        a_cursor.execute('''
-                         SELECT ListingID FROM core.delta
-                         ''')
-
-        result = a_cursor.fetchone()
-
-        self.assertEqual(result[0], 6)
+        self.assertEqual(result[0], 1440)
+        self.assertEqual(float(result[1]), 25)
 
     def test_n_get_delta(self):
-        main_max, a_delta = get_report_delta(m_conn, a_conn)
-        self.assertEqual(main_max, 1)
-        self.assertEqual(a_delta, 0)
+        a_delta = update_get_report_delta(a_conn)
+        self.assertEqual(a_delta, 1)
 
     def test_o_extract_transform_report(self):
-        data = extract_transform_report(m_conn, 0)
+
+        # Update a report
+        m_cursor.execute(
+            '''
+            UPDATE report SET (
+                ModeratorAssigned,
+                ReportOpen,
+                DateClosed,
+                Verdict
+            ) = (
+                NULL,
+                True,
+                NULL,
+                '')
+            WHERE ReportID = 1
+            ''')
+
+        data = update_extract_transform_report(m_conn, 1)
 
         report = data[0]
         
-        # Time to close report
-        self.assertEqual(report[11], 210)
+        # Time to close report should be nulled (set to -1) now
+        self.assertEqual(report[10], -1)
 
     def test_p_load_report(self):
 
 
-        data = extract_transform_report(m_conn, 0)
+        data = update_extract_transform_report(m_conn, 1)
 
-        load_report(a_conn, data)
+        update_load_report(a_conn, data)
 
         a_cursor.execute("SELECT TimeToClose FROM core.report WHERE ReportID = 1")
 
         result = a_cursor.fetchone()
 
-        self.assertEqual(result[0], 210)
-
-    def test_q_newmoderationreport(self):
-
-
-        datamart_newmodreport(a_conn)
-
-        # 1 report was opened in between 12 and 15 UTC and took an average of 210 minutes to close
-        a_cursor.execute('''SELECT NumNewReports, AverageTimeToCLose
-                         FROM datamart.newmodreport 
-                         WHERE NewModReportDate = '2024-03-13 12:00:00'::TIMESTAMP ''')
-
-        result = a_cursor.fetchone()
-
-        self.assertEqual(result[0], 1)
-        self.assertEqual(result[1], 210)
-
-    def test_r_modreport(self):
-
-
-        datamart_modreport(a_conn)
-
-        # One new textbook listing sold at 12 UTC on the 13th of March
-        a_cursor.execute('''SELECT NumOpenReports, NumUnassignedReports, NumClosedReports, NumTotalReports
-                         FROM datamart.modreport 
-                         ORDER BY ModReportDate DESC
-                         LIMIT 1 ''')
-
-        result = a_cursor.fetchone()
-
-        self.assertEqual(result[0], 0)
-        self.assertEqual(result[1], 0)
-        self.assertEqual(result[2], 1)
-        self.assertEqual(result[3], 1)
-
-    def test_s_update_delta(self):
-
-        update_report_delta(a_conn)
-
-        a_cursor.execute('''
-                         SELECT ReportID FROM core.delta
-                         ''')
-
-        result = a_cursor.fetchone()
-
-        self.assertEqual(result[0], 1)
-
+        self.assertEqual(result[0], -1)
 
 if __name__ == '__main__':
 
@@ -1001,6 +1177,157 @@ if __name__ == '__main__':
 
         m_cursor.execute(open(f, "r").read())
 
+    # User ETL
+
+    deltas = get_user_delta(m_conn, a_conn)
+    m_delta = deltas[0]
+    a_delta = deltas[1]
+
+    if m_delta is None or a_delta is None:
+        print("Could not retrieve deltas...")
+        m_conn.close()
+        a_conn.close()
+    
+    if m_delta == a_delta:
+        print("No changes to Users!")
+        try:
+            datamart_newuserreport(a_conn)
+            datamart_userreport(a_conn)
+        except:
+            print("Could not complete User Reports!")
+            m_conn.close()
+            a_conn.close()
+        m_conn.close()
+        a_conn.close()
+
+    data = extract_transform_users(m_conn, a_delta)
+
+    try:
+        load_users(a_conn, data)
+    except:
+        print("Could not update Users!")
+        m_conn.close()
+        a_conn.close()
+
+    # Do Datamart Work...
+    try:
+        datamart_newuserreport(a_conn)
+        datamart_userreport(a_conn)
+    except:
+        print("Could not complete User Reports!")
+        m_conn.close()
+        a_conn.close()
+
+    try:
+        update_user_delta(a_conn)
+    except:
+        print("Could not update user delta!")
+        m_conn.close()
+        a_conn.close()
+
+    # Listing ETL
+
+    # Get listing dependency category type
+    try:
+        get_dim_categorytype(m_conn, a_conn)
+    except:
+        print("Could not get category dimension!")
+        m_conn.close()
+        a_conn.close()
+
+    deltas = get_listing_delta(m_conn, a_conn)
+    m_delta = deltas[0]
+    a_delta = deltas[1]
+
+    if m_delta is None or a_delta is None:
+        print("Could not retrieve deltas...")
+        m_conn.close()
+        a_conn.close()
+    
+    if m_delta == a_delta:
+        print("No changes to Listing!")
+        try:
+            datamart_newlistingreport(a_conn)
+            datamart_listingreport(a_conn)
+        except:
+            print("Could not complete Listing Reports!")
+            m_conn.close()
+            a_conn.close()
+        m_conn.close()
+        a_conn.close()
+
+    data = extract_transform_listing(m_conn, a_delta)
+
+    try:
+        load_listing(a_conn, data)
+    except Exception as e:
+        print("Could not update Listing!")
+        print(e)
+        m_conn.close()
+        a_conn.close()
+
+    # Do Datamart Work...
+    try:
+        datamart_newlistingreport(a_conn)
+        datamart_listingreport(a_conn)
+    except:
+        print("Could not complete Listing Reports!")
+        m_conn.close()
+        a_conn.close()
+    try:
+        update_listing_delta(a_conn)
+    except:
+        print("Could not update Listing delta!")
+        m_conn.close()
+        a_conn.close()
+
+    # Report ETL
+
+    deltas = get_report_delta(m_conn, a_conn)
+    m_delta = deltas[0]
+    a_delta = deltas[1]
+
+    if m_delta is None or a_delta is None:
+        print("Could not retrieve deltas...")
+        m_conn.close()
+        a_conn.close()
+    
+    if m_delta == a_delta:
+        print("No changes to Reports!")
+        try:
+            datamart_newmodreport(a_conn)
+            datamart_modreport(a_conn)
+        except:
+            print("Could not complete Mod Reports!")
+            m_conn.close()
+            a_conn.close()
+        m_conn.close()
+        a_conn.close()
+
+    data = extract_transform_report(m_conn, a_delta)
+
+    try:
+        load_report(a_conn, data)
+    except:
+        print("Could not update Report!")
+        m_conn.close()
+        a_conn.close()
+
+    # Do Datamart Work...
+    try:
+        datamart_newmodreport(a_conn)
+        datamart_modreport(a_conn)
+    except:
+        print("Could not complete Mod Reports!")
+        m_conn.close()
+        a_conn.close()
+
+    try:
+        update_report_delta(a_conn)
+    except:
+        print("Could not update report delta!")
+        m_conn.close()
+        a_conn.close()
 
     unittest.main(exit=False)
 
