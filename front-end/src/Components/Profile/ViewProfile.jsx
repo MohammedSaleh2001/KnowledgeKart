@@ -211,6 +211,9 @@ function ViewProfile() {
                         Email: {email}
                     </div>
                     <div>
+                        Status: {userData?.verified ? "Verified": "Unverified"}
+                    </div>
+                    <div>
                         Rating: {rating || "Not Available"}
                     </div>
                     <div>

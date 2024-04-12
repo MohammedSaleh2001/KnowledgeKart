@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
-from .verification import generate_verification_token, send_review_email
+from .verification import generate_verification_token, send_rateseller_email, send_ratebuyer_email
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone, timedelta
 from flask_cors import cross_origin
@@ -348,11 +348,16 @@ def edit_listing():
 
     if status == 'S' and sold_to is not None:
         buyer_data = get_user_profile_helper('userid', sold_to)
+        
         verification_token = generate_verification_token()
-        ok = send_review_email(seller_data['email'], buyer_data['email'], verification_token)
-        review_tokens[listingid] = {'seller': seller_data['email'],
-                                   'buyer': buyer_data['email'],
-                                   'token': verification_token}
+        send_rateseller_email(seller_data['email'], buyer_data['email'], verification_token)
+        review_tokens[(listingid, 'seller')] = {'email': seller_data['email'],
+                                                            'token': verification_token}
+        
+        verification_token = generate_verification_token()
+        send_ratebuyer_email(seller_data['email'], buyer_data['email'], verification_token)
+        review_tokens[(listingid, 'buyer')] = {'email': buyer_data['email'],
+                                                            'token': verification_token}
 
     return {'status': 'success'}
 
@@ -366,23 +371,22 @@ def submit_review():
 
     for k, v in review_tokens.items():
         if v['token'] == token:            
-            listingid = k
-            seller = v['seller']
-            buyer = v['buyer']
+            # listingid = k[0]
+            email = v['email']
 
-            seller_data = get_user_profile_helper('email', seller)
-            numreviews = seller_data['numreviews'] + 1
-            honesty = (honesty + seller_data['honesty']*seller_data['numreviews']) / numreviews
-            politeness = (politeness + seller_data['politeness']*seller_data['numreviews']) / numreviews
-            quickness = (quickness + seller_data['quickness']*seller_data['numreviews']) / numreviews
-            review_tokens.pop(listingid)
+            user_data = get_user_profile_helper('email', email)
+            numreviews = user_data['numreviews'] + 1
+            honesty = (honesty + user_data['honesty']*user_data['numreviews']) / numreviews
+            politeness = (politeness + user_data['politeness']*user_data['numreviews']) / numreviews
+            quickness = (quickness + user_data['quickness']*user_data['numreviews']) / numreviews
+            review_tokens.pop(k)
 
             query = db.text('''UPDATE kkuser SET numreviews = :numreviews,
                                                 honesty = :honesty,
                                                 politeness = :politeness,
                                                 quickness = :quickness
                               WHERE email = :email''')
-            db.session.execute(query, {'email': seller,
+            db.session.execute(query, {'email': email,
                                        'numreviews': numreviews,
                                        'honesty': honesty,
                                        'politeness': politeness,
