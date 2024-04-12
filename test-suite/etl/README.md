@@ -37,6 +37,6 @@ Run etl tests in the venv by using:
 
 The password is set to postgres in the files. If you have chanaged the DB password, change the global variable in the code file. 
 
-Once done, using:
+Once done, use:
 
 - deactivate
