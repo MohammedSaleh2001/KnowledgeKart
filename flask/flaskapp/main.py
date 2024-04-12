@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
-from .verification import generate_verification_token, send_rateseller_email, send_ratebuyer_email
+from .verification import generate_verification_token, send_rateseller_email, send_ratebuyer_email, send_contact_email
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone, timedelta
 from flask_cors import cross_origin
@@ -601,5 +601,16 @@ def send_chat():
                                         'message': message})
 
     db.session.commit()
+
+    return {'status': 'success'}
+
+@main.route('/send_contact_email', methods=['POST'])
+@jwt_required()
+def send_contact():
+    data = request.json
+    buyer = data.get('buyer').strip().lower()
+    seller = data.get('seller').strip().lower()
+
+    send_contact_email(seller, buyer)
 
     return {'status': 'success'}

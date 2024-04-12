@@ -81,3 +81,19 @@ def send_ratebuyer_email(seller, buyer, token):
         # Handle email sending errors
         print(f"Error sending verification email: {e}")
         return False
+
+def send_contact_email(seller, buyer):
+    subject = f"New buyer"
+    sender = current_app.config['MAIL_USERNAME']
+    body = f"A buyer ({buyer}) has contacted you through the chat: {current_app.config['BASE_URL']}"
+
+    # Send the email
+    msg = Message(subject, sender=sender, recipients=[seller])
+    msg.body = body
+    try:
+        mail.send(msg)
+        return True
+    except Exception as e:
+        # Handle email sending errors
+        print(f"Error sending contact email: {e}")
+        return False
