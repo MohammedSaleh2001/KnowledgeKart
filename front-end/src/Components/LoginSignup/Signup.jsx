@@ -1,11 +1,17 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR1 (Backend implemented in '/api/signup' endpoint)
+    - FR2 (Backend implemented in '/api/signup' endpoint)
+*/
+
 import React, { useState } from 'react'
 import './LoginSignup.css'
-
 import { useNavigate } from "react-router-dom";
 
 function Signup(props) {
     const navigate = useNavigate()
-
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -16,20 +22,15 @@ function Signup(props) {
             alert('Passwords do not match');
             return;
         }
-
         const data = {
             name,
             email,
             password
         };
-
-        console.log(JSON.stringify(data));
-
         try {
             const url = '/api/signup';
             const response = await fetch(url, {
                 method: 'POST',
-                // mode: 'no-cors',
                 cache: 'no-cache',
                 credentials: 'same-origin',
                 headers: {

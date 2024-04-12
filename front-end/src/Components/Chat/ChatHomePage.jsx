@@ -1,3 +1,12 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR9 (Every component in this folder fulfills this requirement)
+    - FR14 (Every component in this folder fulfills this requirement)
+    - FR15 (Every component in this folder fulfills this requirement)
+*/
+
 import React from 'react'
 import { useParams } from 'react-router-dom';
 import { ChatProvider } from '../../Context/ChatContext';

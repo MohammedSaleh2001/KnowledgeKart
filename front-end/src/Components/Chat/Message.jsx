@@ -1,6 +1,12 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - Refer to the ChatHomePage.jsx component.
+*/
+
 import React from 'react'
 import PortraitIcon from '@mui/icons-material/Portrait';
-
 import './Chat.css'
 
 const Message = ({message, datesent, sentByCurrentUser}) => {

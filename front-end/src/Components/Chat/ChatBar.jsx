@@ -1,3 +1,10 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - Refer to the ChatHomePage.jsx component.
+*/
+
 import React from 'react'
 import Messages from './Messages'
 import ChatInput from './ChatInput'

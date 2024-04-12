@@ -1,6 +1,12 @@
+/*
+Author: Ragur Krishnan
+
+Functional Requirements Fulfilled:
+    - FR16
+*/
+
 import React, { useEffect, useState } from 'react'
 import './Listing.css'
-
 import { Col, Button, Row, Container, Card, Form } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -8,13 +14,11 @@ function RateSeller() {
     const [honesty, setHonesty] = useState();
     const [politeness, setPoliteness] = useState();
     const [quickness, setQuickness] = useState();
-
     const { emailToken } = useParams();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             const response = await fetch('/api/submit_review', {
                 method: 'POST',

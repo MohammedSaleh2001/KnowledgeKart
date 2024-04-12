@@ -1,8 +1,13 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - Refer to the ChatHomePage.jsx component.
+*/
+
 import React, { useEffect, useState } from 'react'
 import PortraitIcon from '@mui/icons-material/Portrait';
-
 import { useNavigate } from "react-router-dom";  
-
 import './Chat.css'
 
 const ChatNavbar = () => {

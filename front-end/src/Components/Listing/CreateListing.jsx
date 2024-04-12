@@ -1,6 +1,12 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR11
+*/
+
 import React, { useState } from 'react'
 import './Listing.css'
-
 import { Col, Button, Row, Container, Card, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 

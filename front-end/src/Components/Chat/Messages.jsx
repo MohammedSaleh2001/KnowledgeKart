@@ -1,19 +1,22 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - Refer to the ChatHomePage.jsx component.
+*/
+
 import React, { useEffect, useState } from 'react'
 import Message from './Message'
 import { useChat } from '../../Context/ChatContext';
-
 import './Chat.css'
 
 const Messages = ({ email }) => {
-
     const { activeChat } = useChat();
-
     const [currentUserId, setCurrentUserId] = useState(null);
 
     useEffect(() => {
         const fetchCurrentUserId = async () => {
             const token = localStorage.getItem('token');
-
             try {
                 const response = await fetch('/api/user_profile', {
                     method: 'POST',

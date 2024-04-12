@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from 'react'
+/*
+Author: John Yu
 
+Functional Requirements Fulfilled:
+    - FR20
+*/
+
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from "react-router-dom"
 
 function Suspend() {

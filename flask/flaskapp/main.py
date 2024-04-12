@@ -198,6 +198,7 @@ def search_listings():
     price_filter = data.get('price_filter', 'All')
     date_sort = data.get('date_sort', 'None')
     price_sort = data.get('price_sort', 'None')
+    title_sort = data.get('title_sort', 'None')
     max_results = data.get('max_number_results')
 
     # query = db.text(f"SELECT * FROM listing WHERE LOWER(listingname) LIKE LOWER('%{search_term}%') LIMIT {max_results}")
@@ -220,6 +221,11 @@ def search_listings():
             order_clause.append("askingprice DESC")
         elif price_sort == 'Low to High':
             order_clause.append("askingprice ASC")
+    if title_sort != 'None':
+        if title_sort == 'Ascending':
+            order_clause.append("listingname ASC")
+        elif title_sort == "Descending":
+            order_clause.append("listingname DESC")
     if order_clause:
         query += " ORDER BY " + ", ".join(order_clause)
 

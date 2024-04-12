@@ -1,18 +1,19 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR5
+*/
+
 import React, { useEffect, useState } from 'react'
-
 import { useNavigate, useParams } from 'react-router-dom'
-
 import './Profile.css'
-
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import PortraitIcon from '@mui/icons-material/Portrait';
-
 import { useChat } from '../../Context/ChatContext';
-
 import ListingItem from '../Listing/ListingItem';
 
 function ViewProfile() {
-
     const navigate = useNavigate();
     const { email } = useParams();
     const [userData, setUserData] = useState(null);
@@ -22,7 +23,6 @@ function ViewProfile() {
     const [error, setError] = useState(null);
     const loggedInUserEmail = localStorage.getItem('email');
     const loggedInUserRole = localStorage.getItem('roles');
-
     const { activeChat } = useChat();
     const { addMessageToActiveChat } = useChat();
     const [message, setMessage] = useState('');
@@ -41,7 +41,6 @@ function ViewProfile() {
                 });
                 const data = await response.json();
                 if (data.status === 'success') {
-                    console.log("UserData", data.data);
                     setUserData(data.data)
                 } else {
                     console.error('Failed to fetch user profile:', data.message);
@@ -72,7 +71,6 @@ function ViewProfile() {
                     throw new Error('Something went wrong!');
                 }
                 const data = await response.json();
-                console.log("Profile listing is", data.data);
                 setListings(data.data);
             } catch (error) {
                 setError(error.message);
@@ -91,7 +89,6 @@ function ViewProfile() {
                 const honesty = parseFloat(userData.honesty);
                 const politeness = parseFloat(userData.politeness);
                 const quickness = parseFloat(userData.quickness);
-
                 const calculatedRating = (honesty + politeness + quickness) / 3;
                 setRating(calculatedRating.toFixed(2));
             } catch (error) {
@@ -104,7 +101,6 @@ function ViewProfile() {
         const receiverEmail = email;
         const message = "Hello";
         const senderEmail = localStorage.getItem('email');
-
         const token = localStorage.getItem('token');
 
         try {
@@ -124,7 +120,6 @@ function ViewProfile() {
 
             const senderID = senderProfileData.data.userid;
 
-            console.log("ReceiverEmail", receiverEmail);
             const receiverProfileResponse = await fetch('/api/user_profile', {
                 method: 'POST',
                 headers: {
@@ -139,10 +134,7 @@ function ViewProfile() {
                 throw new Error('Failed to fetch receiver profile');
             }
 
-            console.log("ReceiverProfileData:", receiverProfileData)
-
             const receiverID = receiverProfileData.data.userid;
-
             const newMessage = {
                 from: senderID,
                 to: receiverID,
@@ -175,7 +167,7 @@ function ViewProfile() {
     }
 
     const isViewingOwnProfile = email === loggedInUserEmail;
-    const isUser = localStorage.getItem('roles') === 'U';
+    const isVerifiedUser = localStorage.getItem('roles') === 'U';
 
     return (
         <div id="view_profile_container">
@@ -193,7 +185,7 @@ function ViewProfile() {
                 <div id="profile_title">
                     {userData?.firstname}'s Profile
                 </div>
-                {isViewingOwnProfile && isUser && (
+                {isViewingOwnProfile && (
                     <div id="edit_profile_button" style={{cursor: 'pointer'}} onClick={() => {
                         navigate(`/editprofile/${localStorage.getItem('email')}`)
                     }}>
@@ -228,7 +220,7 @@ function ViewProfile() {
                     <div>
                         Quickness: {parseFloat(userData?.quickness).toFixed(2)}
                     </div>
-                    {!isViewingOwnProfile && isUser && (
+                    {!isViewingOwnProfile && isVerifiedUser && (
                         <div id="view_profile_action_buttons">
                             <div id="view_profile_email_button">
                                 Email

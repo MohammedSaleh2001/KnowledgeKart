@@ -1,5 +1,11 @@
-import React from 'react'
+/*
+Author: John Yu
 
+Functional Requirements Fulfilled:
+    - Refer to the ChatHomePage.jsx component.
+*/
+
+import React from 'react'
 import './Chat.css'
 
 const SearchChat = () => {

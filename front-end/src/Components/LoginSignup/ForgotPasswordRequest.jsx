@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import './LoginSignup.css'
-
 import { useNavigate } from "react-router-dom";
 
 function ForgotPasswordRequest(props) {
     const navigate = useNavigate();
-
     const [email, setEmail] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             const response = await fetch('/api/reset_password_request', {
                 method: 'POST',

@@ -280,17 +280,34 @@
         margin: 2px 0px 2px 0px;
         }
 
-        #listing_email_div {
+        #seller_info_buttons_container {
             display: flex;
-            width: 50px;
-            justify-content: center;
-            align-items: center;
-            margin: 2px 5px 5px 2px;
-            background-color: #ffc107;
-            padding: 5px;
-            border: solid black 1px;
-            border-radius: 5px;
-            cursor: pointer;
+
+            #listing_email_div {
+                display: flex;
+                width: 50px;
+                justify-content: center;
+                align-items: center;
+                margin: 2px 5px 5px 2px;
+                background-color: #ffc107;
+                padding: 5px;
+                border: solid black 1px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+    
+            #listing_view_profile_div {
+                display: flex;
+                width: 100px;
+                justify-content: center;
+                align-items: center;
+                margin: 2px 5px 5px 2px;
+                background-color: #ffc107;
+                padding: 5px;
+                border: solid black 1px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
         }
     }
 }

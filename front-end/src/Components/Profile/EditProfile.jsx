@@ -1,13 +1,17 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR6
+*/
+
 import React, { useEffect, useState } from 'react'
-
 import { useNavigate, useParams } from 'react-router-dom'
-
 import './Profile.css'
 
 function EditProfile() {
-    const { email } = useParams();
     const navigate = useNavigate();
-
+    const { email } = useParams();
     const [newName, setNewName] = useState('');
 
     const handleSubmit = async (e) => {
@@ -22,11 +26,7 @@ function EditProfile() {
                 },
                 body: JSON.stringify({ "new_name": newName }),
             });
-
             const data = await response.json();
-
-            console.log("edit_user_profile response:", data);
-
             if (data.status === 'success') {
                 navigate(`/viewprofile/${email}`)
             } else {
