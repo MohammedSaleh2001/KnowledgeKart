@@ -52,6 +52,8 @@ function RateSeller() {
                     type="number"
                     placeholder="Enter their Honesty."
                     value={honesty}
+                    min={0}
+                    max={5}
                     onChange={e => setHonesty(e.target.value)}
                 />
             </div>
@@ -60,6 +62,8 @@ function RateSeller() {
                     type="number"
                     placeholder="Enter their politeness."
                     value={politeness}
+                    min={0}
+                    max={5}
                     onChange={e => setPoliteness(e.target.value)}
                 />
             </div>
@@ -68,6 +72,8 @@ function RateSeller() {
                     type="number"
                     placeholder="Enter their responsiveness."
                     value={quickness}
+                    min={0}
+                    max={5}
                     onChange={e => setQuickness(e.target.value)}
                 />
             </div>

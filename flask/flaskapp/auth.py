@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session, jsonify
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, unset_jwt_cookies, jwt_required, JWTManager
-from .verification import generate_verification_token, send_verification_email
+from .verification import generate_verification_token, send_verification_email, send_reset_email
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone, timedelta
 from flask_cors import cross_origin
@@ -11,6 +11,7 @@ import json
 auth = Blueprint('auth', __name__)
 
 email_tokens = dict()
+reset_tokens = dict()
 
 def convert_date(date_string):
     date_format = "%a, %d %b %Y %H:%M:%S %Z"
@@ -158,14 +159,11 @@ def logout():
     return response
 
 @auth.route('/change_password', methods=['POST'])
-@jwt_required()
 def change_password():
     data = request.json
-    email = get_jwt_identity()
+    email = data.get('email').strip().lower()
     old_password = data.get('old_password')
     new_password = data.get('new_password')
-
-    # print('login_post:', data)
 
     query = db.text('SELECT * FROM kkuser WHERE Email = :e')
 
@@ -177,19 +175,41 @@ def change_password():
     if not user or not check_password_hash(user[2], old_password):
         return {'status': 'error', 'message': 'Please check your current login details!'} # if the user doesn't exist or password is wrong
 
-    query = db.text(f"UPDATE kkuser SET hashpass = '{generate_password_hash(new_password)}' WHERE email = '{email}'")
-
-    result = db.session.execute(query)
+    query = db.text(f"UPDATE kkuser SET hashpass = :hashpass WHERE email = :email")
+    result = db.session.execute(query, {'email': email, 'hashpass': generate_password_hash(new_password)})
 
     db.session.commit()
+
+    return {'status': 'success'}
+
+@auth.route('/reset_password_request', methods=['POST'])
+def reset_password_request():
+    data = request.json
+    email = data.get('email').strip().lower()
+
+    query = db.text('SELECT * FROM kkuser WHERE Email = :e')
+    result = db.session.execute(query, {'e': email})
+    user = result.fetchone()
+    
+    if not user:
+        return {'status': 'error', 'message': 'Email is not registered'} # if the user doesn't exist or password is wrong
+    
+    token = generate_verification_token()
+    ok = send_reset_email(email, token)
+    reset_tokens[email] = token
 
     return {'status': 'success'}
 
 @auth.route('/reset_password', methods=['POST'])
 def reset_password():
     data = request.json
-    email = data.get('email').strip().lower()
+    token = data.get('reset_token')
     new_password = data.get('new_password')
+
+    if (not token) or (token not in reset_tokens.values()):
+        return {'status': 'error', 'msg:': 'Invalid reset token.'}
+    
+    email = [k for k, v in reset_tokens.items() if v == token][0]
 
     query = db.text('SELECT * FROM kkuser WHERE Email = :e')
     result = db.session.execute(query, {'e': email})
@@ -198,14 +218,12 @@ def reset_password():
     if not user:
         return {'status': 'error', 'message': 'Email is not registered'} # if the user doesn't exist or password is wrong
 
-    query = db.text(f"UPDATE kkuser SET hashpass = :hashpass, verified = false WHERE email = :email")
+    query = db.text(f"UPDATE kkuser SET hashpass = :hashpass WHERE email = :email")
 
     result = db.session.execute(query, {'email': email, 'hashpass': generate_password_hash(new_password)})
 
     db.session.commit()
 
-    verification_token = generate_verification_token()
-    ok = send_verification_email(email, verification_token)
-    email_tokens[email] = verification_token
+    reset_tokens.pop(email, None)
 
     return {'status': 'success', 'data': data}

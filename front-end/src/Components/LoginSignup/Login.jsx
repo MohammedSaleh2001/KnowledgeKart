@@ -119,6 +119,10 @@ function Login(props) {
                 navigate("/forgotpassword")
             }}
             >Forgot Password?</div>
+            <div id="change-password" onClick={() => {
+                navigate("/changepassword")
+            }}
+            >Change Password?</div>
             <div className="submit-container">
                 <div className="submit" onClick={handleSubmit} >Login</div>
             </div>
