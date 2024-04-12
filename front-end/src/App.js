@@ -4,7 +4,6 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './Context/AuthProvider';
 
-import {AnalyticsView} from './Components/Analytics/index'
 import {ChatHomePage} from './Components/Chat/index'
 import {CreateListing, HomePage, Listing, EditListing, RateSeller} from './Components/Listing/index'
 import {ChangePassword, ForgotPasswordRequest, ForgotPasswordForm, Login, LoginSignup, Signup} from './Components/LoginSignup/index'

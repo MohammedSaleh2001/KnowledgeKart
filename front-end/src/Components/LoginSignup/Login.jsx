@@ -1,3 +1,10 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR3 (Backend implemented in '/api/login' endpoint)
+*/
+
 import React, { useState, useContext } from 'react';
 import AuthContext from '../../Context/AuthProvider';
 import './LoginSignup.css';

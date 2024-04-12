@@ -1,3 +1,10 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR5
+*/
+
 import React, { useEffect, useState } from 'react'
 
 import { useNavigate, useParams } from 'react-router-dom'

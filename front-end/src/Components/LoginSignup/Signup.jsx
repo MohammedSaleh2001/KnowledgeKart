@@ -1,3 +1,11 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR1 (Backend implemented in '/api/signup' endpoint)
+    - FR2 (Backend implemented in '/api/signup' endpoint)
+*/
+
 import React, { useState } from 'react'
 import './LoginSignup.css'
 

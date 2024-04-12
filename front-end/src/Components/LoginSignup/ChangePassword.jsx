@@ -1,3 +1,10 @@
+/*
+Author: Ragur Krishnan
+
+Functional Requirements Implemented:
+    - FR4 (Backend implemented in /api/change_password' endpoint)
+*/
+
 import React, { useEffect, useState, useContext } from 'react'
 import AuthContext from '../../Context/AuthProvider';
 import './LoginSignup.css'

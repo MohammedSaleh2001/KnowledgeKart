@@ -1,3 +1,10 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR8 (Also fulfilled by the HomePage.jsx component)
+*/
+
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
@@ -154,6 +161,12 @@ function Listing() {
         }
     }
 
+    const handleViewProfileButton = () => {
+        if (listing && listing.seller && listing.seller.email) {
+            navigate(`/viewprofile/${listing.seller.email}`)
+        }
+    }
+
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return new Intl.DateTimeFormat('en-CA', {
@@ -252,9 +265,12 @@ function Listing() {
                     <div>
                         Quickness: {parseFloat(listing?.seller?.quickness).toFixed(2)}
                     </div>
-                    {!isOwner && !isNotVerified && (<div id="listing_email_div" onClick={handleEmailSeller}>
-                        Email
-                    </div>)}   
+                    <div id="seller_info_buttons_container">
+                        {!isOwner && !isNotVerified && (<div id="listing_email_div" onClick={handleEmailSeller}>
+                            Email
+                        </div>)}   
+                        {!isOwner && (<div id="listing_view_profile_div" onClick={handleViewProfileButton}>View Profile</div>)}    
+                    </div>
                 </div>
             </div>
         </div>

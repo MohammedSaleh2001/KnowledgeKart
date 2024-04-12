@@ -1,3 +1,11 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR7 (Refer to the fetchListings function)
+    - FR8 (Also fulfilled by the ViewListing.jsx component)
+*/
+
 import React, { useEffect, useState } from 'react'
 import './Listing.css'
 
