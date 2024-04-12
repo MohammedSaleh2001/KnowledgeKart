@@ -25,11 +25,12 @@ function HomePage() {
     const [priceFilter, setPriceFilter] = useState('All');
     const [dateSort, setDateSort] = useState('None');
     const [priceSort, setPriceSort] = useState('None');
+    const [titleSort, setTitleSort] = useState('None');
 
     useEffect(() => {
         const endpoint = choice === 'Listing' ? '/api/search_listings' : '/api/search_users';
         fetchListings(endpoint, searchTerm);
-    }, [searchTerm, choice, categoryFilter, priceFilter, dateSort, priceSort]);
+    }, [searchTerm, choice, categoryFilter, priceFilter, dateSort, priceSort, titleSort]);
 
     const fetchListings = async (endpoint, searchTerm) => {
         const token = localStorage.getItem('token');
@@ -43,7 +44,8 @@ function HomePage() {
                 category_filter: parseInt(categoryFilter),
                 price_filter: priceFilter,
                 date_sort: dateSort,
-                price_sort: priceSort
+                price_sort: priceSort,
+                title_sort: titleSort
             });
             console.log("bodyToSend:", bodyToSend);
 
@@ -183,6 +185,16 @@ function HomePage() {
                         <option>None</option>
                         <option>Low to High</option>
                         <option>High to Low</option>
+                    </select>
+                    <select
+                        name="Title"
+                        id="title_sort"
+                        value={titleSort}
+                        onChange={e => setTitleSort(e.target.value)}
+                    >
+                        <option>None</option>
+                        <option>Ascending</option>
+                        <option>Descending</option>
                     </select>
             </div>)}
             <div id="listview_container">
