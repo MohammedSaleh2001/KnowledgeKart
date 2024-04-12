@@ -58,6 +58,11 @@
   color: #316ff6;
   cursor: pointer;
 }
+.container #change-password {
+  margin-top: 30px;
+  color: #316ff6;
+  cursor: pointer;
+}
 
 .text {
   color: black;

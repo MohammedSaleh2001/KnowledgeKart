@@ -57,7 +57,7 @@ function EditListing() {
                     setDescription(data.data.listing_description);
                     setAskingPrice(data.data.asking_price);
                     setCondition(data.data.condition);
-                    setSoldTo(data.data.seller.email);
+                    setSoldTo(data.data.buyer.email);
                     setSoldPrice(data.data.soldprice);
                     var currentStatus;
                     switch (data.data.listingstatus) {

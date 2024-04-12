@@ -12,6 +12,24 @@ def generate_verification_token():
     # Generate a unique verification token (example: using UUID)
     return str(uuid.uuid4())
 
+def send_reset_email(recipient, token):
+    # Compose the verification email
+    subject = "Reset Password"
+    sender = current_app.config['MAIL_USERNAME']
+    verification_link = f"{current_app.config['BASE_URL']}/forgotpasswordform/{token}"
+    body = f"Please click the following link to reset your password: {verification_link}"
+
+    # Send the email
+    msg = Message(subject, sender=sender, recipients=[recipient])
+    msg.body = body
+    try:
+        mail.send(msg)
+        return True
+    except Exception as e:
+        # Handle email sending errors
+        print(f"Error sending reset email: {e}")
+        return False
+
 def send_verification_email(recipient, token):
     # Compose the verification email
     subject = "Email Verification"
