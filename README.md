@@ -27,6 +27,20 @@ as a shorthand for this.
 
 To run in the background, add the -d flag to the end.
 
+<b> NOTE: </b>
+
+There is a chance that Docker does not have permission to files.
+If you receive:
+<i> error docker-entrypoint-initdb.d/init.sh: /bin/sh: bad interpreter: Permission denied postgres exited with code 126 </i>
+Try: 
+- chmod +x db-setup/init.sh
+If you receive:
+<i>open .docker/buildx/current: permission denied</i>
+Try: 
+- sudo chown -R $(whoami) ~/.docker
+
+
+
 You can now navigate to localhost/
 
 There are three default administrative users:
