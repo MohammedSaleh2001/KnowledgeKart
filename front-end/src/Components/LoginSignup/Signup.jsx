@@ -63,7 +63,7 @@ function Signup(props) {
                     <input type="text" placeholder="Full Name" value={name} onInput={e => setName(e.target.value)} />
                 </div>
                 <div className="input">
-                    <input type="email" placeholder="Email Address" value={email} onInput={e => setEmail(e.target.value)} />
+                    <input type="email" placeholder="Email Address" value={email} onInput={e => setEmail(e.target.value.toLowerCase())} />
                 </div>
                 <div className="input">
                     <input type="password" placeholder="Password" value={password} onInput={e => setPassword(e.target.value)} />

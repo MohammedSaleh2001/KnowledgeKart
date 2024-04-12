@@ -102,7 +102,6 @@ function Listing() {
                 const honesty = parseFloat(listing.seller.honesty);
                 const politeness = parseFloat(listing.seller.politeness);
                 const quickness = parseFloat(listing.seller.quickness);
-
                 const calculatedRating = (honesty + politeness + quickness) / 3;
                 setRating(calculatedRating.toFixed(2));
             } catch (error) {
@@ -154,6 +153,31 @@ function Listing() {
             }
         } catch (error) {
             console.error('Error initiating chat:', error);
+        }
+
+        // ----- Send email notification to seller ----- //
+        try {
+            const response = await fetch('/api/send_contact_email', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "buyer": senderEmail,
+                    "seller": receiverEmail,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                ;
+            } else {
+                console.error('Failed to send email notification to seller:', data.message);
+            }
+        } catch (error) {
+            console.error('Error sending email notification:', error);
         }
     }
 

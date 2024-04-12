@@ -22,13 +22,8 @@ function Login(props) {
             alert('Enter email and password');
             return;
         }
-        const data = {
-            email,
-            password
-        };
         try {
-            const url = '/api/login';
-            const response = await fetch(url, {
+            const response = await fetch('/api/login', {
                 method: 'POST',
                 cache: 'no-cache',
                 credentials: 'same-origin',
@@ -36,7 +31,10 @@ function Login(props) {
                     'Accept': 'application/json',
                     'Content-type': 'application/json',
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify({
+                    "email": email,
+                    "password": password
+                })
             });
 
             if (response.ok) {
@@ -96,7 +94,7 @@ function Login(props) {
             </div>
             <div className="inputs">
                 <div className="input">
-                    <input type="email" placeholder="Email Address" value={email} onInput={e => setEmail(e.target.value)} />
+                    <input type="email" placeholder="Email Address" value={email} onInput={e => setEmail(e.target.value.toLowerCase())} />
                 </div>
                 <div className="input">
                     <input type="password" placeholder="Password" value={password} onInput={e => setPassword(e.target.value)} />
