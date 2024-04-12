@@ -1,7 +1,12 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR19
+*/
+
 import React, { useEffect, useState } from 'react';
-
 import { useNavigate, useParams } from 'react-router-dom'
-
 import './Moderate.css'
 
 function ModerateInvestigate() {
@@ -34,35 +39,6 @@ function ModerateInvestigate() {
             console.error('Error closing report:', error);
         }
     };
-
-    const handleSuspendUser = async () => {
-        const token = localStorage.getItem('token');
-        const blacklistedUntil = new Date(new Date().getTime() + (72 * 60 * 60 * 1000)).toISOString();
-
-        try {
-            const response = await fetch('/api/suspend_user', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: report.report_for_email,
-                    blacklist: true,
-                    blacklisted_until: blacklistedUntil,
-                }),
-            });
-            const data = await response.json();
-            if (response.ok && data.status === 'success') {
-                handleCloseReport();
-                window.location.reload();
-            } else {
-                console.log("Failed to suspend user.");
-            }
-        } catch (error) {
-            console.error('Error suspending user:', error);
-        }
-    }
 
     useEffect(() => {
         const fetchReports = async () => {

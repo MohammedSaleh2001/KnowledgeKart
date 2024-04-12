@@ -6,12 +6,10 @@ Functional Requirements Fulfilled:
 
 import React, { useState, useEffect } from 'react';
 import './LoginSignup.css'
-
 import { useNavigate } from "react-router-dom";  
 
 function LoginSignup(props) {
     const navigate = useNavigate();
-
     return (
         <div className='container'>
             <div className="header">

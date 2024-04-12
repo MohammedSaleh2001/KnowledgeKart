@@ -1,20 +1,19 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR13
+*/
+
 import React, { useEffect, useState } from 'react';
-
 import { useParams } from 'react-router-dom';
-
 import './Listing.css';
-
 import { Col, Button, Row, Container, Card, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 function EditListing() {
-
     const navigate = useNavigate();
-
     const { listingId } = useParams();
-
-    const [image, setImage] = useState(null);
-
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [asking_price, setAskingPrice] = useState(0.00);

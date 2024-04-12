@@ -1,10 +1,15 @@
-import React from 'react'
+/*
+Author: John Yu
 
+Functional Requirements Fulfilled:
+    - None
+*/
+
+import React from 'react'
 import { useNavigate } from "react-router-dom"
 
 function ReportInstance({ report }) {
     const navigate = useNavigate();
-
     const handleCloseReport = async () => {
         const token = localStorage.getItem('token');
         try {

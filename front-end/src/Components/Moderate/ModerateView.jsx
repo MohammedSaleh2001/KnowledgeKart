@@ -1,14 +1,17 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - FR18
+*/
+
 import React, { useEffect, useState } from 'react'
-
 import ReportInstance from './ReportInstance'
-
 import './Moderate.css'
-
 import { useNavigate } from "react-router-dom";  
 
 function ModerateView() {
     const [reports, setReports] = useState([]);
-
     const navigate = useNavigate();
 
     useEffect(() => {

@@ -8,7 +8,6 @@ Functional Requirements Implemented:
 import React, { useEffect, useState, useContext } from 'react'
 import AuthContext from '../../Context/AuthProvider';
 import './LoginSignup.css'
-
 import { useNavigate, useParams } from "react-router-dom";
 
 function ChangePassword(props) {

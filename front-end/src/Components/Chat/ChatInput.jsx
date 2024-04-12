@@ -1,10 +1,15 @@
+/*
+Author: John Yu
+
+Functional Requirements Fulfilled:
+    - Refer to the ChatHomePage.jsx component.
+*/
+
 import React, { useEffect, useState } from 'react'
 import { useChat } from '../../Context/ChatContext';
-
 import './Chat.css'
 
 const ChatInput = () => {
-
     const { activeChat } = useChat();
     const { addMessageToActiveChat } = useChat();
     const [message, setMessage] = useState('');

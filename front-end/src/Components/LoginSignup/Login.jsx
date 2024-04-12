@@ -8,37 +8,28 @@ Functional Requirements Fulfilled:
 import React, { useState, useContext } from 'react';
 import AuthContext from '../../Context/AuthProvider';
 import './LoginSignup.css';
-
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 function Login(props) {
     const { auth, setAuth } = useContext(AuthContext);
-
     const navigate = useNavigate();
-    
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (email.trim() === '' || password.trim() === '') {
             alert('Enter email and password');
             return;
         }
-
         const data = {
             email,
             password
         };
-
-        console.log(JSON.stringify(data));
-
         try {
             const url = '/api/login';
             const response = await fetch(url, {
                 method: 'POST',
-                // mode: 'no-cors',
                 cache: 'no-cache',
                 credentials: 'same-origin',
                 headers: {
@@ -50,20 +41,12 @@ function Login(props) {
 
             if (response.ok) {
                 const responseData = await response.json();
-
                 const accessToken = responseData?.accessToken;
                 const roles = responseData?.role;
-
                 localStorage.setItem('token', accessToken);
                 localStorage.setItem('email', email);
-
                 setAuth({ email, password, roles, accessToken });
-
                 props.setToken(responseData.access_token);
-
-                console.log("responseData:", responseData);
-                console.log(props);  // error
-                console.log(props.token);
 
                 // ----- Check user verification ----- //
                 const profileResponse = await fetch('/api/user_profile', {
@@ -76,8 +59,6 @@ function Login(props) {
                 });
                 const profileData = await profileResponse.json();
                 if (profileData.status === 'success') {
-                    // console.log("profileData.data:", profileData.data);
-                    // localStorage.setItem('isVerified', profileData.data.verified);
                     if (profileData.data.verified) {
                         console.log("User is verified!");
                         localStorage.setItem('roles', roles);
@@ -89,7 +70,6 @@ function Login(props) {
                     console.log("Cannot retrieve profile data.");
                 }
                 // ----- End Check User Verification ----- //
-
                 if (responseData.status == 'success') {
                     if (roles === 'U' || roles === 'O' || roles === 'A') {
                         navigate('/home', { replace: true })    

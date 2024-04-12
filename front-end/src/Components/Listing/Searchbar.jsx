@@ -1,12 +1,9 @@
 import React, { useState } from 'react'
-
 import SearchIcon from '@mui/icons-material/Search';
-
 import './Listing.css'
 
 function Searchbar({ onSearch }) {
     const [searchTerm, setSearchTerm] = useState('');
-    
     return (
         <div className='input-wrapper'>
             <input

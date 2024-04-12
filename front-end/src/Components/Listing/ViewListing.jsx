@@ -3,6 +3,9 @@ Author: John Yu
 
 Functional Requirements Fulfilled:
     - FR8 (Also fulfilled by the HomePage.jsx component)
+    - FR9 (Also fulfilled by all components in the Chat folder)
+    - FR10
+    - FR12
 */
 
 import React, { useEffect, useState } from 'react'

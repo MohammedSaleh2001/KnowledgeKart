@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import './LoginSignup.css'
-
 import { useNavigate, useParams } from "react-router-dom";
 
 function ForgotPasswordForm(props) {
     const navigate = useNavigate();
-
     const { resetToken } = useParams();
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');

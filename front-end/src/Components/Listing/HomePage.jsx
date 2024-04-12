@@ -8,21 +8,17 @@ Functional Requirements Fulfilled:
 
 import React, { useEffect, useState } from 'react'
 import './Listing.css'
-
 import Searchbar from './Searchbar'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ChatIcon from '@mui/icons-material/Chat';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import ShieldIcon from '@mui/icons-material/Shield';
-
 import ListingItem from './ListingItem'
 import UserItem from './UserItem'
-
 import { useNavigate } from "react-router-dom";  
 
 function HomePage() {
-
     const navigate = useNavigate();
     const [listings, setListings] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +38,6 @@ function HomePage() {
 
     const fetchListings = async (endpoint, searchTerm) => {
         const token = localStorage.getItem('token');
-
         try {
             setIsLoading(true);
 
