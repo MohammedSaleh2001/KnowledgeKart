@@ -6,6 +6,8 @@ DB_PASS = os.environ["POSTGRES_PASSWORD"]
 DB_HOST = "postgres"
 DB_PORT = "5432"
 
+# Every function in this document is for FR24
+
 def get_user_delta(a_conn):
 
     a_cursor = a_conn.cursor() 
