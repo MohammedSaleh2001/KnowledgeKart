@@ -6,6 +6,7 @@ DB_PASS = os.environ["POSTGRES_PASSWORD"]
 DB_HOST = "postgres"
 DB_PORT = "5432"
 
+# FR22
 def get_user_delta(m_conn, a_conn):
     m_cursor = m_conn.cursor()
 
@@ -20,7 +21,8 @@ def get_user_delta(m_conn, a_conn):
     analytics_max = a_cursor.fetchone()
 
     return main_max[0], analytics_max[0]
-    
+
+# FR22
 def extract_transform_users(m_conn, a_delta):
     m_cursor = m_conn.cursor()
 
@@ -92,6 +94,7 @@ def extract_transform_users(m_conn, a_delta):
     
     return m_cursor.fetchall()
 
+# FR22
 def load_users(a_conn, data):
     a_cursor = a_conn.cursor()
 
@@ -130,6 +133,7 @@ def load_users(a_conn, data):
 
     return True
 
+# FR23
 def datamart_newuserreport(a_conn):
     a_cursor = a_conn.cursor()
 
@@ -172,6 +176,7 @@ def datamart_newuserreport(a_conn):
 
     return True
 
+# FR23
 def datamart_userreport(a_conn):
     a_cursor = a_conn.cursor()
 
@@ -223,6 +228,7 @@ def datamart_userreport(a_conn):
 
     return True
 
+# FR22
 def update_user_delta(a_conn):
     a_cursor = a_conn.cursor()
 
@@ -241,6 +247,7 @@ def update_user_delta(a_conn):
 
     return True
 
+# FR22 / FR23
 def etl_user():
     try:
         m_conn = psycopg2.connect(database='main',
@@ -316,6 +323,8 @@ def etl_user():
     a_conn.close()
     return
 
+
+# FR21
 def get_dim_categorytype(m_conn, a_conn):
     m_cursor = m_conn.cursor()
 
@@ -330,8 +339,7 @@ def get_dim_categorytype(m_conn, a_conn):
     
     a_conn.commit()
 
-
-
+# FR22
 def get_listing_delta(m_conn, a_conn):
     m_cursor = m_conn.cursor()
 
@@ -346,7 +354,8 @@ def get_listing_delta(m_conn, a_conn):
     analytics_max = a_cursor.fetchone()
 
     return main_max[0], analytics_max[0]
-    
+
+# FR22    
 def extract_transform_listing(m_conn, a_delta):
     m_cursor = m_conn.cursor()
 
@@ -388,6 +397,7 @@ def extract_transform_listing(m_conn, a_delta):
     
     return m_cursor.fetchall()
 
+# FR22
 def load_listing(a_conn, data):
     a_cursor = a_conn.cursor()
 
@@ -423,6 +433,7 @@ def load_listing(a_conn, data):
 
     return True
 
+# FR23
 def datamart_newlistingreport(a_conn):
     a_cursor = a_conn.cursor()
 
@@ -505,6 +516,7 @@ def datamart_newlistingreport(a_conn):
 
     return True
 
+# FR23
 def datamart_listingreport(a_conn):
     a_cursor = a_conn.cursor()
 
@@ -551,6 +563,7 @@ def datamart_listingreport(a_conn):
 
     return True
 
+# FR22
 def update_listing_delta(a_conn):
     a_cursor = a_conn.cursor()
 
@@ -569,6 +582,7 @@ def update_listing_delta(a_conn):
 
     return True
 
+# FR22 / FR23
 def etl_listing():
     try:
         m_conn = psycopg2.connect(database='main',
@@ -654,7 +668,7 @@ def etl_listing():
     a_conn.close()
     return
 
-
+# FR22
 def get_report_delta(m_conn, a_conn):
     m_cursor = m_conn.cursor()
 
@@ -669,7 +683,8 @@ def get_report_delta(m_conn, a_conn):
     analytics_max = a_cursor.fetchone()
 
     return main_max[0], analytics_max[0]
-    
+
+# FR22    
 def extract_transform_report(m_conn, a_delta):
     m_cursor = m_conn.cursor()
 
@@ -704,6 +719,7 @@ def extract_transform_report(m_conn, a_delta):
     
     return m_cursor.fetchall()
 
+# FR22
 def load_report(a_conn, data):
     a_cursor = a_conn.cursor()
 
@@ -734,6 +750,7 @@ def load_report(a_conn, data):
 
     return True
 
+# FR23
 def datamart_newmodreport(a_conn):
     a_cursor = a_conn.cursor()
 
@@ -787,6 +804,7 @@ def datamart_newmodreport(a_conn):
 
     return True
 
+# FR23
 def datamart_modreport(a_conn):
     a_cursor = a_conn.cursor()
 
@@ -836,6 +854,7 @@ def datamart_modreport(a_conn):
 
     return True
 
+# FR22
 def update_report_delta(a_conn):
     a_cursor = a_conn.cursor()
 
@@ -854,6 +873,7 @@ def update_report_delta(a_conn):
 
     return True
 
+# FR22 / FR23
 def etl_report():
     try:
         m_conn = psycopg2.connect(database='main',
