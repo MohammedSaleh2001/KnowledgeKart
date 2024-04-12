@@ -1,45 +1,42 @@
 import React, { useEffect, useState } from 'react'
 import './LoginSignup.css'
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-function ForgotPassword(props) {
+function ChangePassword(props) {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [oldPassword, setOldPassword] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (newPassword !== confirmPassword) {
-            alert("Passwords do not match.");
-            return;
-        }
-
         try {
-            const response = await fetch('/api/reset_password', {
+            const response = await fetch('/api/change_password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     email: email,
+                    old_password: oldPassword,
                     new_password: newPassword,
                 }),
             });
             const data = await response.json();
             console.log("Data:", data);
-            if (response.ok) {
-                alert("Password reset successfully");
+            if (response.ok && (data.status === 'success')) {
+                alert("Password changed successfully");
                 navigate("/");
             } else {
-                console.error("Failed to reset password.");
+                alert("Password or email is incorrect");
+                console.error("Failed to change password.");
             }
         } catch (error) {
-            console.error('Error resetting password:', error);
-            alert('An error occurred while resetting the password.');
+            console.error('Error changing password:', error);
+            alert('An error occurred while changing the password.');
         }
     };
 
@@ -51,11 +48,19 @@ function ForgotPassword(props) {
             </div>
             <div className="inputs">
                 <div className="input">
+                    <input 
+                        type="email" 
+                        placeholder="Email Address" 
+                        value={email} 
+                        onInput={e => setEmail(e.target.value)} 
+                    />
+                </div>
+                <div className="input">
                     <input
-                        type="email"
-                        placeholder="Email Address"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
+                        type="password"
+                        placeholder="Old Password"
+                        value={oldPassword}
+                        onChange={e => setOldPassword(e.target.value)}
                     />
                 </div>
                 <div className="input">
@@ -64,14 +69,6 @@ function ForgotPassword(props) {
                         placeholder="New Password"
                         value={newPassword}
                         onChange={e => setNewPassword(e.target.value)}
-                    />
-                </div>
-                <div className="input">
-                    <input
-                        type="password"
-                        placeholder="Re-type New Password"
-                        value={confirmPassword}
-                        onChange={e => setConfirmPassword(e.target.value)}
                     />
                 </div>
             </div>
@@ -83,4 +80,4 @@ function ForgotPassword(props) {
     )
 }
 
-export default ForgotPassword
+export default ChangePassword

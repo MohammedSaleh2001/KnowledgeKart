@@ -245,11 +245,16 @@ def get_listing():
 
     seller_data = get_user_profile_helper('userid', sellerid)
 
+    buyer_data = dict()
+    if listing[12] and listing[12] > 1:
+        buyer_data = get_user_profile_helper('userid', listing[12])
+
     if not seller_data:
         return {'status': 'error', 'message': 'No seller!'}
     
     data = {'listingid': listing[0],
             'seller': seller_data,
+            'buyer': buyer_data,
             'listing_name': listing[2],
             'listing_description': listing[3],
             'asking_price': listing[4],
@@ -355,9 +360,9 @@ def edit_listing():
 def submit_review():
     data = request.json
     token = data.get('review_token')
-    honesty = data.get('honesty')
-    politeness = data.get('politeness')
-    quickness = data.get('quickness')
+    honesty = max(min(data.get('honesty'), 5), 0)
+    politeness = max(min(data.get('politeness'), 5), 0)
+    quickness = max(min(data.get('quickness'), 5), 0)
 
     for k, v in review_tokens.items():
         if v['token'] == token:            
