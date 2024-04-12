@@ -22,14 +22,14 @@ function HomePage() {
     const [searchTerm, setSearchTerm] = useState("%");
     const [choice, setChoice] = useState('Listing');
     const [categoryFilter, setCategoryFilter] = useState('-1');
-    const [conditionFilter, setConditionFilter] = useState('All');
+    const [priceFilter, setPriceFilter] = useState('All');
     const [dateSort, setDateSort] = useState('None');
     const [priceSort, setPriceSort] = useState('None');
 
     useEffect(() => {
         const endpoint = choice === 'Listing' ? '/api/search_listings' : '/api/search_users';
         fetchListings(endpoint, searchTerm);
-    }, [searchTerm, choice, categoryFilter, conditionFilter, dateSort, priceSort]);
+    }, [searchTerm, choice, categoryFilter, priceFilter, dateSort, priceSort]);
 
     const fetchListings = async (endpoint, searchTerm) => {
         const token = localStorage.getItem('token');
@@ -41,7 +41,7 @@ function HomePage() {
                 search_term: `${searchTerm}`,
                 max_number_results: 10,
                 category_filter: parseInt(categoryFilter),
-                condition_filter: conditionFilter,
+                price_filter: priceFilter,
                 date_sort: dateSort,
                 price_sort: priceSort
             });
@@ -152,17 +152,17 @@ function HomePage() {
                         <option value='3'>Lab Equipment</option>
                     </select>
                     <select
-                        name="Condition"
-                        id="condition_filter"
-                        value={conditionFilter}
-                        onChange={e => setConditionFilter(e.target.value)}
+                        name="Price"
+                        id="price_filter"
+                        value={priceFilter}
+                        onChange={e => setPriceFilter(e.target.value)}
                     >
                         <option>All</option>
-                        <option>New</option>
-                        <option>Very Good</option>
-                        <option>Good</option>
-                        <option>Used</option>
-                        <option>Very Used</option>
+                        <option>0-10</option>
+                        <option>0-25</option>
+                        <option>0-50</option>
+                        <option>0-100</option>
+                        <option>0-1000</option>
                     </select>
                     <select
                         name="Date Listed"

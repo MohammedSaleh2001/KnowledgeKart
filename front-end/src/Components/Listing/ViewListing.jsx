@@ -149,7 +149,7 @@ function Listing() {
 
     const handleEmailSeller = () => {
         if (listing && listing.seller && listing.seller.email) {
-            const mailToLink = `mailto:${listing.seller.email}`;
+            const mailToLink = `mailto:${listing.seller.email}?body=${chatMsg}`;
             window.location.href = mailToLink;
         }
     }
