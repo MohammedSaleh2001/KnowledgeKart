@@ -27,6 +27,8 @@ as a shorthand for this.
 
 To run in the background, add the -d flag to the end.
 
+<div style="page-break-after: always;"></div>
+
 <b> NOTE: </b>
 
 You may need to use sudo before Docker commands for them to operate properly.
@@ -52,7 +54,7 @@ Try:
 
 Certain distros and Windows struggle with Docker DNS resolving. If containers cannot communicate, compose down then compose up.
 
-
+<div style="page-break-after: always;"></div>
 
 You should now be able to navigate to localhost/
 
