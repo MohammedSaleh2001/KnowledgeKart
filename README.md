@@ -110,11 +110,11 @@ FR21:
 - in the files themselves, you can see reduced columns
 
 FR22: 
-- SQL/analytics/core/1-CREATE_TABLE_core_delta.sql is where delta columns are stored. Primary keys are used as facts.
+- SQL/analytics/core/1-CREATE_TABLE_core_delta.sql is where delta columns are stored. Primary keys are used as deltas.
 
 FR23:
 - See SQL/analytics/datamart, where there are 6 reports aggregating information.
-- For the final sentence, the use of "such as" was deliberate, as at the time what would be visualized. We formally decided to use category and condition.
+- For the final sentence, the use of "such as" was deliberate, as at the time we were not sure what could be visualized. We formally decided to use category and condition.
 
 FR24:
 - Data mart updates are done first by update_etl changing the core database, and core_etl re-performing the operations
