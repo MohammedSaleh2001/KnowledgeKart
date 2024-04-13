@@ -38,10 +38,13 @@ https://www.linkedin.com/pulse/how-run-docker-commands-without-sudo-andrey-byhal
 There is a chance that Docker does not have permission to files.
 If you receive:
 <i> error docker-entrypoint-initdb.d/init.sh: /bin/sh: bad interpreter: Permission denied postgres exited with code 126 </i>
+
 Try: 
 - chmod +x db-setup/init.sh
+
 If you receive:
 <i>open .docker/buildx/current: permission denied</i>
+
 Try: 
 - sudo chown -R $(whoami) ~/.docker
 
@@ -49,7 +52,9 @@ Try:
 
 Certain distros and Windows struggle with Docker DNS resolving. If containers cannot communicate, compose down then compose up.
 
-You can now navigate to localhost/
+
+
+You should now be able to navigate to localhost/
 
 There are three default administrative users:
 - kkowner@ualberta.ca (pass: kkownerpass)
