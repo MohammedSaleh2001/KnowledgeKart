@@ -66,13 +66,11 @@ There are three default administrative users:
 Do not change these user's password, and instead change the .env file before startup.
 
 There are several sample users:
-- joe 
-- bob
-- alice
-- tim
-- mark
-
-Addresses end with @ualberta.ca, and their passes are <name>pass.
+- joe@ualberta.ca (pass:  joepass)
+- bob@ualberta.ca (pass:  bobpass)
+- alice@ualberta.ca (pass: alicepass)
+- tim@ualberta.ca (pass: timpass)
+- mark@ualberta.ca (pass: markpass)
 
 To access analytics, go to localhost/grafana
 The specific dashboard is at localhost/grafana/d/analytics/
@@ -97,7 +95,7 @@ This clears all images and allows for a fresh run.
 Here is further description on some functional requirements.
 
 EMAIL FRS:
-- The best way to evaluate that emails are working is register using your own ualberta email, and joe@ualberta.ca, since he has an active listing.
+- The best way to evaluate that emails are working is register using your own ualberta email, and kkadmin@ualberta.ca, since we would rather not spam joe :) .
 
 FR18:
 - There are two verdicts, close and suspend, but will mark the report as closed in the database.
@@ -125,3 +123,4 @@ FR25:
 - The analytics dashboard is refreshed every minute (see top right corner)
 - Slicing is done through the time picker in the top right, and specific date/time dimensions on the top left
 - Dicing is done through category and condition. There are figures/graphs already diced by status.
+- To export figures and reports, click the ellipses at the top right of any figure, and select "View Data". There should be an option to export as .csv
