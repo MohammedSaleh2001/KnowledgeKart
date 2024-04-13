@@ -45,6 +45,10 @@ If you receive:
 Try: 
 - sudo chown -R $(whoami) ~/.docker
 
+<b> NOTE: </b>
+
+Certain distros and Windows struggle with Docker DNS resolving. If containers cannot communicate, compose down then compose up.
+
 You can now navigate to localhost/
 
 There are three default administrative users:
