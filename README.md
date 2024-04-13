@@ -29,6 +29,12 @@ To run in the background, add the -d flag to the end.
 
 <b> NOTE: </b>
 
+You may need to use sudo before Docker commands for them to operate properly.
+Check out this URL to mitigate this.
+https://www.linkedin.com/pulse/how-run-docker-commands-without-sudo-andrey-byhalenko-gawzf/
+
+<b> NOTE: </b>
+
 There is a chance that Docker does not have permission to files.
 If you receive:
 <i> error docker-entrypoint-initdb.d/init.sh: /bin/sh: bad interpreter: Permission denied postgres exited with code 126 </i>
@@ -38,8 +44,6 @@ If you receive:
 <i>open .docker/buildx/current: permission denied</i>
 Try: 
 - sudo chown -R $(whoami) ~/.docker
-
-
 
 You can now navigate to localhost/
 
