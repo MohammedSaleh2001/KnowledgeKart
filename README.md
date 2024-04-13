@@ -27,7 +27,7 @@ as a shorthand for this.
 
 To run in the background, add the -d flag to the end.
 
-<div style="page-break-after: always;"></div>
+<br></br>
 
 <b> NOTE: </b>
 
@@ -54,7 +54,7 @@ Try:
 
 Certain distros and Windows struggle with Docker DNS resolving. If containers cannot communicate, compose down then compose up.
 
-<div style="page-break-after: always;"></div>
+<br></br>
 
 You should now be able to navigate to localhost/
 
